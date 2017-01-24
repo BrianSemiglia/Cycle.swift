@@ -13,9 +13,7 @@ import Curry
 @UIApplicationMain
 class Example: CycledApplicationDelegate<IntegerMutatingApp> {
   init() {
-    super.init(
-      cycle: Cycle(transformer: IntegerMutatingApp())
-    )
+    super.init(handler: IntegerMutatingApp())
   }
 }
 

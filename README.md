@@ -22,7 +22,7 @@ Event + AppModel -> AppModel -> DriverModel -> Screen  -> DriverModel -> Event
 @UIApplicationMain
 class Example: CycledApplicationDelegate<MyFilter> {
   init() {
-    super.init(cycle: Cycle(transformer: MyFilter()))
+    super.init(handler: MyFilter())
   }
 }
 
