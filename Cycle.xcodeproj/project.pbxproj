@@ -40,7 +40,6 @@
 		D349A9D51E37CE9F005F521E /* Cycle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cycle.swift; sourceTree = "<group>"; };
 		D349A9D71E37CFA5005F521E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D349A9D91E37D079005F521E /* ValueToggler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ValueToggler.swift; sourceTree = "<group>"; };
-		D349A9DB1E37D93A005F521E /* Readme.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Readme.md; sourceTree = "<group>"; };
 		E1698EFB7DD5E9EBB517E954 /* Pods_CycleTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CycleTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0D2D6BEFB02D32C1CF14D8E /* Pods-CycleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CycleTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CycleTests/Pods-CycleTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -110,7 +109,6 @@
 			isa = PBXGroup;
 			children = (
 				D349A9D51E37CE9F005F521E /* Cycle.swift */,
-				D349A9DB1E37D93A005F521E /* Readme.md */,
 				D349A9BB1E37CE24005F521E /* LaunchScreen.storyboard */,
 				D349A9BE1E37CE24005F521E /* Info.plist */,
 			);
