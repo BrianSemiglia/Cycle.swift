@@ -21,8 +21,8 @@ class CycledApplicationDelegate<C: SinkSourceConverting>: UIResponder, UIApplica
   private var deferred: (() -> Cycle<C>)?
   private var realized: Cycle<C>?
   
-  init(cycle: @autoclosure @escaping () -> Cycle<C>) {
-    self.deferred = cycle
+  init(handler: C) {
+    self.deferred = { Cycle(transformer: handler) }
   }
   
   func application(_ app: UIApplication, didFinishLaunchingWithOptions options: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
