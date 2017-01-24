@@ -1,0 +1,19 @@
+PODS:
+  - Curry (3.0.0)
+  - RxCocoa (3.1.0):
+    - RxSwift (~> 3.1)
+  - RxSwift (3.1.0)
+
+DEPENDENCIES:
+  - Curry
+  - RxCocoa
+  - RxSwift
+
+SPEC CHECKSUMS:
+  Curry: eb3d2c75aec678b3cc7fb2729d2ad6dd121531d1
+  RxCocoa: 50d7564866da9299161e86a263ce12a0873904d8
+  RxSwift: 83ff553e7593fdfdcb2562933a64c0284dffdadc
+
+PODFILE CHECKSUM: a69170358efd3a0f558d0d087dc4c8c55376016b
+
+COCOAPODS: 1.1.1
