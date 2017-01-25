@@ -31,6 +31,9 @@ struct IntegerMutatingApp: SinkSourceConverting {
       .rendered(effects.map { $0.screen })
       .map { Cause.screen($0) }
   }
+  /* 
+   If input was of type Observable<(Reduceable, Effect)>, there wouldn't be a need to define a Cause type and -effectsFrom(events:) could be made generic and pushed into framework. Reduceable has Self contraints though, so it would need to be type-erased. 
+   */
   func effectsFrom(events: Observable<(Cause, Effect)>) -> Observable<Effect> { return
     events
     .map {
