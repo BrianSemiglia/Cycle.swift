@@ -1,16 +1,18 @@
 ##Overview
 Cycle provides a means of writing an app as a filter over a stream of external events.
 
-1. The event stream is fed to a reducer that produces a stream of new models.
-2. The app stream is fed to drivers that render the side-effects of those models.
-3. The drivers produce a stream of new models which are mapped to events.
+1. The event stream is fed to a reducer that produces a stream of driver models.
+2. The driver model stream is fed to drivers that render the side-effects of those models.
+3. The drivers produce a stream of new driver models which are mapped to events.
 4. The cycle repeats.
 
+For example:
 ```
-                                DriverModel -> Network -> DriverModel
+                                DriverModel -> Network
 Event + AppModel -> AppModel -> DriverModel -> Screen  -> DriverModel -> Event
-                                DriverModel -> Session -> DriverModel
+                                DriverModel -> Session
 ```
+A sample project of the infamous 'Counter' app is included.
 
 ##Usage
 1. Subclass CycledApplicationDelegate and provide a SinkSourceConverting filter.
@@ -23,7 +25,7 @@ Event + AppModel -> AppModel -> DriverModel -> Screen  -> DriverModel -> Event
     }
   }
 
-  /* Aside from defining DriverEvent, AppModel and _start_, this is boilerplate and could afford to be pushed below. */
+  /* Aside from defining AppModel, -eventsFrom(effects:) and -start, this is boilerplate and could afford to be pushed below. */
   struct MyFilter: SinkSourceConverting {
 
     enum DriverEvent {
@@ -57,7 +59,7 @@ Event + AppModel -> AppModel -> DriverModel -> Screen  -> DriverModel -> Event
         .merge()
     }
 
-    func effectsFrom(events: Observable<DriverEvent>) -> Observable<AppModel> { return
+    func effectsFrom(events: Observable<(DriverEvent, AppModel)>) -> Observable<AppModel> { return
       events.map {
         switch $0.0 {
         case .network(let e): return e.reduced($0.1)
