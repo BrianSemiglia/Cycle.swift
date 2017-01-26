@@ -25,14 +25,7 @@ A sample project of the infamous 'Counter' app is included.
     }
   }
 
-  /* Aside from defining AppModel, -eventsFrom(effects:) and -start, this is boilerplate and could afford to be pushed below. */
   struct MyFilter: SinkSourceConverting {
-
-    enum DriverEvent {
-      case network (Network.Model)
-      case screen  (Screen.Model)
-      case session (Session.Model)
-    }
 
     struct AppModel {
       var network: Network.Model
@@ -40,40 +33,27 @@ A sample project of the infamous 'Counter' app is included.
       var session: Session.Model
     }
 
-    func eventsFrom(effects: Observable<AppModel>) -> Observable<DriverEvent> {
+    func nextFrom(previous: Observable<AppModel>) -> Observable<AppModel> {
 
       let network = Network.shared
-        .rendered(effects.map { $0.network })
-        .map { DriverEvent.network($0) }
+        .rendered(previous.map { $0.network })
+        .withLatestFrom(previous) { event, context in event.reduced(context) }
 
       let screen = Screen.shared
-        .rendered(effects.map { $0.screen })
-        .map { DriverEvent.screen($0) }
+        .rendered(previous.map { $0.screen })
+        .withLatestFrom(previous) { event, context in event.reduced(context) }
 
       let session = Session.shared
-        .rendered(effects.map { $0.session })
-        .map { DriverEvent.session($0) }
+        .rendered(previous.map { $0.session })
+        .withLatestFrom(previous) { event, context in event.reduced(context) }
 
       return Observable
         .of(network, screen, session)
         .merge()
     }
 
-    func effectsFrom(events: Observable<(DriverEvent, AppModel)>) -> Observable<AppModel> { return
-      events.map {
-        switch $0.0 {
-        case .network(let e): return e.reduced($0.1)
-        case .screen(let e): return e.reduced($0.1)
-        case .session(let e): return e.reduced($0.1)
-        }
-      }
-    }
-
-    func start() -> (DriverEvent, AppModel) { return
-      (
-        .session(Session.Model.launching),
-        DriverEvent.empty
-      )
+    func start() -> AppModel { return
+        AppModel.empty
     }
   }
   ```
@@ -126,7 +106,7 @@ A sample project of the infamous 'Counter' app is included.
 2. Drivers of similar libraries communicate with their shared-stores directly. Cycle inverts that dependancy a bit by with the use of observables (versus drivers subscribing to the app model) and with the return of models that are owned by the drivers (versus actions owned by the app model).
 
 ##Goals
-- [ ] Push boilerplate code into framework.
+- [x] Push boilerplate code into framework.
 - [ ] Refactor reducers to receive/output streams to allow for use of rx features.
 - [ ] Reconsider use of singletons.
 - [ ] Create drivers that provide app-state, push-notification, etc. events that the usual app-delegate would. 
