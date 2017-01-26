@@ -40,17 +40,14 @@ class CycledApplicationDelegate<C: SinkSourceConverting>: UIResponder, UIApplica
 }
 
 class Cycle<E: SinkSourceConverting> {
-  var effects: Observable<E.Sink>?
   var events: Observable<E.Source>?
-  var eventsProxy: ReplaySubject<(E.Source, E.Sink)>?
+  var eventsProxy: ReplaySubject<E.Source>?
   var loop: Disposable?
   
   init(transformer: E) {
     eventsProxy = ReplaySubject.create(bufferSize: 1)
-    effects = transformer.effectsFrom(events: eventsProxy!)
-    events = transformer.eventsFrom(effects: effects!)
+    events = transformer.nextFrom(previous: eventsProxy!)
     loop = events!
-      .withLatestFrom(effects!) { ($0, $1) }
       .startWith(transformer.start())
       .subscribe { [weak self] in
         self?.eventsProxy?.on($0)
@@ -59,11 +56,9 @@ class Cycle<E: SinkSourceConverting> {
 }
 
 protocol SinkSourceConverting {
-  associatedtype Sink
   associatedtype Source
-  func eventsFrom(effects: Observable<Sink>) -> Observable<Source>
-  func effectsFrom(events: Observable<(Source, Sink)>) -> Observable<Sink>
-  func start() -> (Source, Sink)
+  func nextFrom(previous: Observable<Source>) -> Observable<Source>
+  func start() -> Source
 }
 
 extension UIViewController {
