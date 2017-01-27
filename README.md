@@ -8,9 +8,11 @@ Cycle provides a means of writing an app as a filter over a stream of external e
 
 For example:
 ```
-                                DriverModel -> Network
-Event + AppModel -> AppModel -> DriverModel -> Screen  -> DriverModel -> Event
-                                DriverModel -> Session
+-------> event + context ------> effect -------> render  -> event -------->
+         
+                 NetworkModel    NetworkModel -> Network
+-> ScreenModel + ScreenModel  -> ScreenModel  -> Screen  -> NetworkModel ->
+                 SessionModel    SessionModel -> Session
 ```
 A sample project of the infamous 'Counter' app is included.
 
