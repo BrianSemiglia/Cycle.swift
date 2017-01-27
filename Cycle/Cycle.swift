@@ -46,7 +46,7 @@ class Cycle<E: SinkSourceConverting> {
   
   init(transformer: E) {
     eventsProxy = ReplaySubject.create(bufferSize: 1)
-    events = transformer.nextFrom(previous: eventsProxy!)
+    events = transformer.effectsFrom(events: eventsProxy!)
     loop = events!
       .startWith(transformer.start())
       .subscribe { [weak self] in
@@ -57,7 +57,7 @@ class Cycle<E: SinkSourceConverting> {
 
 protocol SinkSourceConverting {
   associatedtype Source
-  func nextFrom(previous: Observable<Source>) -> Observable<Source>
+  func effectsFrom(events: Observable<Source>) -> Observable<Source>
   func start() -> Source
 }
 
