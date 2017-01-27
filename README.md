@@ -33,19 +33,22 @@ A sample project of the infamous 'Counter' app is included.
       var session: Session.Model
     }
 
-    func nextFrom(previous: Observable<AppModel>) -> Observable<AppModel> {
+    func effectFrom(event: Observable<AppModel>) -> Observable<AppModel> {
 
       let network = Network.shared
-        .rendered(previous.map { $0.network })
-        .withLatestFrom(previous) { event, context in event.reduced(context) }
+        .rendered(event.map { $0.network })
+        .withLatestFrom(event) { ($0.0, $0.1) }
+        .reducingFuctionOfYourChoice()
 
       let screen = Screen.shared
-        .rendered(previous.map { $0.screen })
-        .withLatestFrom(previous) { event, context in event.reduced(context) }
+        .rendered(event.map { $0.screen })
+        .withLatestFrom(event) { ($0.0, $0.1) }
+        .reduced()
 
       let session = Session.shared
-        .rendered(previous.map { $0.session })
-        .withLatestFrom(previous) { event, context in event.reduced(context) }
+        .rendered(event.map { $0.session })
+        .withLatestFrom(event) { ($0.0, $0.1) }
+        .reduced()
 
       return Observable
         .of(network, screen, session)
@@ -60,41 +63,49 @@ A sample project of the infamous 'Counter' app is included.
 2. Define reducers.
 
   ```swift
-  extension Network.Model {
-    func reduced(_ input: AppModel) -> AppModel {
-      var new = input
-      switch self.state {
-        case .idle:
-          new.screen.button.color = .blue
-        case .awaitingStart, .awaitingResponse:
-          new.screen.button.color = .grey
-        default: 
-          break
-      }
-      return new
-    }
-  }
-
-  extension Screen.Model {
-    func reduced(_ input: AppModel) -> AppModel {
-      var new = input
-      switch self.button.state {
-        case .highlighted:
-          new.network.state = .awaitingStart
-        default: 
-          break
-      }
-    }
-  }
-
-  extension Session.Model {
-    func reduced(_ input: AppModel) -> AppModel {
-      var new = input
-        switch self.state {
-          case .launching:
-            new.screen = Screen.Model.downloadView
+  extension ObservableType where E == (Network.Model, AppModel) {
+    func reducingFuctionOfYourChoice() -> Observable<AppModel> { return
+      map { event, context in
+        var new = context
+        switch event.state {
+          case .idle:
+            new.screen.button.color = .blue
+          case .awaitingStart, .awaitingResponse:
+            new.screen.button.color = .grey
           default: 
             break
+        }
+        return new
+      }
+    }
+  }
+
+  extension ObservableType where E == (Screen.Model, AppModel) {
+    func reduced() -> Observable<AppModel> { return
+      map { event, context in
+        var new = context
+        switch event.button.state {
+          case .highlighted:
+            new.network.state = .awaitingStart
+          default: 
+            break
+        }
+        return new
+      }
+    }
+  }
+
+  extension ObservableType where E == (Session.Model, AppModel) {
+    func reduced() -> Observable<AppModel> { return
+      map { event, context in
+        var new = context
+          switch event.state {
+            case .launching:
+              new.screen = Screen.Model.downloadView
+            default: 
+              break
+        }
+        return new
       }
     }
   }
@@ -107,6 +118,6 @@ A sample project of the infamous 'Counter' app is included.
 
 ##Goals
 - [x] Push boilerplate code into framework.
-- [ ] Refactor reducers to receive/output streams to allow for use of rx features.
+- [x] Refactor reducers to receive/output streams to allow for use of rx features.
 - [ ] Reconsider use of singletons.
 - [ ] Create drivers that provide app-state, push-notification, etc. events that the usual app-delegate would. 

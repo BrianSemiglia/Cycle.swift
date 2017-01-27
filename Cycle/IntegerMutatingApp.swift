@@ -22,10 +22,11 @@ struct IntegerMutatingApp: SinkSourceConverting {
     var screen: ValueToggler.Model
     var test: String
   }
-  func nextFrom(previous: Observable<Model>) -> Observable<Model> { return
+  func effectsFrom(events: Observable<Model>) -> Observable<Model> { return
     ValueToggler.shared
-      .rendered(previous.map { $0.screen })
-      .withLatestFrom(previous) { $0.0.reduced($0.1) }
+      .rendered(events.map { $0.screen })
+      .withLatestFrom(events) { ($0.0, $0.1) }
+      .reduced()
   }
   func start() -> Model { return
       Model.empty
@@ -41,19 +42,21 @@ extension IntegerMutatingApp.Model {
   }
 }
 
-extension ValueToggler.Model {
-  internal func reduced(_ input: IntegerMutatingApp.Model) -> IntegerMutatingApp.Model {
-    var edit = input
-    edit.screen = self
-    if increment.state == .highlighted {
-      edit.screen.total = Int(edit.screen.total).map { $0 + 1 }.map(String.init) ?? ""
-      edit.screen.increment.state = .enabled
+extension ObservableType where E == (ValueToggler.Model, IntegerMutatingApp.Model) {
+  func reduced() -> Observable<IntegerMutatingApp.Model> { return
+    map { event, context in
+      var x = context
+      x.screen = event
+      if event.increment.state == .highlighted {
+        x.screen.total = Int(x.screen.total).map { $0 + 1 }.map(String.init) ?? ""
+        x.screen.increment.state = .enabled
+      }
+      if event.decrement.state == .highlighted {
+        x.screen.total = Int(x.screen.total).map { $0 - 1 }.map(String.init) ?? ""
+        x.screen.decrement.state = .enabled
+      }
+      return x
     }
-    if decrement.state == .highlighted {
-      edit.screen.total = Int(edit.screen.total).map { $0 - 1 }.map(String.init) ?? ""
-      edit.screen.decrement.state = .enabled
-    }
-    return edit
   }
 }
 
