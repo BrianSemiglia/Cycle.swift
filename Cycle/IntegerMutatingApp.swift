@@ -29,7 +29,7 @@ struct IntegerMutatingApp: SinkSourceConverting {
       .reduced()
   }
   func start() -> Model { return
-      Model.empty
+      .empty
   }
 }
 
