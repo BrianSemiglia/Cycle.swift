@@ -3,12 +3,12 @@ Cycle provides a means of writing an app as a filter over a stream of external e
 
 1. The event stream is fed to a reducer that produces a stream of driver models.
 2. The driver model stream is fed to drivers that render the side-effects of those models.
-3. The drivers produce a stream of new driver models which are mapped to events.
+3. The drivers produce a stream of suggested driver models in response to events.
 4. The cycle repeats.
 
 For example:
 ```
--------> event + context ------> effect -------> render  -> event -------->
+-------> event + context ------> effect -------> render --> event -------->
          
                  NetworkModel    NetworkModel -> Network
 -> ScreenModel + ScreenModel  -> ScreenModel  -> Screen  -> NetworkModel ->
