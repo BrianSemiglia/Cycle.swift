@@ -13,6 +13,9 @@
 		D349A9D61E37CE9F005F521E /* Cycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D349A9D51E37CE9F005F521E /* Cycle.swift */; };
 		D349A9D81E37CFA5005F521E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D349A9D71E37CFA5005F521E /* Assets.xcassets */; };
 		D349A9DA1E37D079005F521E /* ValueToggler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D349A9D91E37D079005F521E /* ValueToggler.swift */; };
+		D349A9DE1E3B0A59005F521E /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = D349A9DD1E3B0A59005F521E /* Session.swift */; };
+		D36E49211E3BF0B500CD0590 /* SessionTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36E49201E3BF0B500CD0590 /* SessionTestCase.swift */; };
+		D36E49221E3BF32800CD0590 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = D349A9DD1E3B0A59005F521E /* Session.swift */; };
 		F3D3205A7E2A37982198B92E /* Pods_Cycle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA991E8A4E0A374CFC26F41F /* Pods_Cycle.framework */; };
 /* End PBXBuildFile section */
 
@@ -40,6 +43,8 @@
 		D349A9D51E37CE9F005F521E /* Cycle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cycle.swift; sourceTree = "<group>"; };
 		D349A9D71E37CFA5005F521E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D349A9D91E37D079005F521E /* ValueToggler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ValueToggler.swift; sourceTree = "<group>"; };
+		D349A9DD1E3B0A59005F521E /* Session.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
+		D36E49201E3BF0B500CD0590 /* SessionTestCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionTestCase.swift; sourceTree = "<group>"; };
 		E1698EFB7DD5E9EBB517E954 /* Pods_CycleTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CycleTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0D2D6BEFB02D32C1CF14D8E /* Pods-CycleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CycleTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CycleTests/Pods-CycleTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -88,6 +93,7 @@
 			isa = PBXGroup;
 			children = (
 				D349A9B11E37CE24005F521E /* Cycle */,
+				D349A9DC1E3B0A25005F521E /* Drivers */,
 				D349A9D21E37CE50005F521E /* Example */,
 				D349A9C61E37CE24005F521E /* CycleTests */,
 				D349A9B01E37CE24005F521E /* Products */,
@@ -118,6 +124,7 @@
 		D349A9C61E37CE24005F521E /* CycleTests */ = {
 			isa = PBXGroup;
 			children = (
+				D36E49201E3BF0B500CD0590 /* SessionTestCase.swift */,
 				D349A9C91E37CE25005F521E /* Info.plist */,
 			);
 			path = CycleTests;
@@ -131,6 +138,15 @@
 				D349A9D91E37D079005F521E /* ValueToggler.swift */,
 			);
 			name = Example;
+			path = Cycle;
+			sourceTree = "<group>";
+		};
+		D349A9DC1E3B0A25005F521E /* Drivers */ = {
+			isa = PBXGroup;
+			children = (
+				D349A9DD1E3B0A59005F521E /* Session.swift */,
+			);
+			name = Drivers;
 			path = Cycle;
 			sourceTree = "<group>";
 		};
@@ -196,6 +212,7 @@
 					D349A9C21E37CE24005F521E = {
 						CreatedOnToolsVersion = 8.2.1;
 						DevelopmentTeam = 9R3LQ2Q36B;
+						LastSwiftMigration = 0820;
 						ProvisioningStyle = Automatic;
 						TestTargetID = D349A9AE1E37CE24005F521E;
 					};
@@ -337,6 +354,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D349A9DE1E3B0A59005F521E /* Session.swift in Sources */,
 				D349A9D61E37CE9F005F521E /* Cycle.swift in Sources */,
 				D349A9D41E37CE7A005F521E /* IntegerMutatingApp.swift in Sources */,
 				D349A9DA1E37D079005F521E /* ValueToggler.swift in Sources */,
@@ -347,6 +365,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D36E49221E3BF32800CD0590 /* Session.swift in Sources */,
+				D36E49211E3BF0B500CD0590 /* SessionTestCase.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -497,11 +517,13 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = 9R3LQ2Q36B;
 				INFOPLIST_FILE = CycleTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.briansemiglia.CycleTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Cycle.app/Cycle";
 			};
@@ -513,6 +535,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = 9R3LQ2Q36B;
 				INFOPLIST_FILE = CycleTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
