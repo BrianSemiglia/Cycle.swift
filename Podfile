@@ -7,7 +7,6 @@ target 'Cycle' do
 
   pod 'RxSwift'
   pod 'RxCocoa'
-  pod 'Curry'
 
   target 'CycleTests' do
     inherit! :search_paths
