@@ -8,24 +8,18 @@
 
 import UIKit
 import RxSwift
-import Curry
 
-protocol Reduceable {
-  associatedtype Reduced
-  func reduced(_: Reduced) -> Reduced
-}
-
-class CycledApplicationDelegate<C: SinkSourceConverting>: UIResponder, UIApplicationDelegate {
+class CycledApplicationDelegate<T: SinkSourceConverting>: UIResponder, UIApplicationDelegate {
   
   var window: UIWindow?
-  private var deferred: (() -> Cycle<C>)?
-  private var realized: Cycle<C>?
+  private var deferred: (() -> Cycle<T>)?
+  private var realized: Cycle<T>?
   
-  init(handler: C) {
+  init(handler: T) {
     self.deferred = { Cycle(transformer: handler) }
   }
   
-  func application(_ app: UIApplication, didFinishLaunchingWithOptions options: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
+  func application(_ app: UIApplication, willFinishLaunchingWithOptions options: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
     
     window = UIWindow(frame: UIScreen.main.bounds)
     window?.rootViewController = .empty
@@ -36,6 +30,14 @@ class CycledApplicationDelegate<C: SinkSourceConverting>: UIResponder, UIApplica
     deferred = nil
     
     return true
+  }
+  
+  override func forwardingTarget(for aSelector: Selector!) -> Any? {
+    return Session.shared
+  }
+  
+  override func responds(to aSelector: Selector!) -> Bool {
+    return Session.shared.responds(to: aSelector)
   }
 }
 
@@ -62,7 +64,7 @@ protocol SinkSourceConverting {
 }
 
 extension UIViewController {
-  static var empty: UIViewController {
+  public static var empty: UIViewController {
     let x = UIViewController()
     x.view.backgroundColor = .white
     return x
