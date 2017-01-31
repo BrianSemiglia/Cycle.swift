@@ -112,7 +112,7 @@ A sample project of the infamous 'Counter' app is included.
     }
   }
 ```
-3. Define drivers that, given a stream of models, can produce streams of model in response to events (hand-waving)
+3. Define drivers that, given a stream of event-models, can produce streams of effect-models (hand-waving)
 
 ##Notes of Interest
 1. Drivers are currently singletons.
