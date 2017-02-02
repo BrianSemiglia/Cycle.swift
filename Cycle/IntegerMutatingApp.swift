@@ -12,7 +12,10 @@ import RxSwift
 @UIApplicationMain
 class Example: CycledApplicationDelegate<IntegerMutatingApp> {
   init() {
-    super.init(handler: IntegerMutatingApp())
+    super.init(
+      filter: IntegerMutatingApp(),
+      session: Session.shared
+    )
   }
 }
 
@@ -48,19 +51,6 @@ extension IntegerMutatingApp.Model {
   }
 }
 
-extension Session.Model {
-  static var empty: Session.Model { return
-    Session.Model(
-      shouldSaveApplicationState: false,
-      shouldRestoreApplicationState: false,
-      willContinueUserActivityWithType: false,
-      continueUserActivity: false,
-      shouldLaunch: true,
-      state: .awaitingLaunch
-    )
-  }
-}
-
 extension ObservableType where E == (ValueToggler.Model, IntegerMutatingApp.Model) {
   func reduced() -> Observable<IntegerMutatingApp.Model> { return
     map { event, context in
@@ -82,12 +72,14 @@ extension ObservableType where E == (ValueToggler.Model, IntegerMutatingApp.Mode
 extension ObservableType where E == (Session.Model, IntegerMutatingApp.Model) {
   func reduced() -> Observable<IntegerMutatingApp.Model> { return
     map { event, context in
-      var x = context
-      x.session = event
-      var y = x.screen
-      y.total = x.session.state == .didBecomeActive ? "55" : y.total
-      x.screen = y
-      return x
+      var c = context
+      var session = event
+      session.shouldLaunch = true
+      c.session = session
+      var s = c.screen
+      s.total = c.session.state == .didBecomeActive ? "55" : s.total
+      c.screen = s
+      return c
     }
   }
 }
