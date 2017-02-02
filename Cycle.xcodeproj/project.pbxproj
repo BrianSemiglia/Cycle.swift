@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		4D554EA47F01A51A5D8E59DE /* Pods_CycleTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E1698EFB7DD5E9EBB517E954 /* Pods_CycleTests.framework */; };
+		D30354D71E425F6300E0A43C /* Cycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D349A9D51E37CE9F005F521E /* Cycle.swift */; };
 		D349A9BD1E37CE24005F521E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D349A9BB1E37CE24005F521E /* LaunchScreen.storyboard */; };
 		D349A9D41E37CE7A005F521E /* IntegerMutatingApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D349A9D31E37CE7A005F521E /* IntegerMutatingApp.swift */; };
 		D349A9D61E37CE9F005F521E /* Cycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D349A9D51E37CE9F005F521E /* Cycle.swift */; };
@@ -367,6 +368,7 @@
 			files = (
 				D36E49221E3BF32800CD0590 /* Session.swift in Sources */,
 				D36E49211E3BF0B500CD0590 /* SessionTestCase.swift in Sources */,
+				D30354D71E425F6300E0A43C /* Cycle.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -516,7 +518,6 @@
 			baseConfigurationReference = F0D2D6BEFB02D32C1CF14D8E /* Pods-CycleTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
-				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = 9R3LQ2Q36B;
 				INFOPLIST_FILE = CycleTests/Info.plist;
@@ -534,7 +535,6 @@
 			baseConfigurationReference = 89C0786DDF0FCC86098B7351 /* Pods-CycleTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
-				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = 9R3LQ2Q36B;
 				INFOPLIST_FILE = CycleTests/Info.plist;

@@ -11,33 +11,47 @@ import RxSwift
 
 class CycledApplicationDelegate<T: SinkSourceConverting>: UIResponder, UIApplicationDelegate {
   
-  var window: UIWindow?
   private var deferred: (() -> Cycle<T>)?
   private var realized: Cycle<T>?
+  private let session: Session
+  var window: UIWindow?
   
-  init(handler: T) {
-    self.deferred = { Cycle(transformer: handler) }
+  init(filter: T, session: Session) {
+    self.session = session
+    deferred = { Cycle(transformer: filter) }
   }
   
-  func application(_ app: UIApplication, willFinishLaunchingWithOptions options: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
+  func application(
+    _ application: UIApplication,
+    willFinishLaunchingWithOptions options: [UIApplicationLaunchOptionsKey : Any]? = nil
+  ) -> Bool {
     
-    window = UIWindow(frame: UIScreen.main.bounds)
-    window?.rootViewController = .empty
+    window = UIWindow(frame: UIScreen.main.bounds, root: .empty)
     window?.makeKeyAndVisible()
-    
+
     // Cycle is deferred to make sure window is ready for drivers.
     realized = deferred?()
     deferred = nil
     
-    return true
+    return session.application(
+      application,
+      willFinishLaunchingWithOptions: options
+    )
   }
   
   override func forwardingTarget(for aSelector: Selector!) -> Any? {
-    return Session.shared
+    return session
   }
   
   override func responds(to aSelector: Selector!) -> Bool {
-    return Session.shared.responds(to: aSelector)
+    return session.responds(to: aSelector)
+  }
+}
+
+extension UIWindow {
+  convenience init(frame: CGRect, root: UIViewController) {
+    self.init(frame: frame)
+    rootViewController = root
   }
 }
 
