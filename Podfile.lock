@@ -1,21 +1,19 @@
 PODS:
-  - RxAppState (0.3.1):
-    - RxCocoa (~> 3.1)
-    - RxSwift (~> 3.1)
+  - Changeset (2.1)
   - RxCocoa (3.1.0):
     - RxSwift (~> 3.1)
   - RxSwift (3.1.0)
 
 DEPENDENCIES:
-  - RxAppState
+  - Changeset
   - RxCocoa
   - RxSwift
 
 SPEC CHECKSUMS:
-  RxAppState: d228847ff8c1fee39e329930f58ed5c75c4f5eca
+  Changeset: 52ae0451caae6d236d8ecee150ab62050c3dc826
   RxCocoa: 50d7564866da9299161e86a263ce12a0873904d8
   RxSwift: 83ff553e7593fdfdcb2562933a64c0284dffdadc
 
-PODFILE CHECKSUM: e9b723cba23665e3d78c210c8056030e8ee206f7
+PODFILE CHECKSUM: 528d3c3cdbb4272fa4ad40af1bd9eda47e323b5a
 
 COCOAPODS: 1.2.0

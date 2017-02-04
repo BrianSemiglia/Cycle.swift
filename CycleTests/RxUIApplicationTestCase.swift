@@ -13,9 +13,9 @@ class SessionTestCase: XCTestCase {
   
   static func statesForEvents(call: (Session) -> Any) -> [Session.Model.State] {
     var output: [Session.Model.State] = []
-    let session = Session(Session.Model.empty)
+    let session = Session(.empty)
     _ = session
-      .rendered(Observable<Session.Model>.just(Session.Model.empty))
+      .rendered(Observable<Session.Model>.just(.empty))
       .subscribe {
         if let new = $0.element?.state {
           output += [new]
@@ -472,7 +472,7 @@ class SessionTestCase: XCTestCase {
   }
   
   func testWillFinishLaunching() {
-    let session = Session(SessionCycle.empty)
+    let session = Session(.empty)
     let cycle = SessionCycle { events -> Observable<SessionTestCase.SessionCycle.DriverModels> in
       session
       .rendered(events.map { $0.session })
@@ -506,7 +506,7 @@ class SessionTestCase: XCTestCase {
   }
   
   func testShouldOpenURLs4() {
-    let session = Session(SessionCycle.empty)
+    let session = Session(.empty)
     let cycle = SessionCycle { events -> Observable<SessionTestCase.SessionCycle.DriverModels> in
       session
       .rendered(events.map { $0.session })
@@ -555,7 +555,7 @@ class SessionTestCase: XCTestCase {
   }
   
   func testShouldOpenURLs9() {
-    let session = Session(SessionCycle.empty)
+    let session = Session(.empty)
     let cycle = SessionCycle { events -> Observable<SessionTestCase.SessionCycle.DriverModels> in
       session
       .rendered(events.map { $0.session })
@@ -603,7 +603,7 @@ class SessionTestCase: XCTestCase {
   }
 
   func testSupportedInterfaceOrientations() {
-    let session = Session(SessionCycle.empty)
+    let session = Session(.empty)
     let cycle = SessionCycle { events -> Observable<SessionTestCase.SessionCycle.DriverModels> in
       session
       .rendered(events.map { $0.session })
@@ -646,7 +646,7 @@ class SessionTestCase: XCTestCase {
   }
   
   func testExtensionPointIdentifiers() {
-    let session = Session(SessionCycle.empty)
+    let session = Session(.empty)
     let cycle = SessionCycle { events -> Observable<SessionTestCase.SessionCycle.DriverModels> in
       session
       .rendered(events.map { $0.session })
@@ -689,7 +689,7 @@ class SessionTestCase: XCTestCase {
   }
   
   func testViewControllerWithRestorationIdentifierPath() {
-    let session = Session(SessionCycle.empty)
+    let session = Session(.empty)
     let cycle = SessionCycle { events -> Observable<SessionTestCase.SessionCycle.DriverModels> in
       session
         .rendered(events.map { $0.session })
@@ -733,7 +733,7 @@ class SessionTestCase: XCTestCase {
   }
   
   func testShouldSaveApplicationState() {
-    let session = Session(SessionCycle.empty)
+    let session = Session(.empty)
     let cycle = SessionCycle { events -> Observable<SessionTestCase.SessionCycle.DriverModels> in
       session
       .rendered(events.map { $0.session })
@@ -788,7 +788,7 @@ class SessionTestCase: XCTestCase {
   }
   
   func testShouldRestoreApplicationState() {
-    let session = Session(SessionCycle.empty)
+    let session = Session(.empty)
     let cycle = SessionCycle { events -> Observable<SessionTestCase.SessionCycle.DriverModels> in
       session
         .rendered(events.map { $0.session })
@@ -831,7 +831,7 @@ class SessionTestCase: XCTestCase {
   }
   
   func testShouldNotifyUserActivitiesWithTypes() {
-    let session = Session(SessionCycle.empty)
+    let session = Session(.empty)
     let cycle = SessionCycle { events -> Observable<SessionTestCase.SessionCycle.DriverModels> in
       session
       .rendered(events.map { $0.session })
@@ -874,7 +874,7 @@ class SessionTestCase: XCTestCase {
   }
   
   func testActivitiesWithAvaliableData() {
-    let session = Session(SessionCycle.empty)
+    let session = Session(.empty)
     let cycle = SessionCycle { events -> Observable<SessionTestCase.SessionCycle.DriverModels> in
       session
       .rendered(events.map { $0.session })
@@ -1021,21 +1021,7 @@ class SessionTestCase: XCTestCase {
     }
     func start() -> DriverModels { return
       DriverModels(
-        session: SessionCycle.empty
-      )
-    }
-    static var empty: Session.Model { return
-      Session.Model(
-        shouldSaveApplicationState: false,
-        shouldRestoreApplicationState: false,
-        shouldNotifyUserActivitiesWithTypes: [],
-        activitiesWithAvaliableData: [],
-        shouldLaunch: false,
-        allowedURLs: [],
-        state: .awaitingLaunch,
-        allowedExtensionPointIdentifiers: [],
-        supportedInterfaceOrientations: [:],
-        restorationViewControllers: [:]
+        session: Session.Model.empty
       )
     }
   }
