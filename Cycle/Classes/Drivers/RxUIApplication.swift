@@ -13,26 +13,11 @@ import Changeset
 
 extension Session {
   struct Model {
-    enum FetchInterval {
-        case minimum
-        case some(TimeInterval)
-        case never
-    }
-    struct BackgroundTask {
-        let name: String
-        let expiration: ((Void) -> Void)?
-    }
-    struct ActionInternal {
-      let action: Selector
-      let target: Any?
-      let sender: Any?
-      let event: UIEvent?
-    }
     var isIgnoringUserEvents: Bool
     var isIdleTimerDisabled: Bool
     var openingURL: URL?
     var sendingEvent: UIEvent?
-    var sendingAction: ActionInternal?
+    var sendingAction: TargetAction?
     var isNetworkActivityIndicatorVisible: Bool
     var iconBadgeNumber: Int
     var supportsShakeToEdit: Bool
@@ -46,7 +31,6 @@ extension Session {
     var isReceivingRemoteControlEvents: Bool
     var newsStandIconImage: UIImage?
     var shortcutItems: [UIApplicationShortcutItem]
-    
     var shouldSaveApplicationState: Bool
     var shouldRestoreApplicationState: Bool
     var shouldNotifyUserActivitiesWithTypes: [String]
@@ -58,6 +42,21 @@ extension Session {
     var supportedInterfaceOrientations: [UIWindow: UIInterfaceOrientationMask]
     var restorationViewControllers: [String: UIViewController]
     
+    enum FetchInterval {
+      case minimum
+      case some(TimeInterval)
+      case never
+    }
+    struct BackgroundTask {
+      let name: String
+      let expiration: ((Void) -> Void)?
+    }
+    struct TargetAction {
+      let action: Selector
+      let target: Any?
+      let sender: Any?
+      let event: UIEvent?
+    }
     enum State {
       enum External {
         enum Query {
@@ -785,10 +784,10 @@ extension Session.Model: Equatable {
     && left.restorationViewControllers == right.restorationViewControllers  }
 }
 
-extension Session.Model.ActionInternal: Equatable {
+extension Session.Model.TargetAction: Equatable {
   static func ==(
-    left: Session.Model.ActionInternal,
-    right: Session.Model.ActionInternal
+    left: Session.Model.TargetAction,
+    right: Session.Model.TargetAction
   ) -> Bool { return
     left.action == right.action
     && left.event === right.event
