@@ -115,7 +115,7 @@ extension Session {
     var activitiesWithAvaliableData: [NSUserActivity]
     var shouldLaunch: Bool
     var URL: Filtered<Session.Model.URLLaunch, URL>
-    var extensionPointIdentifiers: [Filtered<UIApplicationExtensionPointIdentifier, UIApplicationExtensionPointIdentifier>]
+    var extensionPointIdentifier: Filtered<UIApplicationExtensionPointIdentifier, UIApplicationExtensionPointIdentifier>
     var interfaceOrientations: [Filtered<UIWindow, WindowResponse>]
     var viewControllerRestoration: Filtered<RestorationQuery, RestorationResponse>
     
@@ -275,7 +275,7 @@ extension Session.Model {
       activitiesWithAvaliableData: [],
       shouldLaunch: false,
       URL: .idle,
-      extensionPointIdentifiers: [],
+      extensionPointIdentifier: .idle,
       interfaceOrientations: [],
       viewControllerRestoration: .idle
     )
@@ -896,18 +896,14 @@ class Session: NSObject, UIApplicationDelegate {
     shouldAllowExtensionPointIdentifier ID: UIApplicationExtensionPointIdentifier
   ) -> Bool {
     if var model = model {
-      model.extensionPointIdentifiers += [.considering(ID)]
+      model.extensionPointIdentifier = .considering(ID)
       output.on(.next(model))
     }
-    return model?.extensionPointIdentifiers
-      .flatMap {
-        switch $0 {
-        case .allowing(let a): return a
-        default: return nil
-        }
-      }
-      .contains(ID)
-      ?? false
+    if let model = model, case .allowing(let allowed) = model.extensionPointIdentifier {
+      return ID == allowed
+    } else {
+      return false
+    }
   }
 
   func application(
@@ -1244,7 +1240,7 @@ extension Session.Model: Equatable {
     left.activitiesWithAvaliableData == right.activitiesWithAvaliableData &&
     left.shouldLaunch == right.shouldLaunch &&
     left.URL == right.URL &&
-    left.extensionPointIdentifiers == right.extensionPointIdentifiers &&
+    left.extensionPointIdentifier == right.extensionPointIdentifier &&
     left.interfaceOrientations == right.interfaceOrientations &&
     left.viewControllerRestoration == right.viewControllerRestoration
   }
