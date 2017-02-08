@@ -50,6 +50,8 @@ enum Filtered<T: Equatable, U: Equatable> {
 extension Filtered: Equatable {
   static func ==(left: Filtered, right: Filtered) -> Bool {
     switch (left, right) {
+    case (.idle, .idle): return
+      true
     case (.considering(let a), .considering(let b)): return
       a == b
     case (.allowing(let a), .allowing(let b)): return
