@@ -489,8 +489,9 @@ class SessionTestCase: XCTestCase {
           coder: CoderStub(id: "y")
         )
         return x ?? {}
-      }.map { $0.restorationViewControllers }.flatMap { $0 },
+      }.map { $0.viewControllerRestoration },
       [
+        .idle,
         .considering(
           Session.Model.RestorationQuery(
             identifier: "x",
@@ -734,17 +735,13 @@ class SessionTestCase: XCTestCase {
         .map { model -> Session.Model in
           var new = model
           new.shouldLaunch = true
-          new.restorationViewControllers = new.restorationViewControllers.map {
-            switch $0 {
-            case .considering(let query):
-              return .allowing(
-                Session.Model.RestorationResponse(
-                  identifier: query.identifier,
-                  view: ViewControllerStub(id: "x")
-                )
+          if case .considering(let query) = new.viewControllerRestoration {
+            new.viewControllerRestoration = .allowing(
+              Session.Model.RestorationResponse(
+                identifier: query.identifier,
+                view: ViewControllerStub(id: "x")
               )
-            default: return $0
-            }
+            )
           }
           return new
         }
