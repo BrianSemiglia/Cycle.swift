@@ -117,7 +117,7 @@ extension Session {
     var URL: Filtered<Session.Model.URLLaunch, URL>
     var extensionPointIdentifiers: [Filtered<UIApplicationExtensionPointIdentifier, UIApplicationExtensionPointIdentifier>]
     var interfaceOrientations: [Filtered<UIWindow, WindowResponse>]
-    var restorationViewControllers: [Filtered<RestorationQuery, RestorationResponse>]
+    var viewControllerRestoration: Filtered<RestorationQuery, RestorationResponse>
     
     enum URLLaunch {
       case ios4(url: URL, app: String?, annotation: Any)
@@ -277,7 +277,7 @@ extension Session.Model {
       URL: .idle,
       extensionPointIdentifiers: [],
       interfaceOrientations: [],
-      restorationViewControllers: []
+      viewControllerRestoration: .idle
     )
   }
 }
@@ -916,20 +916,18 @@ class Session: NSObject, UIApplicationDelegate {
     coder: NSCoder
   ) -> UIViewController? {
     if var model = model, let component = components.last as? String {
-      model.restorationViewControllers += [
-        .considering(
-          Session.Model.RestorationQuery(
-            identifier: component,
-            coder: coder
-          )
+      model.viewControllerRestoration = .considering(
+        Session.Model.RestorationQuery(
+          identifier: component,
+          coder: coder
         )
-      ]
+      )
       output.on(.next(model))
-      return self.model?.restorationViewControllers
-        .flatMap { $0.allowed() }
-        .filter { $0.identifier == component }
-        .map { $0.view }
-        .first
+      if let model = self.model, case .allowing(let allowed) = model.viewControllerRestoration, allowed.identifier == component {
+        return allowed.view
+      } else {
+        return nil
+      }
     } else {
       return nil
     }
@@ -1248,7 +1246,7 @@ extension Session.Model: Equatable {
     left.URL == right.URL &&
     left.extensionPointIdentifiers == right.extensionPointIdentifiers &&
     left.interfaceOrientations == right.interfaceOrientations &&
-    left.restorationViewControllers == right.restorationViewControllers
+    left.viewControllerRestoration == right.viewControllerRestoration
   }
 }
 
