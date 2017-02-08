@@ -53,8 +53,8 @@ extension IntegerMutatingApp.Model {
 
 extension ObservableType where E == (ValueToggler.Model, IntegerMutatingApp.Model) {
   func reduced() -> Observable<IntegerMutatingApp.Model> { return
-    map { event, context in
-      var x = context
+    map { event, global in
+      var x = global
       x.screen = event
       if event.increment.state == .highlighted {
         x.screen.total = Int(x.screen.total).map { $0 + 1 }.map(String.init) ?? ""
@@ -71,21 +71,15 @@ extension ObservableType where E == (ValueToggler.Model, IntegerMutatingApp.Mode
 
 extension ObservableType where E == (Session.Model, IntegerMutatingApp.Model) {
   func reduced() -> Observable<IntegerMutatingApp.Model> { return
-    map { event, context in
-      var c = context
-      var session = event
-      session.shouldLaunch = true
-      c.session = session
+    map { event, global in
+      var c = global
+      var model = event
+      model.shouldLaunch = true
+      c.session = model
       var s = c.screen
-      s.total = c.session.state == .didBecomeActive ? "55" : s.total
+      s.total = event.state == .did(.active) ? "55" : s.total
       c.screen = s
       return c
     }
-  }
-}
-
-extension String {
-  func reduced(_ input: IntegerMutatingApp.Model) -> IntegerMutatingApp.Model { return
-    input
   }
 }
