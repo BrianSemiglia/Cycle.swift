@@ -366,7 +366,7 @@ class Session: NSObject, UIApplicationDelegate {
         if new.isIgnoringUserEvents != oldValue?.isIgnoringUserEvents {
           if new.isIgnoringUserEvents {
             UIApplication.shared.beginIgnoringInteractionEvents()
-          } else {
+          } else if oldValue != nil {
             UIApplication.shared.endIgnoringInteractionEvents()
           }
         }
