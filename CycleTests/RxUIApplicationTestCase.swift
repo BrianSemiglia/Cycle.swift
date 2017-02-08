@@ -467,8 +467,8 @@ class SessionTestCase: XCTestCase {
           UIApplication.shared,
           shouldAllowExtensionPointIdentifier: .keyboard
         )
-      }.map { $0.extensionPointIdentifiers }.flatMap { $0 },
-      [.considering(.keyboard)]
+      }.map { $0.extensionPointIdentifier },
+      [.idle, .considering(.keyboard)]
     )
     
     XCTAssertEqual(
@@ -683,7 +683,7 @@ class SessionTestCase: XCTestCase {
     )
   }
   
-  func testExtensionPointIdentifiers() {
+  func testextensionPointIdentifier() {
     let session = Session(.empty)
     let cycle = SessionCycle { events -> Observable<SessionTestCase.SessionCycle.DriverModels> in
       session
@@ -691,12 +691,8 @@ class SessionTestCase: XCTestCase {
       .map { model -> Session.Model in
         var new = model
         new.shouldLaunch = true
-        new.extensionPointIdentifiers = model.extensionPointIdentifiers.map {
-          switch $0 {
-          case .considering(let ID):
-            return .allowing(ID)
-          default: return $0
-          }
+        if case .considering(let ID) = model.extensionPointIdentifier {
+          new.extensionPointIdentifier = .allowing(ID)
         }
         return new
       }
