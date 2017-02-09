@@ -524,8 +524,7 @@ class SessionTestCase: XCTestCase {
           return model
         }
       }
-      .withLatestFrom(events) { ($0.0, $0.1) }
-      .map { model, app in
+      .withLatestFrom(events) { model, app in
         var edit = app
         edit.session = model
         return edit
@@ -560,8 +559,7 @@ class SessionTestCase: XCTestCase {
         }
         return new
       }
-      .withLatestFrom(events) { ($0.0, $0.1) }
-      .map { model, app in
+      .withLatestFrom(events) { model, app in
         var edit = app
         edit.session = model
         return edit
@@ -606,8 +604,7 @@ class SessionTestCase: XCTestCase {
         }
         return new
       }
-      .withLatestFrom(events) { ($0.0, $0.1) }
-      .map { model, app in
+      .withLatestFrom(events) { model, app in
         var edit = app
         edit.session = model
         return edit
@@ -657,8 +654,7 @@ class SessionTestCase: XCTestCase {
         }
         return new
       }
-      .withLatestFrom(events) { ($0.0, $0.1) }
-      .map { model, app in
+      .withLatestFrom(events) { model, app in
         var edit = app
         edit.session = model
         return edit
@@ -697,8 +693,7 @@ class SessionTestCase: XCTestCase {
         }
         return new
       }
-      .withLatestFrom(events) { ($0.0, $0.1) }
-      .map { model, app in
+      .withLatestFrom(events) { model, app in
         var edit = app
         edit.session = model
         return edit
@@ -742,8 +737,7 @@ class SessionTestCase: XCTestCase {
         }
         return new
       }
-      .withLatestFrom(events) { ($0.0, $0.1) }
-      .map { model, app in
+      .withLatestFrom(events) { model, app in
         var edit = app
         edit.session = model
         return edit
@@ -786,8 +780,7 @@ class SessionTestCase: XCTestCase {
         }
         return new
       }
-      .withLatestFrom(events) { ($0.0, $0.1) }
-      .map { model, app in
+      .withLatestFrom(events) { model, app in
         var edit = app
         edit.session = model
         return edit
@@ -818,23 +811,22 @@ class SessionTestCase: XCTestCase {
     let session = Session(.empty)
     let cycle = SessionCycle { events -> Observable<SessionTestCase.SessionCycle.DriverModels> in
       session
-        .rendered(events.map { $0.session })
-        .map { model -> Session.Model in
-          var new = model
-          new.shouldLaunch = true
-          switch model.shouldRestoreApplicationState {
-          case .considering(let coder):
-            new.shouldRestoreApplicationState = .allowing(true)
-          default:
-            break
-          }
-          return new
+      .rendered(events.map { $0.session })
+      .map { model -> Session.Model in
+        var new = model
+        new.shouldLaunch = true
+        switch model.shouldRestoreApplicationState {
+        case .considering(let coder):
+          new.shouldRestoreApplicationState = .allowing(true)
+        default:
+          break
         }
-        .withLatestFrom(events) { ($0.0, $0.1) }
-        .map { model, app in
-          var edit = app
-          edit.session = model
-          return edit
+        return new
+      }
+      .withLatestFrom(events) { model, app in
+        var edit = app
+        edit.session = model
+        return edit
       }
     }
     let delegate = CycledApplicationDelegate(
@@ -873,8 +865,7 @@ class SessionTestCase: XCTestCase {
         }
         return new
       }
-      .withLatestFrom(events) { ($0.0, $0.1) }
-      .map { model, app in
+      .withLatestFrom(events) { model, app in
         var edit = app
         edit.session = model
         return edit
@@ -916,8 +907,7 @@ class SessionTestCase: XCTestCase {
         }
         return new
       }
-      .withLatestFrom(events) { ($0.0, $0.1) }
-      .map { model, app in
+      .withLatestFrom(events) { model, app in
         var edit = app
         edit.session = model
         return edit
