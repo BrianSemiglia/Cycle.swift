@@ -47,6 +47,15 @@ enum Filtered<T: Equatable, U: Equatable> {
   }
 }
 
+extension AsyncAction {
+  func isProgressing() -> Bool {
+    switch self {
+    case .progressing: return true
+    default: return false
+    }
+  }
+}
+
 extension Filtered: Equatable {
   static func ==(left: Filtered, right: Filtered) -> Bool {
     switch (left, right) {
@@ -62,10 +71,10 @@ extension Filtered: Equatable {
   }
 }
 
-enum AsyncAction<T: Equatable> {
+enum AsyncAction<Handler: Equatable> {
   case idle
-  case progressing(T)
-  case complete(T)
+  case progressing(Handler)
+  case complete(Handler)
 }
 
 extension Session {
@@ -156,12 +165,12 @@ extension Session {
       var completion: (UIBackgroundFetchResult) -> Void
     }
     struct ShortcutItem {
+      var value: UIApplicationShortcutItem
+      var action: AsyncAction<Action>
       struct Action {
         var id: UIApplicationShortcutItem
         var completion: (Bool) -> Void
       }
-      let value: UIApplicationShortcutItem
-      let action: AsyncAction<Action>
     }
     struct RemoteNofiticationAction {
       var notification: [AnyHashable : Any]
@@ -482,6 +491,26 @@ class Session: NSObject, UIApplicationDelegate {
         }
         
         UIApplication.shared.shortcutItems = new.shortcutItems.map { $0.value }
+        
+        if let old = oldValue {
+          let edits = Changeset( source: old.shortcutItems, target: new.shortcutItems).edits
+            
+          edits
+          .flatMap { $0.possible(.deletion) }
+          .forEach {
+            if case .progressing(let completion) = $0.value.action {
+              completion.completion(false)
+            }
+          }
+
+          edits
+          .flatMap { $0.possible(.substitution) }
+          .forEach {
+            if case .complete(let completion) = $0.value.action {
+              completion.completion(true)
+            }
+          }
+        }
       }
     }
   }
@@ -794,7 +823,7 @@ class Session: NSObject, UIApplicationDelegate {
   ) {
     if var model = model {
       model.shortcutItems = model.shortcutItems.map {
-        if $0.value == shortcutItem {
+        if $0.value.type == shortcutItem.type {
           return Session.Model.ShortcutItem(
             value: shortcutItem,
             action: .progressing(
@@ -1349,4 +1378,36 @@ extension Session.Model.ShortcutItem: Equatable {
   }
 }
 
+extension Edit {
+  func possible(_ input: EditOperation) -> Edit? { return
+    input == operation ? self : nil
+  }
+}
 
+extension EditOperation: Equatable {
+  public static func ==(left: EditOperation, right: EditOperation) -> Bool {
+    switch (left, right) {
+    case (.insertion, .insertion): return true
+    case (.deletion, .deletion): return true
+    case (.substitution, .substitution): return true
+    case (.move(let a), .move(let b)): return a == b
+    default: return false
+    }
+  }
+}
+
+extension Session.Model.ShortcutItem: CustomDebugStringConvertible {
+  var debugDescription: String { return
+    value.type + " " + String(describing: action)
+  }
+}
+
+extension AsyncAction: CustomDebugStringConvertible {
+  var debugDescription: String {
+    switch self {
+    case .complete: return ".complete"
+    case .idle: return ".idle"
+    case .progressing: return ".progressing"
+    }
+  }
+}
