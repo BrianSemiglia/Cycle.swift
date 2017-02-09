@@ -515,7 +515,7 @@ class SessionTestCase: XCTestCase {
           switch a {
           case .launched(let _):
             var new = model
-            new.shouldLaunch = true
+            new.shouldLaunch = false
             return new
           default:
             return model
@@ -535,7 +535,7 @@ class SessionTestCase: XCTestCase {
       filter: cycle,
       session: session
     ) as UIApplicationDelegate
-    XCTAssert(
+    XCTAssertFalse(
       delegate.application!(
         UIApplication.shared,
         willFinishLaunchingWithOptions: [:]
