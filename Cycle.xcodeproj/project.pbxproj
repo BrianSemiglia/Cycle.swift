@@ -17,6 +17,7 @@
 		D349A9DE1E3B0A59005F521E /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = D349A9DD1E3B0A59005F521E /* Session.swift */; };
 		D36E49211E3BF0B500CD0590 /* SessionTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36E49201E3BF0B500CD0590 /* SessionTestCase.swift */; };
 		D36E49221E3BF32800CD0590 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = D349A9DD1E3B0A59005F521E /* Session.swift */; };
+		D3E273771E4C363A00B90946 /* ShortcutItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3E273761E4C363A00B90946 /* ShortcutItems.swift */; };
 		F3D3205A7E2A37982198B92E /* Pods_Cycle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA991E8A4E0A374CFC26F41F /* Pods_Cycle.framework */; };
 /* End PBXBuildFile section */
 
@@ -46,6 +47,7 @@
 		D349A9D91E37D079005F521E /* ValueToggler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ValueToggler.swift; sourceTree = "<group>"; };
 		D349A9DD1E3B0A59005F521E /* Session.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
 		D36E49201E3BF0B500CD0590 /* SessionTestCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionTestCase.swift; sourceTree = "<group>"; };
+		D3E273761E4C363A00B90946 /* ShortcutItems.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShortcutItems.swift; sourceTree = "<group>"; };
 		E1698EFB7DD5E9EBB517E954 /* Pods_CycleTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CycleTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0D2D6BEFB02D32C1CF14D8E /* Pods-CycleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CycleTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CycleTests/Pods-CycleTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -135,8 +137,8 @@
 			isa = PBXGroup;
 			children = (
 				D349A9D71E37CFA5005F521E /* Assets.xcassets */,
-				D349A9D31E37CE7A005F521E /* IntegerMutatingApp.swift */,
-				D349A9D91E37D079005F521E /* ValueToggler.swift */,
+				D3E273751E4C35F000B90946 /* New Group */,
+				D3E273741E4C35E700B90946 /* IntegerMutatingApp */,
 			);
 			name = Example;
 			path = Cycle;
@@ -149,6 +151,23 @@
 			);
 			name = Drivers;
 			path = Cycle;
+			sourceTree = "<group>";
+		};
+		D3E273741E4C35E700B90946 /* IntegerMutatingApp */ = {
+			isa = PBXGroup;
+			children = (
+				D349A9D31E37CE7A005F521E /* IntegerMutatingApp.swift */,
+				D349A9D91E37D079005F521E /* ValueToggler.swift */,
+			);
+			name = IntegerMutatingApp;
+			sourceTree = "<group>";
+		};
+		D3E273751E4C35F000B90946 /* New Group */ = {
+			isa = PBXGroup;
+			children = (
+				D3E273761E4C363A00B90946 /* ShortcutItems.swift */,
+			);
+			name = "New Group";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -356,6 +375,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D349A9DE1E3B0A59005F521E /* Session.swift in Sources */,
+				D3E273771E4C363A00B90946 /* ShortcutItems.swift in Sources */,
 				D349A9D61E37CE9F005F521E /* Cycle.swift in Sources */,
 				D349A9D41E37CE7A005F521E /* IntegerMutatingApp.swift in Sources */,
 				D349A9DA1E37D079005F521E /* ValueToggler.swift in Sources */,
@@ -493,6 +513,7 @@
 			buildSettings = {
 				DEVELOPMENT_TEAM = 9R3LQ2Q36B;
 				INFOPLIST_FILE = Cycle/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.briansemiglia.Cycle;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -506,6 +527,7 @@
 			buildSettings = {
 				DEVELOPMENT_TEAM = 9R3LQ2Q36B;
 				INFOPLIST_FILE = Cycle/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.briansemiglia.Cycle;
 				PRODUCT_NAME = "$(TARGET_NAME)";
