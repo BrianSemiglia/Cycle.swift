@@ -22,12 +22,21 @@ class ShortcutItemsExampleDelegate: CycledApplicationDelegate<ShortcutItemsExamp
 struct ShortcutItemsExample: SinkSourceConverting {
   struct Model {
     var session: Session.Model
+    var async: Timer.Model
   }
-  func effectsFrom(events: Observable<Model>) -> Observable<Model> { return
-    Session.shared
+  func effectsFrom(events: Observable<Model>) -> Observable<Model> {
+    
+    let session = Session.shared
     .rendered(events.map { $0.session })
     .withLatestFrom(events) { ($0.0, $0.1) }
     .reduced()
+    
+    let timer = Timer.shared
+    .rendered(events.map { $0.async })
+    .withLatestFrom(events) { ($0.0, $0.1) }
+    .reduced()
+    
+    return Observable.of(session, timer).merge()
   }
   func start() -> Model { return
     .empty
@@ -37,7 +46,8 @@ struct ShortcutItemsExample: SinkSourceConverting {
 extension ShortcutItemsExample.Model {
   static var empty: ShortcutItemsExample.Model { return
     ShortcutItemsExample.Model(
-      session: .empty
+      session: .empty,
+      async: .empty
     )
   }
 }
@@ -47,6 +57,7 @@ extension ObservableType where E == (Session.Model, ShortcutItemsExample.Model) 
     map { event, global in
       var g = global
       var e = event
+      
       if case .will(let a) = e.state, case .resigned = a {
         e.shortcutItems = Array(0...arc4random_uniform(3)).map {
           Session.Model.ShortcutItem(
@@ -58,7 +69,46 @@ extension ObservableType where E == (Session.Model, ShortcutItemsExample.Model) 
           )
         }
       }
+      
+      var a = global.async
+      a.operations = e.shortcutItems.flatMap {
+        if case .progressing(let a) = $0.action {
+          return Timer.Model.Operation(
+            id: a.id.type,
+            running: true,
+            length: 1
+          )
+        } else {
+          return nil
+        }
+      }
+      g.async = a
       g.session = e
+      return g
+    }
+  }
+}
+
+extension ObservableType where E == (Timer.Model, ShortcutItemsExample.Model) {
+  func reduced() -> Observable<ShortcutItemsExample.Model> { return
+    map { event, global in
+      var g = global
+      var s = global.session
+      s.shortcutItems = s.shortcutItems.map { item in
+        if let _ = event.operations.filter({ $0.id == item.value.type && $0.running == false }).first {
+          if case .progressing(let a) = item.action {
+            var edit = item
+            edit.action = .complete(a)
+            return edit
+          } else {
+            return item
+          }
+        } else {
+          return item
+        }
+      }
+      g.session = s
+      g.async = event
       return g
     }
   }
