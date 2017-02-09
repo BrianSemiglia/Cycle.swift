@@ -193,7 +193,7 @@ extension Session {
       case terminated
     }
     
-    // IDEA: prevent transitioning between enum states with pattern matched conversion methods
+    // IDEA: prevent transitioning between enum states with pattern matched conversion methods and private intializer
     
     struct WindowResponse {
       var window: UIWindow
@@ -273,7 +273,7 @@ extension Session.Model {
       shouldRestoreApplicationState: .allowing(true),
       shouldNotifyUserActivitiesWithTypes: [],
       activitiesWithAvaliableData: [],
-      shouldLaunch: false,
+      shouldLaunch: true,
       URL: .idle,
       extensionPointIdentifier: .idle,
       interfaceOrientations: [],
