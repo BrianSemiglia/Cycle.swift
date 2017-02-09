@@ -119,28 +119,29 @@ class SessionTestCase: XCTestCase {
       [.none(false), .will(false)]
     )
     
-//    XCTAssertEqual(
-//      SessionTestCase.statesForEvents {
-//        $0.application(
-//          UIApplication.shared,
-//          didRegister: UIUserNotificationSettingsStub(id: "x")
-//        )
-//      }.map { $0.registeredUserNotificationSettings as? UIUserNotificationSettingsStub },
-//      [
-//        Optional<UIUserNotificationSettingsStub>.none,
-//        UIUserNotificationSettingsStub(id: "x")
-//      ]
-//    )
+    XCTAssert(
+      SessionTestCase.statesFromEvents {
+        $0.application(
+          UIApplication.shared,
+          didRegister: UIUserNotificationSettingsStub(id: "x")
+        )
+      }.map { $0.registeredUserNotificationSettings }
+      ==
+      [
+        Optional.none,
+        Optional.some(UIUserNotificationSettingsStub(id: "x") as UIUserNotificationSettings)
+      ]
+    )
     
-//    XCTAssertEqual(
-//      SessionTestCase.statesForEvents {
-//        $0.application(
-//          UIApplication.shared,
-//          didFailToRegisterForRemoteNotificationsWithError: ErrorStub(id: "")
-//        )
-//      }.flatMap { $0.deviceToken as? Result.error(ErrorStub(id: "") },
-//      [.none, .error(ErrorStub(id: "")]
-//    )
+    XCTAssertEqual(
+      SessionTestCase.statesFromEvents {
+        $0.application(
+          UIApplication.shared,
+          didFailToRegisterForRemoteNotificationsWithError: ErrorStub(id: "x")
+        )
+      }.map { $0.deviceToken },
+      [.none, .error(ErrorStub(id: "x") as Error)]
+    )
     
     XCTAssertEqual(
       SessionTestCase.statesFromEvents {
@@ -156,61 +157,61 @@ class SessionTestCase: XCTestCase {
       SessionTestCase.statesFromEvents {
         $0.application(
           UIApplication.shared,
-          didDecodeRestorableStateWith: CoderStub(id: "")
+          didDecodeRestorableStateWith: CoderStub(id: "x")
         )
       }.map { $0.stateRestoration },
-      [.idle, .didDecode(CoderStub(id: ""))]
+      [.idle, .didDecode(CoderStub(id: "x"))]
     )
 
     XCTAssertEqual(
       SessionTestCase.statesFromEvents {
         $0.application(
           UIApplication.shared,
-          willEncodeRestorableStateWith: CoderStub(id: "")
+          willEncodeRestorableStateWith: CoderStub(id: "x")
         )
       }.map { $0.stateRestoration },
-      [.idle, .willEncode(CoderStub(id: ""))]
+      [.idle, .willEncode(CoderStub(id: "x"))]
     )
 
     XCTAssertEqual(
       SessionTestCase.statesFromEvents {
         $0.application(
           UIApplication.shared,
-          shouldSaveApplicationState: CoderStub(id: "")
+          shouldSaveApplicationState: CoderStub(id: "x")
         )
       }.map { $0.shouldSaveApplicationState },
-      [.allowing(true), .considering(CoderStub(id: "") as NSCoder)]
+      [.allowing(true), .considering(CoderStub(id: "x") as NSCoder)]
     )
     
     XCTAssertEqual(
       SessionTestCase.statesFromEvents {
         $0.application(
           UIApplication.shared,
-          shouldRestoreApplicationState: CoderStub(id: "")
+          shouldRestoreApplicationState: CoderStub(id: "x")
         )
       }.map { $0.shouldRestoreApplicationState },
-      [.allowing(true), .considering(CoderStub(id: "") as NSCoder)]
+      [.allowing(true), .considering(CoderStub(id: "x") as NSCoder)]
     )
     
     XCTAssertEqual(
       SessionTestCase.statesFromEvents {
         $0.application(
           UIApplication.shared,
-          willContinueUserActivityWithType: ""
+          willContinueUserActivityWithType: "x"
         )
       }.map { $0.userActivityState },
-      [.idle, .willContinue("")]
+      [.idle, .willContinue("x")]
     )
     
     XCTAssertEqual(
       SessionTestCase.statesFromEvents {
         $0.application(
           UIApplication.shared,
-          didFailToContinueUserActivityWithType: "",
-          error: ErrorStub(id: "")
+          didFailToContinueUserActivityWithType: "x",
+          error: ErrorStub(id: "y")
         )
       }.map { $0.userActivityState },
-      [.idle, .didFail("", ErrorStub(id: ""))]
+      [.idle, .didFail("x", ErrorStub(id: "y"))]
     )
     
     let activity = NSUserActivity(activityType: "x")
@@ -305,8 +306,8 @@ class SessionTestCase: XCTestCase {
         $0.application(
           UIApplication.shared,
           handleActionWithIdentifier: "x",
-          forRemoteNotification: ["":""],
-          withResponseInfo: ["":""],
+          forRemoteNotification: ["y":"z"],
+          withResponseInfo: ["a":"b"],
           completionHandler: {}
         )
       }.map { $0.remoteAction },
@@ -315,8 +316,8 @@ class SessionTestCase: XCTestCase {
         .progressing(
           .ios9(
             id: .some( "x"),
-            userInfo: ["":""],
-            responseInfo: ["":""],
+            userInfo: ["y":"z"],
+            responseInfo: ["a":"b"],
             completion: {}
           )
         )
@@ -328,7 +329,7 @@ class SessionTestCase: XCTestCase {
         $0.application(
           UIApplication.shared,
           handleActionWithIdentifier: "x",
-          forRemoteNotification: ["":""],
+          forRemoteNotification: ["y":"z"],
           completionHandler: {}
         )
       }.map { $0.remoteAction },
@@ -337,7 +338,7 @@ class SessionTestCase: XCTestCase {
         .progressing(
           .ios8(
             id: .some( "x"),
-            userInfo: ["":""],
+            userInfo: ["y":"z"],
             completion: {}
           )
         )
@@ -350,7 +351,7 @@ class SessionTestCase: XCTestCase {
           UIApplication.shared,
           handleActionWithIdentifier: "x",
           for: UILocalNotification(),
-          withResponseInfo: ["":""],
+          withResponseInfo: ["y":"z"],
           completionHandler: {}
         )
       }.map { $0.localAction },
@@ -360,7 +361,7 @@ class SessionTestCase: XCTestCase {
           .ios9(
             .some( "x"),
             UILocalNotification(),
-            ["":""],
+            ["y":"z"],
             {}
           )
         )
@@ -371,7 +372,7 @@ class SessionTestCase: XCTestCase {
       SessionTestCase.statesFromEvents {
         $0.application(
           UIApplication.shared,
-          performActionFor: UIApplicationShortcutItem(type: "", localizedTitle: ""),
+          performActionFor: UIApplicationShortcutItem(type: "x", localizedTitle: "y"),
           completionHandler: { _ in }
         )
       }.map { $0.shortcutItemAction },
@@ -379,7 +380,7 @@ class SessionTestCase: XCTestCase {
         .idle,
         .progressing(
           Session.Model.ShortcutAction(
-            item: UIApplicationShortcutItem(type: "", localizedTitle: ""),
+            item: UIApplicationShortcutItem(type: "x", localizedTitle: "y"),
             completion: { _ in }
           )
         )
@@ -409,7 +410,7 @@ class SessionTestCase: XCTestCase {
       SessionTestCase.statesFromEvents {
         $0.application(
           UIApplication.shared,
-          didReceiveRemoteNotification: ["":""],
+          didReceiveRemoteNotification: ["x":"y"],
           fetchCompletionHandler: { _ in }
         )
       }.map { $0.remoteNotification },
@@ -417,7 +418,7 @@ class SessionTestCase: XCTestCase {
         .idle,
         .progressing(
           Session.Model.RemoteNofiticationAction(
-            notification: ["":""],
+            notification: ["x":"y"],
             completion: { _ in }
           )
         )
@@ -446,7 +447,7 @@ class SessionTestCase: XCTestCase {
       SessionTestCase.statesFromEvents {
         $0.application(
           UIApplication.shared,
-          handleWatchKitExtensionRequest: ["":""],
+          handleWatchKitExtensionRequest: ["x":"y"],
           reply: { _ in }
         )
       }.map { $0.watchKitExtensionRequest },
@@ -454,7 +455,7 @@ class SessionTestCase: XCTestCase {
         .idle,
         .progressing(
           Session.Model.WatchKitExtensionRequest(
-            userInfo: ["":""],
+            userInfo: ["x":"y"],
             reply: { _ in }
           )
         )
@@ -727,25 +728,25 @@ class SessionTestCase: XCTestCase {
     let session = Session(.empty)
     let cycle = SessionCycle { events -> Observable<SessionTestCase.SessionCycle.DriverModels> in
       session
-        .rendered(events.map { $0.session })
-        .map { model -> Session.Model in
-          var new = model
-          new.shouldLaunch = true
-          if case .considering(let query) = new.viewControllerRestoration {
-            new.viewControllerRestoration = .allowing(
-              Session.Model.RestorationResponse(
-                identifier: query.identifier,
-                view: ViewControllerStub(id: "x")
-              )
+      .rendered(events.map { $0.session })
+      .map { model -> Session.Model in
+        var new = model
+        new.shouldLaunch = true
+        if case .considering(let query) = new.viewControllerRestoration {
+          new.viewControllerRestoration = .allowing(
+            Session.Model.RestorationResponse(
+              identifier: query.identifier,
+              view: ViewControllerStub(id: "x")
             )
-          }
-          return new
+          )
         }
-        .withLatestFrom(events) { ($0.0, $0.1) }
-        .map { model, app in
-          var edit = app
-          edit.session = model
-          return edit
+        return new
+      }
+      .withLatestFrom(events) { ($0.0, $0.1) }
+      .map { model, app in
+        var edit = app
+        edit.session = model
+        return edit
       }
     }
     let delegate = CycledApplicationDelegate(
@@ -762,7 +763,7 @@ class SessionTestCase: XCTestCase {
       delegate.application!(
         UIApplication.shared,
         viewControllerWithRestorationIdentifierPath: ["y"],
-        coder: CoderStub(id: "")
+        coder: CoderStub(id: "z")
       )
       ==
       ViewControllerStub(id: "x")
@@ -1069,4 +1070,9 @@ class SessionTestCase: XCTestCase {
       }
     }
   }
+}
+
+func ==<T: Equatable>(left: [T?], right: [T?]) -> Bool { return
+  left.count == right.count &&
+  zip(left, right).first { $0 != $1 } == nil
 }
