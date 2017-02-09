@@ -72,7 +72,6 @@ extension Session {
   struct Model {
     var backgroundURLSessionAction: AsyncAction<BackgroundURLSessionAction>
     var fetch: AsyncAction<FetchAction>
-    var shortcutItemAction: AsyncAction<ShortcutAction>
     var remoteAction: AsyncAction<ActionRemote>
     var localAction: AsyncAction<ActionLocal>
     var cloudKitShare: CKShareMetadata?
@@ -108,7 +107,7 @@ extension Session {
     var registeredUserNotificationSettings: UIUserNotificationSettings?
     var isReceivingRemoteControlEvents: Bool
     var newsStandIconImage: UIImage?
-    var shortcutItems: [UIApplicationShortcutItem]
+    var shortcutItems: [ShortcutItem]
     var shouldSaveApplicationState: Filtered<NSCoder, Bool>
     var shouldRestoreApplicationState: Filtered<NSCoder, Bool>
     var shouldNotifyUserActivitiesWithTypes: [String]
@@ -156,9 +155,13 @@ extension Session {
       var hash: Int
       var completion: (UIBackgroundFetchResult) -> Void
     }
-    struct ShortcutAction {
-      var item: UIApplicationShortcutItem
-      var completion: (Bool) -> Void
+    struct ShortcutItem {
+      struct Action {
+        var id: UIApplicationShortcutItem
+        var completion: (Bool) -> Void
+      }
+      let value: UIApplicationShortcutItem
+      let action: AsyncAction<Action>
     }
     struct RemoteNofiticationAction {
       var notification: [AnyHashable : Any]
@@ -232,7 +235,6 @@ extension Session.Model {
     Session.Model(
       backgroundURLSessionAction: .idle,
       fetch: .idle,
-      shortcutItemAction: .idle,
       remoteAction: .idle,
       localAction: .idle,
       cloudKitShare: nil,
@@ -479,10 +481,7 @@ class Session: NSObject, UIApplicationDelegate {
           UIApplication.shared.setNewsstandIconImage(new.newsStandIconImage)
         }
         
-        if let old = oldValue, old.shortcutItems != new.shortcutItems {
-          UIApplication.shared.shortcutItems = new.shortcutItems
-        }
-        
+        UIApplication.shared.shortcutItems = new.shortcutItems.map { $0.value }
       }
     }
   }
@@ -794,12 +793,21 @@ class Session: NSObject, UIApplicationDelegate {
     completionHandler: @escaping (Bool) -> Void
   ) {
     if var model = model {
-      model.shortcutItemAction = .progressing(
-        Session.Model.ShortcutAction(
-          item: shortcutItem,
-          completion: completionHandler
-        )
-      )
+      model.shortcutItems = model.shortcutItems.map {
+        if $0.value == shortcutItem {
+          return Session.Model.ShortcutItem(
+            value: shortcutItem,
+            action: .progressing(
+              Session.Model.ShortcutItem.Action(
+                id: shortcutItem,
+                completion: completionHandler
+              )
+            )
+          )
+        } else {
+          return $0
+        }
+      }
       output.on(.next(model))
     }
   }
@@ -1197,7 +1205,6 @@ extension Session.Model: Equatable {
   static func == (left: Session.Model, right: Session.Model) -> Bool { return
     left.backgroundURLSessionAction == right.backgroundURLSessionAction &&
     left.fetch == right.fetch &&
-    left.shortcutItemAction == right.shortcutItemAction &&
     left.remoteAction == right.remoteAction &&
     left.localAction == right.localAction &&
     left.cloudKitShare == right.cloudKitShare &&
@@ -1252,15 +1259,6 @@ extension Session.Model.FetchAction: Equatable {
     rhs: Session.Model.FetchAction
   ) -> Bool { return
     lhs.hash == rhs.hash
-  }
-}
-
-extension Session.Model.ShortcutAction: Equatable {
-  static func == (
-    lhs: Session.Model.ShortcutAction,
-    rhs: Session.Model.ShortcutAction
-  ) -> Bool { return
-    lhs.item == rhs.item
   }
 }
 
@@ -1331,3 +1329,24 @@ extension Result: Equatable {
     }
   }
 }
+
+extension Session.Model.ShortcutItem.Action: Equatable {
+  static func ==(
+    left: Session.Model.ShortcutItem.Action,
+    right: Session.Model.ShortcutItem.Action
+  ) -> Bool { return
+    left.id == right.id
+  }
+}
+
+extension Session.Model.ShortcutItem: Equatable {
+  static func ==(
+    left: Session.Model.ShortcutItem,
+    right: Session.Model.ShortcutItem
+  ) -> Bool { return
+    left.value == right.value &&
+    left.action == right.action
+  }
+}
+
+
