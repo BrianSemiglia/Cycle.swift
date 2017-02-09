@@ -29,103 +29,121 @@ class SessionTestCase: XCTestCase {
   
   func testConversionCallbacks() {
     
-    XCTAssertEqual(
-      SessionTestCase.statesFromEvents {
-        $0.applicationWillTerminate(UIApplication.shared)
-        }.map { $0.state },
+    XCTAssert(
+      SessionTestCase
+      .statesFromEvents { $0.applicationWillTerminate(UIApplication.shared) }
+      .map { $0.state }
+      ==
       [.none(.awaitingLaunch), .will(.terminated)]
     )
 
-    XCTAssertEqual(
-      SessionTestCase.statesFromEvents {
-        $0.applicationDidBecomeActive(UIApplication.shared)
-      }.map { $0.state },
+    XCTAssert(
+      SessionTestCase
+      .statesFromEvents { $0.applicationDidBecomeActive(UIApplication.shared) }
+      .map { $0.state }
+      ==
       [.none(.awaitingLaunch), .did(.active)]
     )
 
-    XCTAssertEqual(
-      SessionTestCase.statesFromEvents {
-        $0.applicationWillResignActive(UIApplication.shared)
-      }.map { $0.state },
+    XCTAssert(
+      SessionTestCase
+      .statesFromEvents { $0.applicationWillResignActive(UIApplication.shared) }
+      .map { $0.state }
+      ==
       [.none(.awaitingLaunch), .will(.resigned)]
     )
 
-    XCTAssertEqual(
-      SessionTestCase.statesFromEvents {
-        $0.applicationDidEnterBackground(UIApplication.shared)
-      }.map { $0.state },
+    XCTAssert(
+      SessionTestCase
+      .statesFromEvents { $0.applicationDidEnterBackground(UIApplication.shared) }
+      .map { $0.state }
+      ==
       [.none(.awaitingLaunch), .did(.resigned)]
     )
     
-    XCTAssertEqual(
-      SessionTestCase.statesFromEvents {
+    XCTAssert(
+      SessionTestCase
+      .statesFromEvents {
         $0.application(
           UIApplication.shared,
           willFinishLaunchingWithOptions: nil
         )
-      }.map { $0.state },
+      }
+      .map { $0.state }
+      ==
       [.none(.awaitingLaunch), .will(.launched(nil))]
     )
     
-    XCTAssertEqual(
-      SessionTestCase.statesFromEvents {
+    XCTAssert(
+      SessionTestCase
+      .statesFromEvents {
         $0.application(
           UIApplication.shared,
           didFinishLaunchingWithOptions: nil
         )
-      }.map { $0.state },
+      }
+      .map { $0.state }
+      ==
       [.none(.awaitingLaunch), .did(.launched(nil))]
     )
     
-    XCTAssertEqual(
-      SessionTestCase.statesFromEvents {
-        $0.applicationWillEnterForeground(UIApplication.shared)
-      }.map { $0.state },
+    XCTAssert(
+      SessionTestCase
+      .statesFromEvents { $0.applicationWillEnterForeground(UIApplication.shared) }
+      .map { $0.state }
+      ==
       [.none(.awaitingLaunch), .will(.active)]
     )
     
-    XCTAssertEqual(
-      SessionTestCase.statesFromEvents {
-        $0.applicationSignificantTimeChange(UIApplication.shared)
-      }.map { $0.isObservingSignificantTimeChange },
+    XCTAssert(
+      SessionTestCase
+      .statesFromEvents { $0.applicationSignificantTimeChange(UIApplication.shared) }
+      .map { $0.isObservingSignificantTimeChange }
+      ==
       [false, true, false]
     )
     
-    XCTAssertEqual(
-      SessionTestCase.statesFromEvents {
-        $0.applicationDidReceiveMemoryWarning(UIApplication.shared)
-      }.map { $0.isExperiencingMemoryWarning },
+    XCTAssert(
+      SessionTestCase
+      .statesFromEvents { $0.applicationDidReceiveMemoryWarning(UIApplication.shared) }
+      .map { $0.isExperiencingMemoryWarning }
+      ==
       [false, true, false]
     )
     
-    XCTAssertEqual(
-      SessionTestCase.statesFromEvents {
-        $0.applicationShouldRequestHealthAuthorization(UIApplication.shared)
-      }.map { $0.isExperiencingHealthAuthorizationRequest },
+    XCTAssert(
+      SessionTestCase
+      .statesFromEvents { $0.applicationShouldRequestHealthAuthorization(UIApplication.shared) }
+      .map { $0.isExperiencingHealthAuthorizationRequest }
+      ==
       [false, true, false]
     )
     
-    XCTAssertEqual(
-      SessionTestCase.statesFromEvents {
-        $0.applicationProtectedDataDidBecomeAvailable(UIApplication.shared)
-      }.map { $0.isProtectedDataAvailable },
+    XCTAssert(
+      SessionTestCase
+      .statesFromEvents { $0.applicationProtectedDataDidBecomeAvailable(UIApplication.shared) }
+      .map { $0.isProtectedDataAvailable }
+      ==
       [.none(false), .did(true)]
     )
     
-    XCTAssertEqual(
-      SessionTestCase.statesFromEvents {
-        $0.applicationProtectedDataWillBecomeUnavailable(UIApplication.shared)
-      }.map { $0.isProtectedDataAvailable },
+    XCTAssert(
+      SessionTestCase
+      .statesFromEvents { $0.applicationProtectedDataWillBecomeUnavailable(UIApplication.shared) }
+      .map { $0.isProtectedDataAvailable }
+      ==
       [.none(false), .will(false)]
     )
     
     XCTAssert(
-      SessionTestCase.statesFromEvents {
+      SessionTestCase
+      .statesFromEvents {
         $0.application(
           UIApplication.shared,
           didRegister: UIUserNotificationSettingsStub(id: "x")
         )
-      }.map { $0.registeredUserNotificationSettings }
+      }
+      .map { $0.registeredUserNotificationSettings }
       ==
       [
         Optional.none,
@@ -133,176 +151,224 @@ class SessionTestCase: XCTestCase {
       ]
     )
     
-    XCTAssertEqual(
-      SessionTestCase.statesFromEvents {
+    XCTAssert(
+      SessionTestCase
+      .statesFromEvents {
         $0.application(
           UIApplication.shared,
           didFailToRegisterForRemoteNotificationsWithError: ErrorStub(id: "x")
         )
-      }.map { $0.deviceToken },
+      }
+      .map { $0.deviceToken }
+      ==
       [.none, .error(ErrorStub(id: "x") as Error)]
     )
     
-    XCTAssertEqual(
-      SessionTestCase.statesFromEvents {
+    XCTAssert(
+      SessionTestCase
+      .statesFromEvents {
         $0.application(
           UIApplication.shared,
           didRegisterForRemoteNotificationsWithDeviceToken: Data()
         )
-      }.map { $0.deviceToken },
+      }
+      .map { $0.deviceToken }
+      ==
       [.none, .some(Data())]
     )
     
-    XCTAssertEqual(
-      SessionTestCase.statesFromEvents {
+    XCTAssert(
+      SessionTestCase
+      .statesFromEvents {
         $0.application(
           UIApplication.shared,
           didDecodeRestorableStateWith: CoderStub(id: "x")
         )
-      }.map { $0.stateRestoration },
+      }
+      .map { $0.stateRestoration }
+      ==
       [.idle, .didDecode(CoderStub(id: "x"))]
     )
 
-    XCTAssertEqual(
-      SessionTestCase.statesFromEvents {
+    XCTAssert(
+      SessionTestCase
+      .statesFromEvents {
         $0.application(
           UIApplication.shared,
           willEncodeRestorableStateWith: CoderStub(id: "x")
         )
-      }.map { $0.stateRestoration },
+      }
+      .map { $0.stateRestoration }
+      ==
       [.idle, .willEncode(CoderStub(id: "x"))]
     )
 
-    XCTAssertEqual(
-      SessionTestCase.statesFromEvents {
+    XCTAssert(
+      SessionTestCase
+      .statesFromEvents {
         $0.application(
           UIApplication.shared,
           shouldSaveApplicationState: CoderStub(id: "x")
         )
-      }.map { $0.shouldSaveApplicationState },
+      }
+      .map { $0.shouldSaveApplicationState }
+      ==
       [.allowing(true), .considering(CoderStub(id: "x") as NSCoder)]
     )
     
-    XCTAssertEqual(
-      SessionTestCase.statesFromEvents {
+    XCTAssert(
+      SessionTestCase
+      .statesFromEvents {
         $0.application(
           UIApplication.shared,
           shouldRestoreApplicationState: CoderStub(id: "x")
         )
-      }.map { $0.shouldRestoreApplicationState },
+      }
+      .map { $0.shouldRestoreApplicationState }
+      ==
       [.allowing(true), .considering(CoderStub(id: "x") as NSCoder)]
     )
     
-    XCTAssertEqual(
-      SessionTestCase.statesFromEvents {
+    XCTAssert(
+      SessionTestCase
+      .statesFromEvents {
         $0.application(
           UIApplication.shared,
           willContinueUserActivityWithType: "x"
         )
-      }.map { $0.userActivityState },
+      }
+      .map { $0.userActivityState }
+      ==
       [.idle, .willContinue("x")]
     )
     
-    XCTAssertEqual(
-      SessionTestCase.statesFromEvents {
+    XCTAssert(
+      SessionTestCase
+      .statesFromEvents {
         $0.application(
           UIApplication.shared,
           didFailToContinueUserActivityWithType: "x",
           error: ErrorStub(id: "y")
         )
-      }.map { $0.userActivityState },
+      }
+      .map { $0.userActivityState }
+      ==
       [.idle, .didFail("x", ErrorStub(id: "y"))]
     )
     
     let activity = NSUserActivity(activityType: "x")
-    XCTAssertEqual(
-      SessionTestCase.statesFromEvents {
+    XCTAssert(
+      SessionTestCase
+      .statesFromEvents {
         $0.application(
           UIApplication.shared,
           didUpdate: activity
         )
-      }.map { $0.userActivityState },
+      }
+      .map { $0.userActivityState }
+      ==
       [.idle, .didContinue(activity)]
     )
     
-    XCTAssertEqual(
-      SessionTestCase.statesFromEvents {
+    XCTAssert(
+      SessionTestCase
+      .statesFromEvents {
         $0.application(
           UIApplication.shared,
           continue: activity,
           restorationHandler: { _ in }
         )
-      }.map { $0.userActivityState },
+      }
+      .map { $0.userActivityState }
+      ==
       [.idle, .isContinuing(activity)]
     )
     
-    XCTAssertEqual(
-      SessionTestCase.statesFromEvents {
-        $0.applicationWillResignActive(UIApplication.shared)
-        }.map { $0.state },
+    XCTAssert(
+      SessionTestCase
+      .statesFromEvents { $0.applicationWillResignActive(UIApplication.shared) }
+      .map { $0.state }
+      ==
       [.none(.awaitingLaunch), .will(.resigned)]
     )
     
-    XCTAssertEqual(
-      SessionTestCase.statesFromEvents {
+    XCTAssert(
+      SessionTestCase
+      .statesFromEvents {
         $0.application(
           UIApplication.shared,
           willChangeStatusBarOrientation: .landscapeLeft,
           duration: 0.0
         )
-      }.map { $0.statusBarOrientation },
+      }
+      .map { $0.statusBarOrientation }
+      ==
       [.none(.unknown), .will(.landscapeLeft)]
     )
     
-    XCTAssertEqual(
-      SessionTestCase.statesFromEvents {
+    XCTAssert(
+      SessionTestCase
+      .statesFromEvents {
         $0.application(
           UIApplication.shared,
           didChangeStatusBarOrientation: .landscapeLeft
         )
-      }.map { $0.statusBarOrientation },
+      }
+      .map { $0.statusBarOrientation }
+      ==
       [.none(.unknown), .did(.landscapeLeft)]
     )
     
-    XCTAssertEqual(
-      SessionTestCase.statesFromEvents {
+    XCTAssert(
+      SessionTestCase
+      .statesFromEvents {
         $0.application(
           UIApplication.shared,
           willChangeStatusBarFrame: CGRect(x: 1, y: 2, width: 3, height: 4)
         )
-      }.map { $0.statusBarFrame },
+      }
+      .map { $0.statusBarFrame }
+      ==
       [.none(.zero), .will(CGRect(x: 1, y: 2, width: 3, height: 4))]
     )
 
     // Consider adding beginState to -willChange enum option .will(from: to:)
     // Or firing changes for every frame of animation
     
-    XCTAssertEqual(
-      SessionTestCase.statesFromEvents {
+    XCTAssert(
+      SessionTestCase
+      .statesFromEvents {
         $0.application(
           UIApplication.shared,
           didChangeStatusBarFrame: CGRect(x: 1, y: 2, width: 3, height: 4)
         )
-      }.map { $0.statusBarFrame },
+      }
+      .map { $0.statusBarFrame }
+      ==
       [.none(.zero), .did(CGRect(x: 0, y: 0, width: 320, height: 20))]
     )
 
-    XCTAssertEqual(
-      SessionTestCase.statesFromEvents {
+    XCTAssert(
+      SessionTestCase
+      .statesFromEvents {
         $0.application(
           UIApplication.shared,
           handleActionWithIdentifier: "x",
           for: UILocalNotification(),
           completionHandler: {}
         )
-      }.map { $0.localAction },
-      [.idle,
-       .progressing(.ios8(.some( "x"), UILocalNotification(), {}))
+      }
+      .map { $0.localAction }
+      ==
+      [
+        .idle,
+        .progressing(.ios8(.some( "x"), UILocalNotification(), {}))
       ]
     )
     
-    XCTAssertEqual(
-      SessionTestCase.statesFromEvents {
+    XCTAssert(
+      SessionTestCase
+      .statesFromEvents {
         $0.application(
           UIApplication.shared,
           handleActionWithIdentifier: "x",
@@ -310,7 +376,9 @@ class SessionTestCase: XCTestCase {
           withResponseInfo: ["a":"b"],
           completionHandler: {}
         )
-      }.map { $0.remoteAction },
+      }
+      .map { $0.remoteAction }
+      ==
       [
         .idle,
         .progressing(
@@ -324,15 +392,18 @@ class SessionTestCase: XCTestCase {
       ]
     )
 
-    XCTAssertEqual(
-      SessionTestCase.statesFromEvents {
+    XCTAssert(
+      SessionTestCase
+      .statesFromEvents {
         $0.application(
           UIApplication.shared,
           handleActionWithIdentifier: "x",
           forRemoteNotification: ["y":"z"],
           completionHandler: {}
         )
-      }.map { $0.remoteAction },
+      }
+      .map { $0.remoteAction }
+      ==
       [
         .idle,
         .progressing(
@@ -345,8 +416,9 @@ class SessionTestCase: XCTestCase {
       ]
     )
     
-    XCTAssertEqual(
-      SessionTestCase.statesFromEvents {
+    XCTAssert(
+      SessionTestCase
+      .statesFromEvents {
         $0.application(
           UIApplication.shared,
           handleActionWithIdentifier: "x",
@@ -354,7 +426,9 @@ class SessionTestCase: XCTestCase {
           withResponseInfo: ["y":"z"],
           completionHandler: {}
         )
-      }.map { $0.localAction },
+      }
+      .map { $0.localAction }
+      ==
       [
         .idle,
         .progressing(
@@ -368,14 +442,17 @@ class SessionTestCase: XCTestCase {
       ]
     )
 
-    XCTAssertEqual(
-      SessionTestCase.statesFromEvents {
+    XCTAssert(
+      SessionTestCase
+      .statesFromEvents {
         $0.application(
           UIApplication.shared,
           performActionFor: UIApplicationShortcutItem(type: "x", localizedTitle: "y"),
           completionHandler: { _ in }
         )
-      }.map { $0.shortcutItemAction },
+      }
+      .map { $0.shortcutItemAction }
+      ==
       [
         .idle,
         .progressing(
@@ -387,14 +464,17 @@ class SessionTestCase: XCTestCase {
       ]
     )
     
-    XCTAssertEqual(
-      SessionTestCase.statesFromEvents {
+    XCTAssert(
+      SessionTestCase
+      .statesFromEvents {
         $0.application(
           UIApplication.shared,
           handleEventsForBackgroundURLSession: "x",
           completionHandler: {}
         )
-      }.map { $0.backgroundURLSessionAction },
+      }
+      .map { $0.backgroundURLSessionAction }
+      ==
       [
         .idle,
         .progressing(
@@ -406,14 +486,17 @@ class SessionTestCase: XCTestCase {
       ]
     )
     
-    XCTAssertEqual(
-      SessionTestCase.statesFromEvents {
+    XCTAssert(
+      SessionTestCase
+      .statesFromEvents {
         $0.application(
           UIApplication.shared,
           didReceiveRemoteNotification: ["x":"y"],
           fetchCompletionHandler: { _ in }
         )
-      }.map { $0.remoteNotification },
+      }
+      .map { $0.remoteNotification }
+      ==
       [
         .idle,
         .progressing(
@@ -425,7 +508,7 @@ class SessionTestCase: XCTestCase {
       ]
     )
     
-//    XCTAssertEqual(
+//    XCTAssert(
 //      SessionTestCase.statesForEvents {
 //        $0.application(
 //          UIApplication.shared,
@@ -443,14 +526,17 @@ class SessionTestCase: XCTestCase {
 //      ]
 //    )
     
-    XCTAssertEqual(
-      SessionTestCase.statesFromEvents {
+    XCTAssert(
+      SessionTestCase
+      .statesFromEvents {
         $0.application(
           UIApplication.shared,
           handleWatchKitExtensionRequest: ["x":"y"],
           reply: { _ in }
         )
-      }.map { $0.watchKitExtensionRequest },
+      }
+      .map { $0.watchKitExtensionRequest }
+      ==
       [
         .idle,
         .progressing(
@@ -462,35 +548,44 @@ class SessionTestCase: XCTestCase {
       ]
     )
     
-    XCTAssertEqual(
-      SessionTestCase.statesFromEvents {
+    XCTAssert(
+      SessionTestCase
+      .statesFromEvents {
         $0.application(
           UIApplication.shared,
           shouldAllowExtensionPointIdentifier: .keyboard
         )
-      }.map { $0.extensionPointIdentifier },
+      }
+      .map { $0.extensionPointIdentifier }
+      ==
       [.idle, .considering(.keyboard)]
     )
     
-    XCTAssertEqual(
-      SessionTestCase.statesFromEvents {
+    XCTAssert(
+      SessionTestCase
+      .statesFromEvents {
         $0.application(
           UIApplication.shared,
           supportedInterfaceOrientationsFor: WindowStub(id: "x")
         )
-      }.map { $0.interfaceOrientations }.flatMap { $0 },
+      }
+      .map { $0.interfaceOrientations }.flatMap { $0 }
+      ==
       [.considering(WindowStub(id: "x") as UIWindow)]
     )
 
-    XCTAssertEqual(
-      SessionTestCase.statesFromEvents {
+    XCTAssert(
+      SessionTestCase
+      .statesFromEvents {
         let x = $0.application(
           UIApplication.shared,
           viewControllerWithRestorationIdentifierPath: ["x"],
           coder: CoderStub(id: "y")
         )
         return x ?? {}
-      }.map { $0.viewControllerRestoration },
+      }
+      .map { $0.viewControllerRestoration }
+      ==
       [
         .idle,
         .considering(
@@ -639,8 +734,7 @@ class SessionTestCase: XCTestCase {
       .map { model -> Session.Model in
         var new = model
         new.shouldLaunch = true
-        new.interfaceOrientations = model.interfaceOrientations
-        .map {
+        new.interfaceOrientations = model.interfaceOrientations.map {
           switch $0 {
           case .considering(let window):
             return .allowing(
@@ -804,7 +898,6 @@ class SessionTestCase: XCTestCase {
       ==
       true
     )
-
   }
   
   func testShouldRestoreApplicationState() {
