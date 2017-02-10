@@ -406,6 +406,9 @@ class Session: NSObject, UIApplicationDelegate {
       
       if let new = model.sendingEvent {
         UIApplication.shared.sendEvent(new)
+        var edit = model
+        edit.sendingEvent = nil
+        output.on(.next(edit))
       }
       
       if let new = model.sendingAction {
