@@ -492,24 +492,19 @@ class Session: NSObject, UIApplicationDelegate {
         
         UIApplication.shared.shortcutItems = new.shortcutItems.map { $0.value }
         
-        if let old = oldValue {
-          let edits = Changeset( source: old.shortcutItems, target: new.shortcutItems).edits
-            
-          edits
-          .flatMap { $0.possible(.deletion) }
-          .forEach {
-            if case .progressing(let completion) = $0.value.action {
-              completion.completion(false)
-            }
-          }
+        if let change = oldValue.map({ Changeset(source: $0.shortcutItems, target: new.shortcutItems
+          )}) {
+          
+          change
+          .edits
+          .flatMap { completionHandler(type: .deletion, edit: $0) }
+          .forEach { $0(false) }
 
-          edits
-          .flatMap { $0.possible(.substitution) }
-          .forEach {
-            if case .complete(let completion) = $0.value.action {
-              completion.completion(true)
-            }
-          }
+          change
+          .edits
+          .flatMap { completionHandler(type: .substitution, edit: $0) }
+          .forEach { $0(true) }
+
         }
       }
     }
@@ -1409,5 +1404,16 @@ extension AsyncAction: CustomDebugStringConvertible {
     case .idle: return ".idle"
     case .progressing: return ".progressing"
     }
+  }
+}
+
+func completionHandler(
+  type: EditOperation,
+  edit: Edit<Session.Model.ShortcutItem>
+  ) -> ((Bool) -> Void)? {
+  if let d = edit.possible(type), case .progressing(let a) = d.value.action {
+    return a.completion
+  } else {
+    return nil
   }
 }
