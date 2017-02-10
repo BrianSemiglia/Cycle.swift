@@ -83,7 +83,7 @@ extension Session {
     var fetch: AsyncAction<FetchAction>
     var remoteAction: AsyncAction<ActionRemote>
     var localAction: AsyncAction<ActionLocal>
-    var cloudKitShare: CKShareMetadata?
+//    var cloudKitShare: CKShareMetadata?
     var userActivityState: UserActivityState
     var stateRestoration: StateRestoration
     var userActivityContinuation: UserActivityState
@@ -246,7 +246,7 @@ extension Session.Model {
       fetch: .idle,
       remoteAction: .idle,
       localAction: .idle,
-      cloudKitShare: nil,
+//      cloudKitShare: nil,
       userActivityState: .idle,
       stateRestoration: .idle,
       userActivityContinuation: .idle,
@@ -366,147 +366,139 @@ extension Session.Model.RestorationResponse: Equatable {
 class Session: NSObject, UIApplicationDelegate {
   
   init(_ input: Model) {
+    model = input
     output = BehaviorSubject<Model>(value: input)
   }
   
   static let shared = Session(.empty)
   fileprivate var disposable: Disposable?
   fileprivate let output: BehaviorSubject<Model>
-  fileprivate var model: Model? {
+  fileprivate var model: Model {
     didSet {
-      if let new = model {
-        
-        if new.isIgnoringUserEvents != oldValue?.isIgnoringUserEvents {
-          if new.isIgnoringUserEvents {
-            UIApplication.shared.beginIgnoringInteractionEvents()
-          } else if oldValue != nil {
-            UIApplication.shared.endIgnoringInteractionEvents()
-          }
-        }
-        
-        UIApplication.shared.isIdleTimerDisabled = new.isIdleTimerDisabled
-        
-        if let url = new.openingURL, url != oldValue?.openingURL {
-          UIApplication.shared.openURL(url)
-        }
-        
-        if let new = new.sendingEvent {
-          UIApplication.shared.sendEvent(new)
-        }
-        
-        if let new = new.sendingAction {
-          UIApplication.shared.sendAction(
-            new.action,
-            to: new.target,
-            from: new.sender,
-            for: new.event
-          )
-        }
-        
-        UIApplication.shared.isNetworkActivityIndicatorVisible = new.isNetworkActivityIndicatorVisible
-        UIApplication.shared.applicationIconBadgeNumber = new.iconBadgeNumber
-        UIApplication.shared.applicationSupportsShakeToEdit = new.supportsShakeToEdit
-        
-        Session.additions(
-          new: new.pendingBackgroundTasks,
-          old: oldValue?.pendingBackgroundTasks
-        ).forEach {
-          // need to add these ID to output model's running tasks
-          let ID = UIApplication.shared.beginBackgroundTask(
-            withName: $0.name,
-            expirationHandler: $0.expiration
-          )
-          var edit = new
-          edit.runningBackgroundTasksIdentifiers += [ID]
-          output.on(.next(edit))
-          // don't have event currently. reconsider output schema.
-        }
-        
-        Session.deletions(
-          new: new.runningBackgroundTasksIdentifiers,
-          old: oldValue?.runningBackgroundTasksIdentifiers
-        ).forEach {
-          UIApplication.shared.endBackgroundTask($0)
-        }
-        
-        switch new.minimumBackgroundFetchInterval {
-        case .minimum:
-          UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplicationBackgroundFetchIntervalMinimum)
-        case .never:
-          UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplicationBackgroundFetchIntervalNever)
-        case .some(let value):
-          UIApplication.shared.setMinimumBackgroundFetchInterval(value)
-        }
-        
-        let deletionsTypesRegistered = oldValue.flatMap {
-          Changeset(
-            source: $0.typesRegisteredForRemoteNotifications,
-            target: new.typesRegisteredForRemoteNotifications
-            ).edits
-        }
-        
-        if deletionsTypesRegistered?.count != 0 {
-          UIApplication.shared.unregisterForRemoteNotifications()
-          new.typesRegisteredForRemoteNotifications.forEach {
-            UIApplication.shared.registerForRemoteNotifications(matching: $0)
-          }
-        }
-        
-        if
-        let new = new.presentedLocalNotification,
-        oldValue?.presentedLocalNotification != new {
-          UIApplication.shared.presentLocalNotificationNow(new)
-        }
-        
-        Session.additions(
-          new: new.scheduledLocalNotifications,
-          old: oldValue?.scheduledLocalNotifications
-        ).forEach {
-            UIApplication.shared.scheduleLocalNotification($0)
-        }
-        
-        Session.deletions(
-          new: new.scheduledLocalNotifications,
-          old: oldValue?.scheduledLocalNotifications
-        ).forEach {
-            UIApplication.shared.cancelLocalNotification($0)
-        }
-        
-        if
-          let new = new.registeredUserNotificationSettings,
-          oldValue?.registeredUserNotificationSettings != new {
-          UIApplication.shared.registerUserNotificationSettings(new)
-        }
-        
-        if oldValue?.isReceivingRemoteControlEvents != new.isReceivingRemoteControlEvents {
-          if new.isReceivingRemoteControlEvents {
-            UIApplication.shared.beginReceivingRemoteControlEvents()
-          } else {
-            UIApplication.shared.endReceivingRemoteControlEvents()
-          }
-        }
-        
-        if oldValue?.newsStandIconImage != new.newsStandIconImage {
-          UIApplication.shared.setNewsstandIconImage(new.newsStandIconImage)
-        }
-        
-        UIApplication.shared.shortcutItems = new.shortcutItems.map { $0.value }
-        
-        if let change = oldValue.map({ Changeset(source: $0.shortcutItems, target: new.shortcutItems
-          )}) {
-          
-          change
-          .edits
-          .flatMap { completionHandler(type: .deletion, edit: $0) }
-          .forEach { $0(false) }
-
-          change
-          .edits
-          .flatMap { completionHandler(type: .substitution, edit: $0) }
-          .forEach { $0(true) }
-
+      if model.isIgnoringUserEvents != oldValue.isIgnoringUserEvents {
+        if model.isIgnoringUserEvents {
+          UIApplication.shared.beginIgnoringInteractionEvents()
+        } else {
+          UIApplication.shared.endIgnoringInteractionEvents()
         }
       }
+      
+      UIApplication.shared.isIdleTimerDisabled = model.isIdleTimerDisabled
+      
+      if let url = model.openingURL, url != oldValue.openingURL {
+        UIApplication.shared.openURL(url)
+      }
+      
+      if let new = model.sendingEvent {
+        UIApplication.shared.sendEvent(new)
+      }
+      
+      if let new = model.sendingAction {
+        UIApplication.shared.sendAction(
+          new.action,
+          to: new.target,
+          from: new.sender,
+          for: new.event
+        )
+      }
+      
+      UIApplication.shared.isNetworkActivityIndicatorVisible = model.isNetworkActivityIndicatorVisible
+      UIApplication.shared.applicationIconBadgeNumber = model.iconBadgeNumber
+      UIApplication.shared.applicationSupportsShakeToEdit = model.supportsShakeToEdit
+      
+      Session.additions(
+        new: model.pendingBackgroundTasks,
+        old: oldValue.pendingBackgroundTasks
+      ).forEach {
+        // need to add these ID to output model's running tasks
+        let ID = UIApplication.shared.beginBackgroundTask(
+          withName: $0.name,
+          expirationHandler: $0.expiration
+        )
+        var edit = model
+        edit.runningBackgroundTasksIdentifiers += [ID]
+        output.on(.next(edit))
+        // don't have event currently. reconsider output schema.
+      }
+      
+      Session.deletions(
+        new: model.runningBackgroundTasksIdentifiers,
+        old: oldValue.runningBackgroundTasksIdentifiers
+      ).forEach {
+        UIApplication.shared.endBackgroundTask($0)
+      }
+      
+      switch model.minimumBackgroundFetchInterval {
+      case .minimum:
+        UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplicationBackgroundFetchIntervalMinimum)
+      case .never:
+        UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplicationBackgroundFetchIntervalNever)
+      case .some(let value):
+        UIApplication.shared.setMinimumBackgroundFetchInterval(value)
+      }
+      
+      let deletionsTypesRegistered = Changeset(
+        source: oldValue.typesRegisteredForRemoteNotifications,
+        target: model.typesRegisteredForRemoteNotifications
+      ).edits
+      
+      if deletionsTypesRegistered.count != 0 {
+        UIApplication.shared.unregisterForRemoteNotifications()
+        model.typesRegisteredForRemoteNotifications.forEach {
+          UIApplication.shared.registerForRemoteNotifications(matching: $0)
+        }
+      }
+      
+      if
+      let new = model.presentedLocalNotification,
+      oldValue.presentedLocalNotification != new {
+        UIApplication.shared.presentLocalNotificationNow(new)
+      }
+      
+      Session.additions(
+        new: model.scheduledLocalNotifications,
+        old: oldValue.scheduledLocalNotifications
+      ).forEach {
+          UIApplication.shared.scheduleLocalNotification($0)
+      }
+      
+      Session.deletions(
+        new: model.scheduledLocalNotifications,
+        old: oldValue.scheduledLocalNotifications
+      ).forEach {
+          UIApplication.shared.cancelLocalNotification($0)
+      }
+      
+      if
+        let new = model.registeredUserNotificationSettings,
+        oldValue.registeredUserNotificationSettings != new {
+        UIApplication.shared.registerUserNotificationSettings(new)
+      }
+      
+      if oldValue.isReceivingRemoteControlEvents != model.isReceivingRemoteControlEvents {
+        model.isReceivingRemoteControlEvents
+          ? UIApplication.shared.beginReceivingRemoteControlEvents()
+          : UIApplication.shared.endReceivingRemoteControlEvents()
+      }
+      
+      if oldValue.newsStandIconImage != model.newsStandIconImage {
+        UIApplication.shared.setNewsstandIconImage(model.newsStandIconImage)
+      }
+      
+      UIApplication.shared.shortcutItems = model.shortcutItems.map { $0.value }
+      
+      let change = Changeset(source: oldValue.shortcutItems, target: model.shortcutItems)
+        
+      change
+      .edits
+      .flatMap { completionHandler(type: .deletion, edit: $0) }
+      .forEach { $0(false) }
+
+      change
+      .edits
+      .flatMap { completionHandler(type: .substitution, edit: $0) }
+      .forEach { $0(true) }
+
     }
   }
   
@@ -530,37 +522,32 @@ class Session: NSObject, UIApplicationDelegate {
     _ application: UIApplication,
     willFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil
   ) -> Bool {
-    if var model = model {
-      model.state = .will(.launched(launchOptions))
-      output.on(.next(model)
-      )
-    }
-    return model?.shouldLaunch == true
+    var edit = model
+    edit.state = .will(.launched(launchOptions))
+    output.on(.next(edit))
+    return model.shouldLaunch == true
   }
 
   func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil
   ) -> Bool {
-    if var model = model {
-      model.state = .did(.launched(launchOptions))
-      output.on(.next(model))
-    }
-    return model?.shouldLaunch == true
+    var edit = model
+    edit.state = .did(.launched(launchOptions))
+    output.on(.next(edit))
+    return model.shouldLaunch == true
   }
 
   func applicationDidBecomeActive(_ application: UIApplication) {
-    if var model = model {
-      model.state = .did(.active)
-      output.on(.next(model))
-    }
+    var edit = model
+    edit.state = .did(.active)
+    output.on(.next(edit))
   }
 
   func applicationWillResignActive(_ application: UIApplication) {
-    if var model = model {
-      model.state = .will(.resigned)
-      output.on(.next(model))
-    }
+    var edit = model
+    edit.state = .will(.resigned)
+    output.on(.next(edit))
   }
 
   func application(
@@ -569,13 +556,16 @@ class Session: NSObject, UIApplicationDelegate {
     sourceApplication: String?,
     annotation: Any
   ) -> Bool {
-    if var model = model {
-      model.URL = .considering(
-        .ios4(url: url, app: sourceApplication, annotation: annotation)
+    var edit = model
+    edit.URL = .considering(
+      .ios4(
+        url: url,
+        app: sourceApplication,
+        annotation: annotation
       )
-      output.on(.next(model))
-    }
-    if let model = model, case .allowing(let allowed) = model.URL {
+    )
+    output.on(.next(edit))
+    if case .allowing(let allowed) = model.URL {
       return url == allowed
     } else {
       return false
@@ -587,11 +577,10 @@ class Session: NSObject, UIApplicationDelegate {
     open url: URL,
     options: [UIApplicationOpenURLOptionsKey : Any] = [:]
   ) -> Bool {
-    if var model = model {
-      model.URL = .considering(.ios9(url: url, options: options))
-      output.on(.next(model))
-    }
-    if let model = model, case .allowing(let allowed) = model.URL {
+    var edit = model
+    edit.URL = .considering(.ios9(url: url, options: options))
+    output.on(.next(edit))
+    if case .allowing(let allowed) = model.URL {
       return url == allowed
     } else {
       return false
@@ -599,28 +588,25 @@ class Session: NSObject, UIApplicationDelegate {
   }
 
   func applicationDidReceiveMemoryWarning(_ application: UIApplication) {
-    if var model = model {
-      model.isExperiencingMemoryWarning = true
-      output.on(.next(model))
-      model.isExperiencingMemoryWarning = false
-      output.on(.next(model))
-    }
+    var edit = model
+    edit.isExperiencingMemoryWarning = true
+    output.on(.next(edit))
+    edit.isExperiencingMemoryWarning = false
+    output.on(.next(edit))
   }
 
   func applicationWillTerminate(_ application: UIApplication) {
-    if var model = model {
-      model.state = Change.will(.terminated)
-      output.on(.next(model))
-    }
+    var edit = model
+    edit.state = Change.will(.terminated)
+    output.on(.next(edit))
   }
 
   func applicationSignificantTimeChange(_ application: UIApplication) {
-    if var model = model {
-      model.isObservingSignificantTimeChange = true
-      output.on(.next(model))
-      model.isObservingSignificantTimeChange = false
-      output.on(.next(model))
-    }
+    var edit = model
+    edit.isObservingSignificantTimeChange = true
+    output.on(.next(edit))
+    edit.isObservingSignificantTimeChange = false
+    output.on(.next(edit))
   }
 
   func application(
@@ -628,80 +614,72 @@ class Session: NSObject, UIApplicationDelegate {
     willChangeStatusBarOrientation newStatusBarOrientation: UIInterfaceOrientation,
     duration: TimeInterval
   ) {
-    if var model = model {
-      model.statusBarOrientation = .will(newStatusBarOrientation)
-      output.on(.next(model))
-    }
+    var edit = model
+    edit.statusBarOrientation = .will(newStatusBarOrientation)
+    output.on(.next(edit))
   }
 
   func application(
     _ application: UIApplication,
     didChangeStatusBarOrientation oldStatusBarOrientation: UIInterfaceOrientation
   ) {
-    if var model = model {
-      model.statusBarOrientation = .did(oldStatusBarOrientation)
-      output.on(.next(model))
-    }
+    var edit = model
+    edit.statusBarOrientation = .did(oldStatusBarOrientation)
+    output.on(.next(edit))
   }
 
   func application(
     _ application: UIApplication,
     willChangeStatusBarFrame new: CGRect
   ) {
-    if var model = model {
-      model.statusBarFrame = Change.will(new)
-      output.on(.next(model))
-    }
+    var edit = model
+    edit.statusBarFrame = Change.will(new)
+    output.on(.next(edit))
   }
 
   func application(
     _ application: UIApplication,
     didChangeStatusBarFrame old: CGRect
   ) {
-    if var model = model {
-      model.statusBarFrame = Change.did(UIApplication.shared.statusBarFrame)
-      output.on(.next(model))
-    }
+    var edit = model
+    edit.statusBarFrame = Change.did(UIApplication.shared.statusBarFrame)
+    output.on(.next(edit))
   }
 
   func application(
     _ application: UIApplication,
     didRegister notificationSettings: UIUserNotificationSettings
   ) {
-    if var model = model {
-      model.registeredUserNotificationSettings = notificationSettings
-      output.on(.next(model))
-    }
+    var edit = model
+    edit.registeredUserNotificationSettings = notificationSettings
+    output.on(.next(edit))
   }
 
   func application(
     _ application: UIApplication,
     didRegisterForRemoteNotificationsWithDeviceToken token: Data
   ) {
-    if var model = model {
-      model.deviceToken = .some(token)
-      output.on(.next(model))
-    }
+    var edit = model
+    edit.deviceToken = .some(token)
+    output.on(.next(edit))
   }
 
   func application(
     _ application: UIApplication,
     didFailToRegisterForRemoteNotificationsWithError error: Error
   ) {
-    if var model = model {
-      model.deviceToken = .error(error)
-      output.on(.next(model))
-    }
+    var edit = model
+    edit.deviceToken = .error(error)
+    output.on(.next(edit))
   }
 
   func application(
     _ application: UIApplication,
     didReceive notification: UILocalNotification
   ) {
-    if var model = model {
-      model.localNotification = notification
-      output.on(.next(model))
-    }
+    var edit = model
+    edit.localNotification = notification
+    output.on(.next(edit))
   }
 
   func application(
@@ -710,16 +688,15 @@ class Session: NSObject, UIApplicationDelegate {
     for notification: UILocalNotification,
     completionHandler: @escaping () -> Void
   ) {
-    if var model = model {
-      model.localAction = .progressing(
-        .ios8(
-          identifier.map {.some( $0)} ?? .defaultAction,
-          notification,
-          completionHandler
-        )
+    var edit = model
+    edit.localAction = .progressing(
+      .ios8(
+        identifier.map {.some( $0)} ?? .defaultAction,
+        notification,
+        completionHandler
       )
-      output.on(.next(model))
-    }
+    )
+    output.on(.next(edit))
   }
 
   func application(
@@ -729,17 +706,16 @@ class Session: NSObject, UIApplicationDelegate {
     withResponseInfo responseInfo: [AnyHashable : Any],
     completionHandler: @escaping () -> Void
   ) {
-    if var model = model {
-      model.remoteAction = .progressing(
-        .ios9(
-          id: identifier.map {.some($0)} ?? .defaultAction,
-          userInfo: userInfo,
-          responseInfo: responseInfo,
-          completion: completionHandler
-        )
+    var edit = model
+    edit.remoteAction = .progressing(
+      .ios9(
+        id: identifier.map {.some($0)} ?? .defaultAction,
+        userInfo: userInfo,
+        responseInfo: responseInfo,
+        completion: completionHandler
       )
-      output.on(.next(model))
-    }
+    )
+    output.on(.next(edit))
   }
 
   func application(
@@ -748,16 +724,15 @@ class Session: NSObject, UIApplicationDelegate {
     forRemoteNotification userInfo: [AnyHashable : Any],
     completionHandler: @escaping () -> Void
   ) {
-    if var model = model {
-      model.remoteAction = .progressing(
-        .ios8(
-          id: identifier.map {.some( $0)} ?? .defaultAction,
-          userInfo: userInfo,
-          completion: completionHandler
-        )
+    var edit = model
+    edit.remoteAction = .progressing(
+      .ios8(
+        id: identifier.map {.some( $0)} ?? .defaultAction,
+        userInfo: userInfo,
+        completion: completionHandler
       )
-      output.on(.next(model))
-    }
+    )
+    output.on(.next(edit))
   }
 
   func application(
@@ -767,17 +742,16 @@ class Session: NSObject, UIApplicationDelegate {
     withResponseInfo responseInfo: [AnyHashable : Any],
     completionHandler: @escaping () -> Void
   ) {
-    if var model = model {
-      model.localAction = .progressing(
-        .ios9(
-          identifier.map {.some( $0)} ?? .defaultAction,
-          notification,
-          responseInfo,
-          completionHandler
-        )
+    var edit = model
+    edit.localAction = .progressing(
+      .ios9(
+        identifier.map {.some( $0)} ?? .defaultAction,
+        notification,
+        responseInfo,
+        completionHandler
       )
-      output.on(.next(model))
-    }
+    )
+    output.on(.next(edit))
   }
 
   func application(
@@ -785,30 +759,28 @@ class Session: NSObject, UIApplicationDelegate {
     didReceiveRemoteNotification info: [AnyHashable : Any],
     fetchCompletionHandler completion: @escaping (UIBackgroundFetchResult) -> Void
   ) {
-    if var model = model {
-      model.remoteNotification = .progressing(
-        Session.Model.RemoteNofiticationAction(
-          notification: info,
-          completion: completion
-        )
+    var edit = model
+    edit.remoteNotification = .progressing(
+      Session.Model.RemoteNofiticationAction(
+        notification: info,
+        completion: completion
       )
-      output.on(.next(model))
-    }
+    )
+    output.on(.next(edit))
   }
 
   func application(
     _ application: UIApplication,
     performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult
   ) -> Void) {
-    if var model = model {
-      model.fetch = .progressing(
-        Session.Model.FetchAction(
-          hash: Date().hashValue,
-          completion: completionHandler
-        )
+    var edit = model
+    edit.fetch = .progressing(
+      Session.Model.FetchAction(
+        hash: Date().hashValue,
+        completion: completionHandler
       )
-      output.on(.next(model))
-    }
+    )
+    output.on(.next(edit))
   }
 
   func application(
@@ -816,24 +788,23 @@ class Session: NSObject, UIApplicationDelegate {
     performActionFor shortcutItem: UIApplicationShortcutItem,
     completionHandler: @escaping (Bool) -> Void
   ) {
-    if var model = model {
-      model.shortcutItems = model.shortcutItems.map {
-        if $0.value.type == shortcutItem.type {
-          return Session.Model.ShortcutItem(
-            value: shortcutItem,
-            action: .progressing(
-              Session.Model.ShortcutItem.Action(
-                id: shortcutItem,
-                completion: completionHandler
-              )
+    var edit = model
+    edit.shortcutItems = edit.shortcutItems.map {
+      if $0.value.type == shortcutItem.type {
+        return Session.Model.ShortcutItem(
+          value: shortcutItem,
+          action: .progressing(
+            Session.Model.ShortcutItem.Action(
+              id: shortcutItem,
+              completion: completionHandler
             )
           )
-        } else {
-          return $0
-        }
+        )
+      } else {
+        return $0
       }
-      output.on(.next(model))
     }
+    output.on(.next(edit))
   }
 
   func application(
@@ -841,15 +812,14 @@ class Session: NSObject, UIApplicationDelegate {
     handleEventsForBackgroundURLSession identifier: String,
     completionHandler: @escaping () -> Void
   ) {
-    if var model = model {
-      model.backgroundURLSessionAction = .progressing(
-        Session.Model.BackgroundURLSessionAction(
-          identifier: identifier,
-          completion: completionHandler
-        )
+    var edit = model
+    edit.backgroundURLSessionAction = .progressing(
+      Session.Model.BackgroundURLSessionAction(
+        identifier: identifier,
+        completion: completionHandler
       )
-      output.on(.next(model))
-    }
+    )
+    output.on(.next(edit))
   }
 
   func application(
@@ -857,62 +827,57 @@ class Session: NSObject, UIApplicationDelegate {
     handleWatchKitExtensionRequest userInfo: [AnyHashable : Any]?,
     reply: @escaping ([AnyHashable : Any]?) -> Void
   ) {
-    if var model = model {
-      model.watchKitExtensionRequest = .progressing(
-        Session.Model.WatchKitExtensionRequest(
-          userInfo: userInfo,
-          reply: reply
-        )
+    var edit = model
+    edit.watchKitExtensionRequest = .progressing(
+      Session.Model.WatchKitExtensionRequest(
+        userInfo: userInfo,
+        reply: reply
       )
-      output.on(.next(model))
-    }
+    )
+    output.on(.next(edit))
   }
 
   func applicationShouldRequestHealthAuthorization(_ application: UIApplication) {
-    if var model = model {
-      model.isExperiencingHealthAuthorizationRequest = true
-      output.on(.next(model))
-      model.isExperiencingHealthAuthorizationRequest = false
-      output.on(.next(model))
-    }
+    var edit = model
+    edit.isExperiencingHealthAuthorizationRequest = true
+    output.on(.next(edit))
+    edit.isExperiencingHealthAuthorizationRequest = false
+    output.on(.next(edit))
   }
 
   func applicationDidEnterBackground(_ application: UIApplication) {
-    if var model = model {
-      model.state = .did(.resigned)
-      output.on(.next(model))
-    }
+    var edit = model
+    edit.state = .did(.resigned)
+    output.on(.next(edit))
   }
 
   func applicationWillEnterForeground(_ application: UIApplication) {
-    if var model = model {
-      model.state = .will(.active)
-      output.on(.next(model))
-    }
+    var edit = model
+    edit.state = .will(.active)
+    output.on(.next(edit))
   }
 
   func applicationProtectedDataWillBecomeUnavailable(_ application: UIApplication) {
-    if var model = model {
-      model.isProtectedDataAvailable = .will(false)
-      output.on(.next(model))
-    }
+    var edit = model
+    edit.isProtectedDataAvailable = .will(false)
+    output.on(.next(edit))
   }
 
   func applicationProtectedDataDidBecomeAvailable(_ application: UIApplication) {
-    if var model = model {
-      model.isProtectedDataAvailable = .did(true)
-      output.on(.next(model))
-    }
+    var edit = model
+    edit.isProtectedDataAvailable = .did(true)
+    output.on(.next(edit))
   }
 
   func application(
     _ application: UIApplication,
     supportedInterfaceOrientationsFor window: UIWindow?
   ) -> UIInterfaceOrientationMask {
-    if var model = model, let window = window {
-      model.interfaceOrientations += [.considering(window)]
-      output.on(.next(model))
-      return self.model?.interfaceOrientations
+    if let window = window {
+      var edit = model
+      edit.interfaceOrientations += [.considering(window)]
+      output.on(.next(edit))
+      return self.model.interfaceOrientations
         .flatMap { $0.allowed() }
         .filter { $0.window == window }
         .first
@@ -927,11 +892,10 @@ class Session: NSObject, UIApplicationDelegate {
     _ application: UIApplication,
     shouldAllowExtensionPointIdentifier ID: UIApplicationExtensionPointIdentifier
   ) -> Bool {
-    if var model = model {
-      model.extensionPointIdentifier = .considering(ID)
-      output.on(.next(model))
-    }
-    if let model = model, case .allowing(let allowed) = model.extensionPointIdentifier {
+    var edit = model
+    edit.extensionPointIdentifier = .considering(ID)
+    output.on(.next(edit))
+    if case .allowing(let allowed) = model.extensionPointIdentifier {
       return ID == allowed
     } else {
       return false
@@ -943,15 +907,16 @@ class Session: NSObject, UIApplicationDelegate {
     viewControllerWithRestorationIdentifierPath components: [Any],
     coder: NSCoder
   ) -> UIViewController? {
-    if var model = model, let component = components.last as? String {
-      model.viewControllerRestoration = .considering(
+    if let component = components.last as? String {
+      var edit = model
+      edit.viewControllerRestoration = .considering(
         Session.Model.RestorationQuery(
           identifier: component,
           coder: coder
         )
       )
-      output.on(.next(model))
-      if let model = self.model, case .allowing(let allowed) = model.viewControllerRestoration, allowed.identifier == component {
+      output.on(.next(edit))
+      if case .allowing(let allowed) = model.viewControllerRestoration, allowed.identifier == component {
         return allowed.view
       } else {
         return nil
@@ -965,53 +930,48 @@ class Session: NSObject, UIApplicationDelegate {
     _ application: UIApplication,
     shouldSaveApplicationState coder: NSCoder
   ) -> Bool {
-    if var model = model {
-      model.shouldSaveApplicationState = .considering(coder)
-      output.on(.next(model))
-    }
-    return model?.shouldSaveApplicationState == .allowing(true)
+    var edit = model
+    edit.shouldSaveApplicationState = .considering(coder)
+    output.on(.next(edit))
+    return model.shouldSaveApplicationState == .allowing(true)
   }
 
   func application(
     _ application: UIApplication,
     shouldRestoreApplicationState coder: NSCoder
   ) -> Bool {
-    if var model = model {
-      model.shouldRestoreApplicationState = .considering(coder)
-      output.on(.next(model))
-    }
-    return model?.shouldRestoreApplicationState.allowed() == true
+    var edit = model
+    edit.shouldRestoreApplicationState = .considering(coder)
+    output.on(.next(edit))
+    return model.shouldRestoreApplicationState.allowed() == true
   }
 
   func application(
     _ application: UIApplication,
     willEncodeRestorableStateWith coder: NSCoder
   ) {
-    if var model = model {
-      model.stateRestoration = .willEncode(coder)
-      output.on(.next(model))
-    }
+    var edit = model
+    edit.stateRestoration = .willEncode(coder)
+    output.on(.next(edit))
   }
 
   func application(
     _ application: UIApplication,
     didDecodeRestorableStateWith coder: NSCoder
   ) {
-    if var model = model {
-      model.stateRestoration = .didDecode(coder)
-      output.on(.next(model))
-    }
+    var edit = model
+    edit.stateRestoration = .didDecode(coder)
+    output.on(.next(edit))
   }
 
   func application(
     _ application: UIApplication,
     willContinueUserActivityWithType type: String
   ) -> Bool {
-    if var model = model {
-      model.userActivityState = .willContinue(type)
-      output.on(.next(model))
-    }
-    return model?.shouldNotifyUserActivitiesWithTypes.contains(type) == true
+    var edit = model
+    edit.userActivityState = .willContinue(type)
+    output.on(.next(edit))
+    return model.shouldNotifyUserActivitiesWithTypes.contains(type) == true
   }
 
   func application(
@@ -1019,11 +979,10 @@ class Session: NSObject, UIApplicationDelegate {
     continue userActivity: NSUserActivity,
     restorationHandler: @escaping ([Any]?) -> Void
   ) -> Bool {
-    if var model = model {
-      model.userActivityState = .isContinuing(userActivity)
-      output.on(.next(model))
-    }
-    return model?.activitiesWithAvaliableData.contains(userActivity) == true
+    var edit = model
+    edit.userActivityState = .isContinuing(userActivity)
+    output.on(.next(edit))
+    return model.activitiesWithAvaliableData.contains(userActivity) == true
   }
 
   func application(
@@ -1031,31 +990,29 @@ class Session: NSObject, UIApplicationDelegate {
     didFailToContinueUserActivityWithType userActivityType: String,
     error: Error
   ) {
-    if var model = model {
-      model.userActivityState = .didFail(userActivityType, error)
-      output.on(.next(model))
-    }
+    var edit = model
+    edit.userActivityState = .didFail(userActivityType, error)
+    output.on(.next(edit))
   }
 
   func application(
     _ application: UIApplication,
     didUpdate userActivity: NSUserActivity
   ) {
-    if var model = model {
-      model.userActivityState = .didContinue(userActivity)
-      output.on(.next(model))
-    }
+    var edit = model
+    edit.userActivityState = .didContinue(userActivity)
+    output.on(.next(edit))
   }
 
-  func application(
-    _ application: UIApplication,
-    userDidAcceptCloudKitShareWith cloudKitShareMetadata: CKShareMetadata
-    ) {
-    if var model = model {
-      model.cloudKitShare = cloudKitShareMetadata
-      output.on(.next(model))
-    }
-  }
+//  func application(
+//    _ application: UIApplication,
+//    userDidAcceptCloudKitShareWith cloudKitShareMetadata: CKShareMetadata
+//    ) {
+//    if var model = model {
+//      model.cloudKitShare = cloudKitShareMetadata
+//      output.on(.next(model))
+//    }
+//  }
 }
 
 extension Session.Model.TargetAction: Equatable {
@@ -1231,7 +1188,7 @@ extension Session.Model: Equatable {
     left.fetch == right.fetch &&
     left.remoteAction == right.remoteAction &&
     left.localAction == right.localAction &&
-    left.cloudKitShare == right.cloudKitShare &&
+//    left.cloudKitShare == right.cloudKitShare &&
     left.userActivityState == right.userActivityState &&
     left.stateRestoration == right.stateRestoration &&
     left.userActivityContinuation == right.userActivityContinuation &&
