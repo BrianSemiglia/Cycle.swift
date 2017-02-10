@@ -102,7 +102,7 @@ extension Session {
     var isExperiencingHealthAuthorizationRequest: Bool
     var isIgnoringUserEvents: Bool
     var isIdleTimerDisabled: Bool
-    var openingURL: URL?
+    var urlAction: Filtered<URL, URLActionResponse>
     var sendingEvent: UIEvent?
     var sendingAction: TargetAction?
     var isNetworkActivityIndicatorVisible: Bool
@@ -155,6 +155,10 @@ extension Session {
     enum ActionLocal {
       case ios8(ActionID, UILocalNotification, () -> Void)
       case ios9(ActionID, UILocalNotification, [AnyHashable: Any], () -> Void)
+    }
+    struct URLActionResponse {
+      let url: URL
+      let success: Bool
     }
     struct BackgroundURLSessionAction {
       var identifier: String
@@ -265,7 +269,7 @@ extension Session.Model {
       isExperiencingHealthAuthorizationRequest: false,
       isIgnoringUserEvents: false,
       isIdleTimerDisabled: false,
-      openingURL: nil,
+      urlAction: .idle,
       sendingEvent: nil,
       sendingAction: nil,
       isNetworkActivityIndicatorVisible: false,
@@ -385,8 +389,19 @@ class Session: NSObject, UIApplicationDelegate {
       
       UIApplication.shared.isIdleTimerDisabled = model.isIdleTimerDisabled
       
-      if let url = model.openingURL, url != oldValue.openingURL {
-        UIApplication.shared.openURL(url)
+      if case .considering(let url) = model.urlAction {
+        let didOpen = UIApplication.shared.openURL(url)
+        var edit = model
+        edit.urlAction = .allowing(
+          Session.Model.URLActionResponse(url: url, success: didOpen)
+        )
+        output.on(.next(edit))
+        // Model may change in response to output. Reevaluate before sending further output.
+        if case .allowing(let x) = model.urlAction, x.url == url {
+          var edit = model
+          edit.urlAction = .idle
+          output.on(.next(edit))
+        }
       }
       
       if let new = model.sendingEvent {
@@ -1207,7 +1222,7 @@ extension Session.Model: Equatable {
     left.isExperiencingHealthAuthorizationRequest == right.isExperiencingHealthAuthorizationRequest &&
     left.isIgnoringUserEvents == right.isIgnoringUserEvents &&
     left.isIdleTimerDisabled == right.isIdleTimerDisabled &&
-    left.openingURL == right.openingURL &&
+    left.urlAction == right.urlAction &&
     left.sendingEvent == right.sendingEvent &&
     left.sendingAction == right.sendingAction &&
     left.isNetworkActivityIndicatorVisible == right.isNetworkActivityIndicatorVisible &&
@@ -1361,6 +1376,13 @@ extension AsyncAction: CustomDebugStringConvertible {
     case .idle: return ".idle"
     case .progressing: return ".progressing"
     }
+  }
+}
+
+extension Session.Model.URLActionResponse: Equatable {
+  static func ==(left: Session.Model.URLActionResponse, right: Session.Model.URLActionResponse) -> Bool { return
+    left.url == right.url &&
+    left.success == right.success
   }
 }
 
