@@ -7,83 +7,18 @@
 //
 
 import Foundation
-import CloudKit
+//import CloudKit
 import RxSwift
 import Changeset
 
-enum Change<T: Equatable> {
-  case none(T)
-  case will(T)
-  case did(T)
-}
-
-extension Change: Equatable {
-  static func ==(left: Change, right: Change) -> Bool {
-    switch (left, right) {
-    case (.none(let a), .none(let b)): return a == b
-    case (.will(let a), .will(let b)): return a == b
-    case (.did(let a), .did(let b)): return a == b
-    default: return false
-    }
-  }
-}
-
-enum Result<T: Equatable> {
-  case none
-  case some(T)
-  case error(Error)
-}
-
-enum Filtered<T: Equatable, U: Equatable> {
-  case idle
-  case considering(T)
-  case allowing(U)
+class Session: NSObject, UIApplicationDelegate {
   
-  func allowed() -> U? {
-    switch self {
-    case .allowing(let a): return a
-    default: return nil
-    }
-  }
-}
-
-extension AsyncAction {
-  func isProgressing() -> Bool {
-    switch self {
-    case .progressing: return true
-    default: return false
-    }
-  }
-}
-
-extension Filtered: Equatable {
-  static func ==(left: Filtered, right: Filtered) -> Bool {
-    switch (left, right) {
-    case (.idle, .idle): return
-      true
-    case (.considering(let a), .considering(let b)): return
-      a == b
-    case (.allowing(let a), .allowing(let b)): return
-      a == b
-    default: return
-      false
-    }
-  }
-}
-
-enum AsyncAction<Handler: Equatable> {
-  case idle
-  case progressing(Handler)
-  case complete(Handler)
-}
-
-extension Session {
   struct Model {
     var backgroundURLSessionAction: AsyncAction<BackgroundURLSessionAction>
     var fetch: AsyncAction<FetchAction>
     var remoteAction: AsyncAction<ActionRemote>
     var localAction: AsyncAction<ActionLocal>
-//    var cloudKitShare: CKShareMetadata?
+    //    var cloudKitShare: CKShareMetadata?
     var userActivityState: UserActivityState
     var stateRestoration: StateRestoration
     var userActivityContinuation: UserActivityState
@@ -98,17 +33,16 @@ extension Session {
     var isProtectedDataAvailable: Change<Bool>
     var deviceToken: Result<Data>
     var statusBarOrientation: Change<UIInterfaceOrientation>
-    var runningBackgroundTasksIdentifiers: [UIBackgroundTaskIdentifier]
+    var backgroundTasks: [BackgroundTask] // TODO: should be a Set (via _name_ member)
     var isExperiencingHealthAuthorizationRequest: Bool
     var isIgnoringUserEvents: Bool
     var isIdleTimerDisabled: Bool
     var urlAction: Filtered<URL, URLActionResponse>
     var sendingEvent: UIEvent?
-    var sendingAction: TargetAction?
+    var sendingAction: TartgetActionProcess
     var isNetworkActivityIndicatorVisible: Bool
     var iconBadgeNumber: Int
     var supportsShakeToEdit: Bool
-    var pendingBackgroundTasks: [Session.Model.BackgroundTask]
     var minimumBackgroundFetchInterval: FetchInterval
     var typesRegisteredForRemoteNotifications: [UIRemoteNotificationType]
     var presentedLocalNotification: UILocalNotification?
@@ -232,7 +166,17 @@ extension Session {
     }
     struct BackgroundTask {
       var name: String
-      var expiration: ((Void) -> Void)?
+      var state: State
+      enum State {
+        case pending
+        case progressing(UIBackgroundTaskIdentifier)
+        case complete
+      }
+    }
+    enum TartgetActionProcess {
+      case idle
+      case sending(TargetAction)
+      case responding(TargetAction, Bool)
     }
     struct TargetAction {
       var action: Selector
@@ -241,150 +185,21 @@ extension Session {
       var event: UIEvent?
     }
   }
-}
-
-extension Session.Model {
-  static var empty: Session.Model { return
-    Session.Model(
-      backgroundURLSessionAction: .idle,
-      fetch: .idle,
-      remoteAction: .idle,
-      localAction: .idle,
-//      cloudKitShare: nil,
-      userActivityState: .idle,
-      stateRestoration: .idle,
-      userActivityContinuation: .idle,
-      watchKitExtensionRequest: .idle,
-      localNotification: nil,
-      remoteNotification: .idle,
-      notificationSettings: nil,
-      isObservingSignificantTimeChange: false,
-      isExperiencingMemoryWarning: false,
-      state: .none(.awaitingLaunch),
-      statusBarFrame: .none(.zero),
-      isProtectedDataAvailable: .none(false),
-      deviceToken: .none,
-      statusBarOrientation: .none(.unknown),
-      runningBackgroundTasksIdentifiers: [],
-      isExperiencingHealthAuthorizationRequest: false,
-      isIgnoringUserEvents: false,
-      isIdleTimerDisabled: false,
-      urlAction: .idle,
-      sendingEvent: nil,
-      sendingAction: nil,
-      isNetworkActivityIndicatorVisible: false,
-      iconBadgeNumber: 0,
-      supportsShakeToEdit: true,
-      pendingBackgroundTasks: [],
-      minimumBackgroundFetchInterval: .never,
-      typesRegisteredForRemoteNotifications: [],
-      presentedLocalNotification: nil,
-      scheduledLocalNotifications: [],
-      registeredUserNotificationSettings: nil,
-      isReceivingRemoteControlEvents: true,
-      newsStandIconImage: nil,
-      shortcutItems: [],
-      shouldSaveApplicationState: .allowing(true),
-      shouldRestoreApplicationState: .allowing(true),
-      shouldNotifyUserActivitiesWithTypes: [],
-      activitiesWithAvaliableData: [],
-      shouldLaunch: true,
-      URL: .idle,
-      extensionPointIdentifier: .idle,
-      interfaceOrientations: [],
-      viewControllerRestoration: .idle
-    )
-  }
-}
-
-extension Session.Model.State: Equatable {
-  static func ==(left: Session.Model.State, right: Session.Model.State) -> Bool {
-    switch (left, right) {
-    case (.awaitingLaunch, .awaitingLaunch): return
-      true
-    case (.launched(let a), .launched(let b)): return
-      a.map { NSDictionary(dictionary: $0) } ==
-      b.map { NSDictionary(dictionary: $0) }
-    case (.active, .active): return
-      true
-    case (.resigned, .resigned): return
-      true
-    case (.terminated, .terminated): return
-      true
-    default: return
-      false
-    }
-  }
-}
-
-extension Session.Model.BackgroundURLSessionAction: Equatable {
-  static func ==(
-    left: Session.Model.BackgroundURLSessionAction,
-    right: Session.Model.BackgroundURLSessionAction
-  ) -> Bool {
-    return left.identifier == right.identifier
-  }
-}
-
-extension Session.Model.URLLaunch: Equatable {
-  static func ==(left: Session.Model.URLLaunch, right: Session.Model.URLLaunch) -> Bool {
-    switch (left, right) {
-    case (.ios4(let a), .ios4(let b)): return
-      a.url == b.url &&
-      a.app == b.app &&
-      (a.annotation as? NSObject) == (b.annotation as? NSObject)
-    case (.ios9(let a), .ios9(let b)): return
-      a.url == b.url &&
-      NSDictionary(dictionary: a.options) == NSDictionary(dictionary: b.options)
-    default: return
-      false
-    }
-  }
-}
-
-extension AsyncAction: Equatable {
-  static func ==(left: AsyncAction, right: AsyncAction) -> Bool {
-    switch (left, right) {
-    case (.idle, .idle): return true
-    case (.progressing(let a), .progressing(let b)): return a == b
-    case (.complete(let a), .complete(let b)): return a == b
-    default: return false
-    }
-  }
-}
-
-extension Session.Model.RestorationQuery: Equatable {
-  static func ==(left: Session.Model.RestorationQuery, right: Session.Model.RestorationQuery) -> Bool { return
-    left.identifier == right.identifier &&
-    left.coder == right.coder
-  }
-}
-
-extension Session.Model.RestorationResponse: Equatable {
-  static func ==(left: Session.Model.RestorationResponse, right: Session.Model.RestorationResponse) -> Bool { return
-    left.identifier == right.identifier &&
-    left.view == right.view
-  }
-}
-
-class Session: NSObject, UIApplicationDelegate {
   
-  init(_ input: Model) {
+  init(_ input: Session.Model) {
     model = input
     output = BehaviorSubject<Model>(value: input)
   }
   
   static let shared = Session(.empty)
   fileprivate var disposable: Disposable?
-  fileprivate let output: BehaviorSubject<Model>
-  fileprivate var model: Model {
+  fileprivate let output: BehaviorSubject<Session.Model>
+  fileprivate var model: Session.Model {
     didSet {
       if model.isIgnoringUserEvents != oldValue.isIgnoringUserEvents {
-        if model.isIgnoringUserEvents {
-          UIApplication.shared.beginIgnoringInteractionEvents()
-        } else {
-          UIApplication.shared.endIgnoringInteractionEvents()
-        }
+        model.isIgnoringUserEvents
+          ? UIApplication.shared.beginIgnoringInteractionEvents()
+          : UIApplication.shared.endIgnoringInteractionEvents()
       }
       
       UIApplication.shared.isIdleTimerDisabled = model.isIdleTimerDisabled
@@ -411,56 +226,72 @@ class Session: NSObject, UIApplicationDelegate {
         output.on(.next(edit))
       }
       
-      if let new = model.sendingAction {
-        UIApplication.shared.sendAction(
+      if case .sending(let new) = model.sendingAction {
+        let didSend = UIApplication.shared.sendAction(
           new.action,
           to: new.target,
           from: new.sender,
           for: new.event
         )
+        var edit = model
+        edit.sendingAction = .responding(new, didSend)
+        output.on(.next(edit))
+        if case .responding(let action, _) = model.sendingAction, action == new {
+          var edit = model
+          edit.sendingAction = .idle
+          output.on(.next(edit))
+        }
       }
       
       UIApplication.shared.isNetworkActivityIndicatorVisible = model.isNetworkActivityIndicatorVisible
       UIApplication.shared.applicationIconBadgeNumber = model.iconBadgeNumber
       UIApplication.shared.applicationSupportsShakeToEdit = model.supportsShakeToEdit
       
-      Session.additions(
-        new: model.pendingBackgroundTasks,
-        old: oldValue.pendingBackgroundTasks
-      ).forEach {
-        // need to add these ID to output model's running tasks
-        let ID = UIApplication.shared.beginBackgroundTask(
-          withName: $0.name,
-          expirationHandler: $0.expiration
+      // Needs to returned at some point
+      var edit = model
+      edit.backgroundTasks = Session.additions(
+        new: model.backgroundTasks,
+        old: oldValue.backgroundTasks
+      )
+      .filter {
+        if case .progressing = $0.state {
+          return true
+        } else {
+          return false
+        }
+      }
+      .map { task in
+        var ID: UIBackgroundTaskIdentifier = 0
+        ID = UIApplication.shared.beginBackgroundTask( // SIDE EFFECT!
+          withName: task.name,
+          expirationHandler: {
+            UIApplication.shared.endBackgroundTask(ID)
+            var edit = self.model
+            edit.backgroundTasks = edit.backgroundTasks.filter { $0.name != task.name }
+            self.output.on(.next(edit))
+          }
         )
-        var edit = model
-        edit.runningBackgroundTasksIdentifiers += [ID]
-        output.on(.next(edit))
-        // don't have event currently. reconsider output schema.
+        var edit = task
+        edit.state = .progressing(ID)
+        return edit
       }
       
       Session.deletions(
-        new: model.runningBackgroundTasksIdentifiers,
-        old: oldValue.runningBackgroundTasksIdentifiers
-      ).forEach {
-        UIApplication.shared.endBackgroundTask($0)
+        new: model.backgroundTasks,
+        old: oldValue.backgroundTasks
+      )
+      .forEach {
+        if case .progressing(let id) = $0.state {
+          UIApplication.shared.endBackgroundTask(id)
+        }
       }
+      // Don't need .completed state anymore
       
-      switch model.minimumBackgroundFetchInterval {
-      case .minimum:
-        UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplicationBackgroundFetchIntervalMinimum)
-      case .never:
-        UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplicationBackgroundFetchIntervalNever)
-      case .some(let value):
-        UIApplication.shared.setMinimumBackgroundFetchInterval(value)
-      }
+      UIApplication.shared.setMinimumBackgroundFetchInterval(
+        model.minimumBackgroundFetchInterval.asUIApplicationBackgroundFetchInterval()
+      )
       
-      let deletionsTypesRegistered = Changeset(
-        source: oldValue.typesRegisteredForRemoteNotifications,
-        target: model.typesRegisteredForRemoteNotifications
-      ).edits
-      
-      if deletionsTypesRegistered.count != 0 {
+      if model.typesRegisteredForRemoteNotifications.count != 0 {
         UIApplication.shared.unregisterForRemoteNotifications()
         model.typesRegisteredForRemoteNotifications.forEach {
           UIApplication.shared.registerForRemoteNotifications(matching: $0)
@@ -1033,106 +864,6 @@ class Session: NSObject, UIApplicationDelegate {
 //  }
 }
 
-extension Session.Model.TargetAction: Equatable {
-  static func ==(
-    left: Session.Model.TargetAction,
-    right: Session.Model.TargetAction
-  ) -> Bool { return
-    left.action == right.action
-    && left.event === right.event
-    && (left.sender as? NSObject) === (right.sender as? NSObject)
-    && (left.target as? NSObject) === (right.target as? NSObject)
-  }
-}
-
-extension Session.Model.FetchInterval: Equatable {
-  static func ==(
-    left: Session.Model.FetchInterval,
-    right: Session.Model.FetchInterval
-  ) -> Bool {
-    switch (left, right) {
-    case (.minimum, .minimum): return
-      true
-    case (.never, .never): return
-      true
-    case (.some(let a), .some(let b)): return
-      a == b
-    default: return
-      false
-    }
-  }
-}
-
-extension Session.Model.ActionID: Equatable {
-  static func ==(
-    left: Session.Model.ActionID,
-    right: Session.Model.ActionID
-  ) -> Bool {
-    switch (left, right) {
-    case (.some(let a), .some(let b)): return
-      a == b
-    case (.defaultAction, .defaultAction): return
-      true
-    default: return
-      false
-    }
-  }
-}
-
-extension Session.Model.ActionRemote: Equatable {
-  static func ==(
-    left: Session.Model.ActionRemote,
-    right: Session.Model.ActionRemote
-  ) -> Bool {
-    switch (left, right) {
-    case (.ios9(let a), ios9(let b)): return
-      NSDictionary(dictionary: a.1) == NSDictionary(dictionary: b.1) &&
-      NSDictionary(dictionary: a.2) == NSDictionary(dictionary: b.2) &&
-      a.0 == b.0
-    case (.ios8(let a), .ios8(let b)): return
-      NSDictionary(dictionary: a.1) == NSDictionary(dictionary: b.1) &&
-      a.0 == b.0
-    default: return
-      false
-    }
-  }
-}
-
-extension Session.Model.ActionLocal: Equatable {
-  static func ==(
-    left: Session.Model.ActionLocal,
-    right: Session.Model.ActionLocal
-  ) -> Bool {
-    switch (left, right) {
-    case (.ios9(let a), ios9(let b)): return
-      a.0 == b.0 &&
-      a.1 == b.1 &&
-      NSDictionary(dictionary: a.2) == NSDictionary(dictionary: b.2)
-    case (.ios8(let a), .ios8(let b)): return
-      a.0 == b.0 &&
-      a.1 == b.1
-    default: return
-      false
-    }
-  }
-}
-
-extension Session.Model.Notification: Equatable {
-  static func ==(
-    left: Session.Model.Notification,
-    right: Session.Model.Notification
-  ) -> Bool {
-    switch (left, right) {
-    case (.local(let a), .local(let b)): return
-      a == b
-    case (.remote(let a), .remote(let b)): return
-      NSDictionary(dictionary: a) == NSDictionary(dictionary: b)
-    default: return
-      false
-    }
-  }
-}
-
 func +=<Key, Value> (left: inout [Key: Value], right: [Key: Value]) {
   left = left + right
 }
@@ -1141,15 +872,6 @@ func +<Key, Value> (left: [Key: Value], right: [Key: Value]) -> [Key: Value] {
   var x = right
   left.forEach{ x[$0] = $1 }
   return x
-}
-
-extension Session.Model.BackgroundTask: Equatable {
-  static func ==(
-    left: Session.Model.BackgroundTask,
-    right: Session.Model.BackgroundTask
-  ) -> Bool { return
-    left.name == right.name
-  }
 }
 
 extension Session {
@@ -1221,7 +943,7 @@ extension Session.Model: Equatable {
     left.isProtectedDataAvailable == right.isProtectedDataAvailable &&
     left.deviceToken == right.deviceToken &&
     left.statusBarOrientation == right.statusBarOrientation &&
-    left.runningBackgroundTasksIdentifiers == right.runningBackgroundTasksIdentifiers &&
+    left.backgroundTasks == right.backgroundTasks &&
     left.isExperiencingHealthAuthorizationRequest == right.isExperiencingHealthAuthorizationRequest &&
     left.isIgnoringUserEvents == right.isIgnoringUserEvents &&
     left.isIdleTimerDisabled == right.isIdleTimerDisabled &&
@@ -1231,7 +953,6 @@ extension Session.Model: Equatable {
     left.isNetworkActivityIndicatorVisible == right.isNetworkActivityIndicatorVisible &&
     left.iconBadgeNumber == right.iconBadgeNumber &&
     left.supportsShakeToEdit == right.supportsShakeToEdit &&
-    left.pendingBackgroundTasks == right.pendingBackgroundTasks &&
     left.minimumBackgroundFetchInterval == right.minimumBackgroundFetchInterval &&
     left.typesRegisteredForRemoteNotifications == right.typesRegisteredForRemoteNotifications &&
     left.presentedLocalNotification == right.presentedLocalNotification &&
@@ -1252,117 +973,9 @@ extension Session.Model: Equatable {
   }
 }
 
-extension Session.Model.FetchAction: Equatable {
-  static func == (
-    lhs: Session.Model.FetchAction,
-    rhs: Session.Model.FetchAction
-  ) -> Bool { return
-    lhs.hash == rhs.hash
-  }
-}
-
-extension Session.Model.RemoteNofiticationAction: Equatable {
-  static func == (
-    lhs: Session.Model.RemoteNofiticationAction,
-    rhs: Session.Model.RemoteNofiticationAction
-  ) -> Bool { return
-    NSDictionary(dictionary: lhs.notification) ==
-    NSDictionary(dictionary: rhs.notification)
-  }
-}
-
-extension Session.Model.UserActivityState: Equatable {
-  static func ==(
-    left: Session.Model.UserActivityState,
-    right: Session.Model.UserActivityState
-  ) -> Bool {
-    switch (left, right) {
-    case (.idle, .idle): return true
-    case (.willContinue(let a), .willContinue(let b)): return a == b
-    case (.isContinuing(let a), .isContinuing(let b)): return a == b
-    case (.didContinue(let a), .didContinue(let b)): return a == b
-    case (.didFail(let a), .didFail(let b)): return a.0 == b.0 // Need to compare errors
-    default: return false
-    }
-  }
-}
-
-extension Session.Model.StateRestoration: Equatable {
-  static func == (
-    left: Session.Model.StateRestoration,
-    right: Session.Model.StateRestoration
-  ) -> Bool {
-    switch (left, right) {
-    case (.idle, .idle): return true
-    case (.willEncode(let a), .willEncode(let b)): return a == b
-    case (.didDecode(let a), didDecode(let b)): return a == b
-    default: return false
-    }
-  }
-}
-
-extension Session.Model.WatchKitExtensionRequest: Equatable {
-  static func ==(
-    left: Session.Model.WatchKitExtensionRequest,
-    right: Session.Model.WatchKitExtensionRequest
-  ) -> Bool { return
-    left.userInfo.map { NSDictionary(dictionary: $0) } ==
-    right.userInfo.map { NSDictionary(dictionary: $0) }
-  }
-}
-
-extension Session.Model.WindowResponse: Equatable {
-  static func ==(left: Session.Model.WindowResponse, right: Session.Model.WindowResponse) -> Bool { return
-    left.window == right.window &&
-    left.orientation == left.orientation
-  }
-}
-
-extension Result: Equatable {
-  static func ==(left: Result, right: Result) -> Bool {
-    switch (left, right) {
-    case (.none, .none): return true
-    case (.some(let a), .some(let b)): return a == b
-    case (.error, .error): return true // Needs to compare errors
-    default: return false
-    }
-  }
-}
-
-extension Session.Model.ShortcutItem.Action: Equatable {
-  static func ==(
-    left: Session.Model.ShortcutItem.Action,
-    right: Session.Model.ShortcutItem.Action
-  ) -> Bool { return
-    left.id == right.id
-  }
-}
-
-extension Session.Model.ShortcutItem: Equatable {
-  static func ==(
-    left: Session.Model.ShortcutItem,
-    right: Session.Model.ShortcutItem
-  ) -> Bool { return
-    left.value == right.value &&
-    left.action == right.action
-  }
-}
-
 extension Edit {
   func possible(_ input: EditOperation) -> Edit? { return
     input == operation ? self : nil
-  }
-}
-
-extension EditOperation: Equatable {
-  public static func ==(left: EditOperation, right: EditOperation) -> Bool {
-    switch (left, right) {
-    case (.insertion, .insertion): return true
-    case (.deletion, .deletion): return true
-    case (.substitution, .substitution): return true
-    case (.move(let a), .move(let b)): return a == b
-    default: return false
-    }
   }
 }
 
@@ -1382,20 +995,467 @@ extension AsyncAction: CustomDebugStringConvertible {
   }
 }
 
-extension Session.Model.URLActionResponse: Equatable {
-  static func ==(left: Session.Model.URLActionResponse, right: Session.Model.URLActionResponse) -> Bool { return
-    left.url == right.url &&
-    left.success == right.success
-  }
-}
-
 func completionHandler(
-  type: EditOperation,
-  edit: Edit<Session.Model.ShortcutItem>
+    type: EditOperation,
+    edit: Edit<Session.Model.ShortcutItem>
   ) -> ((Bool) -> Void)? {
   if let d = edit.possible(type), case .progressing(let a) = d.value.action {
     return a.completion
   } else {
     return nil
+  }
+}
+
+enum Change<T: Equatable> {
+  case none(T)
+  case will(T)
+  case did(T)
+}
+
+extension Change: Equatable {
+  static func ==(left: Change, right: Change) -> Bool {
+    switch (left, right) {
+    case (.none(let a), .none(let b)): return a == b
+    case (.will(let a), .will(let b)): return a == b
+    case (.did(let a), .did(let b)): return a == b
+    default: return false
+    }
+  }
+}
+
+enum Result<T: Equatable> {
+  case none
+  case some(T)
+  case error(Error)
+}
+
+enum Filtered<T: Equatable, U: Equatable> {
+  case idle
+  case considering(T)
+  case allowing(U)
+  
+  func allowed() -> U? {
+    switch self {
+    case .allowing(let a): return a
+    default: return nil
+    }
+  }
+}
+
+extension AsyncAction {
+  func isProgressing() -> Bool {
+    switch self {
+    case .progressing: return true
+    default: return false
+    }
+  }
+}
+
+extension Filtered: Equatable {
+  static func ==(left: Filtered, right: Filtered) -> Bool {
+    switch (left, right) {
+    case (.idle, .idle): return
+      true
+    case (.considering(let a), .considering(let b)): return
+      a == b
+    case (.allowing(let a), .allowing(let b)): return
+      a == b
+    default: return
+      false
+    }
+  }
+}
+
+enum AsyncAction<Handler: Equatable> {
+  case idle
+  case progressing(Handler)
+  case complete(Handler)
+}
+
+extension Session.Model {
+  static var empty: Session.Model { return
+    Session.Model(
+      backgroundURLSessionAction: .idle,
+      fetch: .idle,
+      remoteAction: .idle,
+      localAction: .idle,
+      userActivityState: .idle,
+      stateRestoration: .idle,
+      userActivityContinuation: .idle,
+      watchKitExtensionRequest: .idle,
+      localNotification: nil,
+      remoteNotification: .idle,
+      notificationSettings: nil,
+      isObservingSignificantTimeChange: false,
+      isExperiencingMemoryWarning: false,
+      state: .none(.awaitingLaunch),
+      statusBarFrame: .none(.zero),
+      isProtectedDataAvailable: .none(false),
+      deviceToken: .none,
+      statusBarOrientation: .none(.unknown),
+      backgroundTasks: [],
+      isExperiencingHealthAuthorizationRequest: false,
+      isIgnoringUserEvents: false,
+      isIdleTimerDisabled: false,
+      urlAction: .idle,
+      sendingEvent: nil,
+      sendingAction: .idle,
+      isNetworkActivityIndicatorVisible: false,
+      iconBadgeNumber: 0,
+      supportsShakeToEdit: true,
+      minimumBackgroundFetchInterval: .never,
+      typesRegisteredForRemoteNotifications: [],
+      presentedLocalNotification: nil,
+      scheduledLocalNotifications: [],
+      registeredUserNotificationSettings: nil,
+      isReceivingRemoteControlEvents: false,
+      newsStandIconImage: nil,
+      shortcutItems: [],
+      shouldSaveApplicationState: .idle,
+      shouldRestoreApplicationState: .idle,
+      shouldNotifyUserActivitiesWithTypes: [],
+      activitiesWithAvaliableData: [],
+      shouldLaunch: false,
+      URL: .idle,
+      extensionPointIdentifier: .idle,
+      interfaceOrientations: [],
+      viewControllerRestoration: .idle
+    )
+  }
+}
+
+extension Session.Model.State: Equatable {
+  static func ==(left: Session.Model.State, right: Session.Model.State) -> Bool {
+    switch (left, right) {
+    case (.awaitingLaunch, .awaitingLaunch): return
+      true
+    case (.launched(let a), .launched(let b)): return
+      a.map { NSDictionary(dictionary: $0) } ==
+        b.map { NSDictionary(dictionary: $0) }
+    case (.active, .active): return
+      true
+    case (.resigned, .resigned): return
+      true
+    case (.terminated, .terminated): return
+      true
+    default: return
+      false
+    }
+  }
+}
+
+extension Session.Model.BackgroundURLSessionAction: Equatable {
+  static func ==(
+    left: Session.Model.BackgroundURLSessionAction,
+    right: Session.Model.BackgroundURLSessionAction
+    ) -> Bool {
+    return left.identifier == right.identifier
+  }
+}
+
+extension Session.Model.URLLaunch: Equatable {
+  static func ==(left: Session.Model.URLLaunch, right: Session.Model.URLLaunch) -> Bool {
+    switch (left, right) {
+    case (.ios4(let a), .ios4(let b)): return
+      a.url == b.url &&
+        a.app == b.app &&
+        (a.annotation as? NSObject) == (b.annotation as? NSObject)
+    case (.ios9(let a), .ios9(let b)): return
+      a.url == b.url &&
+        NSDictionary(dictionary: a.options) == NSDictionary(dictionary: b.options)
+    default: return
+      false
+    }
+  }
+}
+
+extension AsyncAction: Equatable {
+  static func ==(left: AsyncAction, right: AsyncAction) -> Bool {
+    switch (left, right) {
+    case (.idle, .idle): return true
+    case (.progressing(let a), .progressing(let b)): return a == b
+    case (.complete(let a), .complete(let b)): return a == b
+    default: return false
+    }
+  }
+}
+
+extension Session.Model.RestorationQuery: Equatable {
+  static func ==(left: Session.Model.RestorationQuery, right: Session.Model.RestorationQuery) -> Bool { return
+    left.identifier == right.identifier &&
+      left.coder == right.coder
+  }
+}
+
+extension Session.Model.RestorationResponse: Equatable {
+  static func ==(left: Session.Model.RestorationResponse, right: Session.Model.RestorationResponse) -> Bool { return
+    left.identifier == right.identifier &&
+      left.view == right.view
+  }
+}
+
+extension Session.Model.TargetAction: Equatable {
+  static func ==(
+    left: Session.Model.TargetAction,
+    right: Session.Model.TargetAction
+    ) -> Bool { return
+    left.action == right.action
+      && left.event === right.event
+      && (left.sender as? NSObject) === (right.sender as? NSObject)
+      && (left.target as? NSObject) === (right.target as? NSObject)
+  }
+}
+
+extension Session.Model.FetchInterval: Equatable {
+  static func ==(
+    left: Session.Model.FetchInterval,
+    right: Session.Model.FetchInterval
+    ) -> Bool {
+    switch (left, right) {
+    case (.minimum, .minimum): return
+      true
+    case (.never, .never): return
+      true
+    case (.some(let a), .some(let b)): return
+      a == b
+    default: return
+      false
+    }
+  }
+}
+
+extension Session.Model.ActionID: Equatable {
+  static func ==(
+    left: Session.Model.ActionID,
+    right: Session.Model.ActionID
+    ) -> Bool {
+    switch (left, right) {
+    case (.some(let a), .some(let b)): return
+      a == b
+    case (.defaultAction, .defaultAction): return
+      true
+    default: return
+      false
+    }
+  }
+}
+
+extension Session.Model.ActionRemote: Equatable {
+  static func ==(
+    left: Session.Model.ActionRemote,
+    right: Session.Model.ActionRemote
+    ) -> Bool {
+    switch (left, right) {
+    case (.ios9(let a), ios9(let b)): return
+      NSDictionary(dictionary: a.1) == NSDictionary(dictionary: b.1) &&
+        NSDictionary(dictionary: a.2) == NSDictionary(dictionary: b.2) &&
+        a.0 == b.0
+    case (.ios8(let a), .ios8(let b)): return
+      NSDictionary(dictionary: a.1) == NSDictionary(dictionary: b.1) &&
+        a.0 == b.0
+    default: return
+      false
+    }
+  }
+}
+
+extension Session.Model.ActionLocal: Equatable {
+  static func ==(
+    left: Session.Model.ActionLocal,
+    right: Session.Model.ActionLocal
+    ) -> Bool {
+    switch (left, right) {
+    case (.ios9(let a), ios9(let b)): return
+      a.0 == b.0 &&
+        a.1 == b.1 &&
+        NSDictionary(dictionary: a.2) == NSDictionary(dictionary: b.2)
+    case (.ios8(let a), .ios8(let b)): return
+      a.0 == b.0 &&
+        a.1 == b.1
+    default: return
+      false
+    }
+  }
+}
+
+extension Session.Model.Notification: Equatable {
+  static func ==(
+    left: Session.Model.Notification,
+    right: Session.Model.Notification
+    ) -> Bool {
+    switch (left, right) {
+    case (.local(let a), .local(let b)): return
+      a == b
+    case (.remote(let a), .remote(let b)): return
+      NSDictionary(dictionary: a) == NSDictionary(dictionary: b)
+    default: return
+      false
+    }
+  }
+}
+
+extension Session.Model.FetchAction: Equatable {
+  static func == (
+    lhs: Session.Model.FetchAction,
+    rhs: Session.Model.FetchAction
+    ) -> Bool { return
+    lhs.hash == rhs.hash
+  }
+}
+
+extension Session.Model.RemoteNofiticationAction: Equatable {
+  static func == (
+    lhs: Session.Model.RemoteNofiticationAction,
+    rhs: Session.Model.RemoteNofiticationAction
+    ) -> Bool { return
+    NSDictionary(dictionary: lhs.notification) ==
+      NSDictionary(dictionary: rhs.notification)
+  }
+}
+
+extension Session.Model.UserActivityState: Equatable {
+  static func ==(
+    left: Session.Model.UserActivityState,
+    right: Session.Model.UserActivityState
+    ) -> Bool {
+    switch (left, right) {
+    case (.idle, .idle): return true
+    case (.willContinue(let a), .willContinue(let b)): return a == b
+    case (.isContinuing(let a), .isContinuing(let b)): return a == b
+    case (.didContinue(let a), .didContinue(let b)): return a == b
+    case (.didFail(let a), .didFail(let b)): return a.0 == b.0 // Need to compare errors
+    default: return false
+    }
+  }
+}
+
+extension Session.Model.StateRestoration: Equatable {
+  static func == (
+    left: Session.Model.StateRestoration,
+    right: Session.Model.StateRestoration
+    ) -> Bool {
+    switch (left, right) {
+    case (.idle, .idle): return true
+    case (.willEncode(let a), .willEncode(let b)): return a == b
+    case (.didDecode(let a), didDecode(let b)): return a == b
+    default: return false
+    }
+  }
+}
+
+extension Session.Model.WatchKitExtensionRequest: Equatable {
+  static func ==(
+    left: Session.Model.WatchKitExtensionRequest,
+    right: Session.Model.WatchKitExtensionRequest
+    ) -> Bool { return
+    left.userInfo.map { NSDictionary(dictionary: $0) } ==
+      right.userInfo.map { NSDictionary(dictionary: $0) }
+  }
+}
+
+extension Session.Model.WindowResponse: Equatable {
+  static func ==(left: Session.Model.WindowResponse, right: Session.Model.WindowResponse) -> Bool { return
+    left.window == right.window &&
+      left.orientation == left.orientation
+  }
+}
+
+extension Result: Equatable {
+  static func ==(left: Result, right: Result) -> Bool {
+    switch (left, right) {
+    case (.none, .none): return true
+    case (.some(let a), .some(let b)): return a == b
+    case (.error, .error): return true // Needs to compare errors
+    default: return false
+    }
+  }
+}
+
+extension Session.Model.ShortcutItem.Action: Equatable {
+  static func ==(
+    left: Session.Model.ShortcutItem.Action,
+    right: Session.Model.ShortcutItem.Action
+    ) -> Bool { return
+    left.id == right.id
+  }
+}
+
+extension Session.Model.ShortcutItem: Equatable {
+  static func ==(
+    left: Session.Model.ShortcutItem,
+    right: Session.Model.ShortcutItem
+    ) -> Bool { return
+    left.value == right.value &&
+      left.action == right.action
+  }
+}
+
+extension EditOperation: Equatable {
+  public static func ==(left: EditOperation, right: EditOperation) -> Bool {
+    switch (left, right) {
+    case (.insertion, .insertion): return true
+    case (.deletion, .deletion): return true
+    case (.substitution, .substitution): return true
+    case (.move(let a), .move(let b)): return a == b
+    default: return false
+    }
+  }
+}
+
+extension Session.Model.URLActionResponse: Equatable {
+  static func ==(left: Session.Model.URLActionResponse, right: Session.Model.URLActionResponse) -> Bool { return
+    left.url == right.url &&
+      left.success == right.success
+  }
+}
+
+extension Session.Model.TartgetActionProcess: Equatable {
+  static func ==(
+    left: Session.Model.TartgetActionProcess,
+    right: Session.Model.TartgetActionProcess
+    ) -> Bool {
+    switch (left, right) {
+    case (.idle, .idle): return true
+    case (.sending(let a), .sending(let b)): return a == b
+    case (.responding(let a, let b), .responding(let c, let d)): return a == c && b == d
+    default: return false
+    }
+  }
+}
+
+extension Session.Model.BackgroundTask: Equatable {
+  static func ==(
+    left: Session.Model.BackgroundTask,
+    right: Session.Model.BackgroundTask
+    ) -> Bool { return
+    left.name == right.name &&
+      left.state == right.state
+  }
+}
+
+extension Session.Model.BackgroundTask.State: Equatable {
+  static func ==(
+    left: Session.Model.BackgroundTask.State,
+    right: Session.Model.BackgroundTask.State
+    ) -> Bool {
+    switch (left, right) {
+    case (.pending, .pending): return true
+    case (.progressing(let a), .progressing(let b)): return a == b
+    case (.complete, .complete): return true
+    default: return false
+    }
+  }
+}
+
+extension Session.Model.FetchInterval {
+  func asUIApplicationBackgroundFetchInterval() -> TimeInterval {
+    switch self {
+    case .minimum:
+      return UIApplicationBackgroundFetchIntervalMinimum
+    case .never:
+      return UIApplicationBackgroundFetchIntervalNever
+    case .some(let value):
+      return value
+    }
   }
 }

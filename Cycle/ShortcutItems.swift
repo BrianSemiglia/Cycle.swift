@@ -55,9 +55,8 @@ extension ShortcutItemsExample.Model {
 extension ObservableType where E == (Session.Model, ShortcutItemsExample.Model) {
   func reduced() -> Observable<ShortcutItemsExample.Model> { return
     map { event, global in
-      var g = global
-      var e = event
       
+      var e = event
       if case .will(let a) = e.state, case .resigned = a {
         e.shortcutItems = Array(0...arc4random_uniform(3)).map {
           Session.Model.ShortcutItem(
@@ -82,9 +81,11 @@ extension ObservableType where E == (Session.Model, ShortcutItemsExample.Model) 
           return nil
         }
       }
-      g.async = a
-      g.session = e
-      return g
+      
+      var output = global
+      output.async = a
+      output.session = e
+      return output
     }
   }
 }
@@ -92,7 +93,7 @@ extension ObservableType where E == (Session.Model, ShortcutItemsExample.Model) 
 extension ObservableType where E == (Timer.Model, ShortcutItemsExample.Model) {
   func reduced() -> Observable<ShortcutItemsExample.Model> { return
     map { event, global in
-      var g = global
+
       var s = global.session
       s.shortcutItems = s.shortcutItems.map { item in
         if let _ = event.operations.filter({ $0.id == item.value.type && $0.running == false }).first {
@@ -107,9 +108,11 @@ extension ObservableType where E == (Timer.Model, ShortcutItemsExample.Model) {
           return item
         }
       }
-      g.session = s
-      g.async = event
-      return g
+      
+      var output = global
+      output.session = s
+      output.async = event
+      return output
     }
   }
 }
