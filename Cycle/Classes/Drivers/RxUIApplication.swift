@@ -52,8 +52,6 @@ class Session: NSObject, UIApplicationDelegate {
     var shortcutItems: [ShortcutItem]
     var shouldSaveApplicationState: Filtered<NSCoder, Bool>
     var shouldRestoreApplicationState: Filtered<NSCoder, Bool>
-    var shouldNotifyUserActivitiesWithTypes: [String]
-    var activitiesWithAvaliableData: [NSUserActivity]
     var shouldLaunch: Bool
     var URL: Filtered<Session.Model.URLLaunch, URL>
     var extensionPointIdentifier: Filtered<UIApplicationExtensionPointIdentifier, UIApplicationExtensionPointIdentifier>
@@ -127,6 +125,8 @@ class Session: NSObject, UIApplicationDelegate {
       case idle
       case willContinue(String)
       case isContinuing(NSUserActivity)
+      case hasAvailableData(NSUserActivity)
+      case shouldNotifyUserActivitiesWithType(String)
       case didContinue(NSUserActivity)
       case didFail(String, Error)
     }
@@ -850,7 +850,11 @@ class Session: NSObject, UIApplicationDelegate {
     var edit = model
     edit.userActivityState = .willContinue(type)
     output.on(.next(edit))
-    return model.shouldNotifyUserActivitiesWithTypes.contains(type) == true
+    if case .shouldNotifyUserActivitiesWithType(let allowed) = model.userActivityState {
+      return type == allowed
+    } else {
+      return false
+    }
   }
 
   func application(
@@ -861,7 +865,11 @@ class Session: NSObject, UIApplicationDelegate {
     var edit = model
     edit.userActivityState = .isContinuing(userActivity)
     output.on(.next(edit))
-    return model.activitiesWithAvaliableData.contains(userActivity) == true
+    if case .hasAvailableData(let confirmed) = model.userActivityState {
+      return userActivity == confirmed
+    } else {
+      return true
+    }
   }
 
   func application(
@@ -992,8 +1000,6 @@ extension Session.Model: Equatable {
     left.shortcutItems == right.shortcutItems &&
     left.shouldSaveApplicationState == right.shouldSaveApplicationState &&
     left.shouldRestoreApplicationState == right.shouldRestoreApplicationState &&
-    left.shouldNotifyUserActivitiesWithTypes == right.shouldNotifyUserActivitiesWithTypes &&
-    left.activitiesWithAvaliableData == right.activitiesWithAvaliableData &&
     left.shouldLaunch == right.shouldLaunch &&
     left.URL == right.URL &&
     left.extensionPointIdentifier == right.extensionPointIdentifier &&
@@ -1154,8 +1160,6 @@ extension Session.Model {
       shortcutItems: [],
       shouldSaveApplicationState: .idle,
       shouldRestoreApplicationState: .idle,
-      shouldNotifyUserActivitiesWithTypes: [],
-      activitiesWithAvaliableData: [],
       shouldLaunch: false,
       URL: .idle,
       extensionPointIdentifier: .idle,
@@ -1375,12 +1379,22 @@ extension Session.Model.UserActivityState: Equatable {
     right: Session.Model.UserActivityState
   ) -> Bool {
     switch (left, right) {
-    case (.idle, .idle): return true
-    case (.willContinue(let a), .willContinue(let b)): return a == b
-    case (.isContinuing(let a), .isContinuing(let b)): return a == b
-    case (.didContinue(let a), .didContinue(let b)): return a == b
-    case (.didFail(let a), .didFail(let b)): return a.0 == b.0 // Need to compare errors
-    default: return false
+    case (.idle, .idle): return
+      true
+    case (.willContinue(let a), .willContinue(let b)): return
+      a == b
+    case (.isContinuing(let a), .isContinuing(let b)): return
+      a == b
+    case (.hasAvailableData(let a), .hasAvailableData(let b)): return
+      a == b
+    case (.shouldNotifyUserActivitiesWithType(let a), .shouldNotifyUserActivitiesWithType(let b)): return
+      a == b
+    case (.didContinue(let a), .didContinue(let b)): return
+      a == b
+    case (.didFail(let a), .didFail(let b)): return
+      a.0 == b.0 // Need to compare errors too
+    default: return
+      false
     }
   }
 }
