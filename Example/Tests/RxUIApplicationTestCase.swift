@@ -146,6 +146,15 @@ class SessionTestCase: XCTestCase {
       [.none(false), .will(false)]
     )
     
+    print(SessionTestCase
+      .statesFrom {
+        $0.application(
+          UIApplication.shared,
+          didRegister: UIUserNotificationSettingsStub(id: "x")
+        )
+      }
+      .map { $0.registeredUserNotificationSettings })
+    
     XCTAssert(
       SessionTestCase
       .statesFrom {
@@ -157,8 +166,8 @@ class SessionTestCase: XCTestCase {
       .map { $0.registeredUserNotificationSettings }
       ==
       [
-        Optional.none,
-        Optional.some(UIUserNotificationSettingsStub(id: "x") as UIUserNotificationSettings)
+        .none,
+        .some(UIUserNotificationSettingsStub(id: "x") as UIUserNotificationSettings)
       ]
     )
     
@@ -172,7 +181,7 @@ class SessionTestCase: XCTestCase {
       }
       .map { $0.remoteNotificationRegistration }
       ==
-      [.none, .error(ErrorStub(id: "x") as Error)]
+      [.idle, .error(ErrorStub(id: "x") as Error)]
     )
     
     XCTAssert(
@@ -185,7 +194,7 @@ class SessionTestCase: XCTestCase {
       }
       .map { $0.remoteNotificationRegistration }
       ==
-      [.none, .token(Data())]
+      [.idle, .token(Data())]
     )
     
     XCTAssert(
@@ -224,8 +233,8 @@ class SessionTestCase: XCTestCase {
       }
       .map { $0.shouldSaveApplicationState }
       ==
-      [.allowing(true), .considering(CoderStub(id: "x") as NSCoder)]
-    )
+      [.idle, .considering(CoderStub(id: "x") as NSCoder)]
+    ) // might want to refactor to bool or change default to .allow(true)
     
     XCTAssert(
       SessionTestCase
@@ -237,8 +246,8 @@ class SessionTestCase: XCTestCase {
       }
       .map { $0.shouldRestoreApplicationState }
       ==
-      [.allowing(true), .considering(CoderStub(id: "x") as NSCoder)]
-    )
+      [.idle, .considering(CoderStub(id: "x") as NSCoder)]
+    ) // might want to refactor to bool or change default to .allow(true)
     
     XCTAssert(
       SessionTestCase
@@ -502,12 +511,7 @@ class SessionTestCase: XCTestCase {
       ==
       [
         .idle,
-        .progressing(
-          Session.Model.BackgroundURLSessionAction(
-            identifier: "x",
-            completion: {}
-          )
-        )
+        .progressing("x", {})
       ]
     )
     
@@ -977,7 +981,7 @@ class SessionTestCase: XCTestCase {
         new.shouldLaunch = true
         switch model.userActivityState {
         case .willContinue(let type):
-          new.shouldNotifyUserActivitiesWithTypes += [type]
+          new.userActivityState = .shouldNotifyUserActivitiesWithType(type)
         default:
           break
         }
@@ -1019,7 +1023,7 @@ class SessionTestCase: XCTestCase {
         new.shouldLaunch = true
         switch model.userActivityState {
           case .isContinuing(let activity):
-          new.activitiesWithAvaliableData += [activity]
+          new.userActivityState = .hasAvailableData(activity)
         default:
           break
         }
