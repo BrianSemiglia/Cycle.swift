@@ -367,6 +367,12 @@ class Session: NSObject, UIApplicationDelegate {
       .flatMap { completionHandler(type: .substitution, edit: $0) }
       .forEach { $0(true) }
 
+      if case .complete(let handler) = model.backgroundURLSessionAction {
+        handler.completion()
+        var edit = model
+        edit.backgroundURLSessionAction = .idle
+        output.on(.next(edit))
+      }
     }
   }
   
