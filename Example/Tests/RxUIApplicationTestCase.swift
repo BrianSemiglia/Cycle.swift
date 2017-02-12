@@ -1057,14 +1057,11 @@ class SessionTestCase: XCTestCase {
   }
   
   func testRenderingCallbacks() {
-    
+    /* .complete is a read-only selection and is normally set internally.
+     Session should follow .complete callbacks with state of .idle */
     let x = Session.Model.empty
-    var y = x
-    y.backgroundURLSessionAction = .progressing("id", {})
-    var z = y
-    z.backgroundURLSessionAction = .complete
-    
-    let foo = SessionTestCase.statesFromStream(stream: Observable.of(x, y, z))
+    var y = x; y.backgroundURLSessionAction = .progressing("id", {})
+    var z = y; z.backgroundURLSessionAction = .complete
     
     XCTAssert(
       SessionTestCase.statesFromStream(stream: Observable.of(x, y, z))
@@ -1072,6 +1069,7 @@ class SessionTestCase: XCTestCase {
       ==
       [
         .idle,
+        .progressing("id", {}),
         .idle
       ]
     )
