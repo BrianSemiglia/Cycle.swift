@@ -157,7 +157,7 @@ class SessionTestCase: XCTestCase {
           didFailToRegisterForRemoteNotificationsWithError: ErrorStub(id: "x")
         )
       }
-      .map { $0.deviceToken }
+      .map { $0.remoteNotificationRegistration }
       ==
       [.none, .error(ErrorStub(id: "x") as Error)]
     )
@@ -170,9 +170,9 @@ class SessionTestCase: XCTestCase {
           didRegisterForRemoteNotificationsWithDeviceToken: Data()
         )
       }
-      .map { $0.deviceToken }
+      .map { $0.remoteNotificationRegistration }
       ==
-      [.none, .some(Data())]
+      [.none, .token(Data())]
     )
     
     XCTAssert(

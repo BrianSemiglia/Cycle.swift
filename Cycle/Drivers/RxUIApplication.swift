@@ -31,7 +31,7 @@ class Session: NSObject, UIApplicationDelegate {
     var state: Change<State>
     var statusBarFrame: Change<CGRect>
     var isProtectedDataAvailable: Change<Bool>
-    var deviceToken: Result<Data>
+    var remoteNotificationRegistration: RemoteNotificationRegistration
     var statusBarOrientation: Change<UIInterfaceOrientation>
     var backgroundTasks: Set<BackgroundTask>
     var isExperiencingHealthAuthorizationRequest: Bool
@@ -44,7 +44,6 @@ class Session: NSObject, UIApplicationDelegate {
     var iconBadgeNumber: Int
     var supportsShakeToEdit: Bool
     var minimumBackgroundFetchInterval: FetchInterval
-    var typesRegisteredForRemoteNotifications: [UIRemoteNotificationType]
     var presentedLocalNotification: UILocalNotification?
     var scheduledLocalNotifications: [UILocalNotification]
     var registeredUserNotificationSettings: UIUserNotificationSettings?
@@ -309,11 +308,13 @@ class Session: NSObject, UIApplicationDelegate {
         model.minimumBackgroundFetchInterval.asUIApplicationBackgroundFetchInterval()
       )
       
-      if model.typesRegisteredForRemoteNotifications.count != 0 {
+      switch model.remoteNotificationRegistration {
+      case .attempting:
+        UIApplication.shared.registerForRemoteNotifications()
+      case .unregistering:
         UIApplication.shared.unregisterForRemoteNotifications()
-        model.typesRegisteredForRemoteNotifications.forEach {
-          UIApplication.shared.registerForRemoteNotifications(matching: $0)
-        }
+      default:
+        break
       }
       
       if
@@ -527,7 +528,7 @@ class Session: NSObject, UIApplicationDelegate {
     didRegisterForRemoteNotificationsWithDeviceToken token: Data
   ) {
     var edit = model
-    edit.deviceToken = .some(token)
+    edit.remoteNotificationRegistration = .token(token)
     output.on(.next(edit))
   }
 
@@ -536,7 +537,7 @@ class Session: NSObject, UIApplicationDelegate {
     didFailToRegisterForRemoteNotificationsWithError error: Error
   ) {
     var edit = model
-    edit.deviceToken = .error(error)
+    edit.remoteNotificationRegistration = .error(error)
     output.on(.next(edit))
   }
 
@@ -959,7 +960,7 @@ extension Session.Model: Equatable {
     left.state == right.state &&
     left.statusBarFrame == right.statusBarFrame &&
     left.isProtectedDataAvailable == right.isProtectedDataAvailable &&
-    left.deviceToken == right.deviceToken &&
+    left.remoteNotificationRegistration == right.remoteNotificationRegistration &&
     left.statusBarOrientation == right.statusBarOrientation &&
     left.backgroundTasks == right.backgroundTasks &&
     left.isExperiencingHealthAuthorizationRequest == right.isExperiencingHealthAuthorizationRequest &&
@@ -972,7 +973,6 @@ extension Session.Model: Equatable {
     left.iconBadgeNumber == right.iconBadgeNumber &&
     left.supportsShakeToEdit == right.supportsShakeToEdit &&
     left.minimumBackgroundFetchInterval == right.minimumBackgroundFetchInterval &&
-    left.typesRegisteredForRemoteNotifications == right.typesRegisteredForRemoteNotifications &&
     left.presentedLocalNotification == right.presentedLocalNotification &&
     left.scheduledLocalNotifications == right.scheduledLocalNotifications &&
     left.registeredUserNotificationSettings == right.registeredUserNotificationSettings &&
@@ -1006,9 +1006,12 @@ extension Session.Model.ShortcutItem: CustomDebugStringConvertible {
 extension AsyncAction: CustomDebugStringConvertible {
   var debugDescription: String {
     switch self {
-    case .complete: return ".complete"
-    case .idle: return ".idle"
-    case .progressing: return ".progressing"
+    case .complete: return
+      ".complete"
+    case .idle: return
+      ".idle"
+    case .progressing: return
+      ".progressing"
     }
   }
 }
@@ -1017,10 +1020,10 @@ func completionHandler(
     type: EditOperation,
     edit: Edit<Session.Model.ShortcutItem>
   ) -> ((Bool) -> Void)? {
-  if let d = edit.possible(type), case .progressing(let a) = d.value.action {
-    return a.completion
-  } else {
-    return nil
+  if let d = edit.possible(type), case .progressing(let a) = d.value.action { return
+    a.completion
+  } else { return
+    nil
   }
 }
 
@@ -1033,18 +1036,24 @@ enum Change<T: Equatable> {
 extension Change: Equatable {
   static func ==(left: Change, right: Change) -> Bool {
     switch (left, right) {
-    case (.none(let a), .none(let b)): return a == b
-    case (.will(let a), .will(let b)): return a == b
-    case (.did(let a), .did(let b)): return a == b
-    default: return false
+    case (.none(let a), .none(let b)): return
+      a == b
+    case (.will(let a), .will(let b)): return
+      a == b
+    case (.did(let a), .did(let b)): return
+      a == b
+    default: return
+      false
     }
   }
 }
 
-enum Result<T: Equatable> {
-  case none
-  case some(T)
+enum RemoteNotificationRegistration {
+  case idle
+  case attempting
+  case token(Data)
   case error(Error)
+  case unregistering
 }
 
 enum Filtered<T: Equatable, U: Equatable> {
@@ -1054,8 +1063,10 @@ enum Filtered<T: Equatable, U: Equatable> {
   
   func allowed() -> U? {
     switch self {
-    case .allowing(let a): return a
-    default: return nil
+    case .allowing(let a): return
+      a
+    default: return
+      nil
     }
   }
 }
@@ -1063,8 +1074,10 @@ enum Filtered<T: Equatable, U: Equatable> {
 extension AsyncAction {
   func isProgressing() -> Bool {
     switch self {
-    case .progressing: return true
-    default: return false
+    case .progressing: return
+      true
+    default: return
+      false
     }
   }
 }
@@ -1109,7 +1122,7 @@ extension Session.Model {
       state: .none(.awaitingLaunch),
       statusBarFrame: .none(.zero),
       isProtectedDataAvailable: .none(false),
-      deviceToken: .none,
+      remoteNotificationRegistration: .idle,
       statusBarOrientation: .none(.unknown),
       backgroundTasks: [],
       isExperiencingHealthAuthorizationRequest: false,
@@ -1122,7 +1135,6 @@ extension Session.Model {
       iconBadgeNumber: 0,
       supportsShakeToEdit: true,
       minimumBackgroundFetchInterval: .never,
-      typesRegisteredForRemoteNotifications: [],
       presentedLocalNotification: nil,
       scheduledLocalNotifications: [],
       registeredUserNotificationSettings: nil,
@@ -1166,8 +1178,8 @@ extension Session.Model.BackgroundURLSessionAction: Equatable {
   static func ==(
     left: Session.Model.BackgroundURLSessionAction,
     right: Session.Model.BackgroundURLSessionAction
-    ) -> Bool {
-    return left.identifier == right.identifier
+  ) -> Bool { return
+    left.identifier == right.identifier
   }
 }
 
@@ -1176,11 +1188,11 @@ extension Session.Model.URLLaunch: Equatable {
     switch (left, right) {
     case (.ios4(let a), .ios4(let b)): return
       a.url == b.url &&
-        a.app == b.app &&
-        (a.annotation as? NSObject) == (b.annotation as? NSObject)
+      a.app == b.app &&
+      (a.annotation as? NSObject) == (b.annotation as? NSObject)
     case (.ios9(let a), .ios9(let b)): return
       a.url == b.url &&
-        NSDictionary(dictionary: a.options) == NSDictionary(dictionary: b.options)
+      NSDictionary(dictionary: a.options) == NSDictionary(dictionary: b.options)
     default: return
       false
     }
@@ -1199,16 +1211,22 @@ extension AsyncAction: Equatable {
 }
 
 extension Session.Model.RestorationQuery: Equatable {
-  static func ==(left: Session.Model.RestorationQuery, right: Session.Model.RestorationQuery) -> Bool { return
+  static func ==(
+    left: Session.Model.RestorationQuery,
+    right: Session.Model.RestorationQuery
+  ) -> Bool { return
     left.identifier == right.identifier &&
-      left.coder == right.coder
+    left.coder == right.coder
   }
 }
 
 extension Session.Model.RestorationResponse: Equatable {
-  static func ==(left: Session.Model.RestorationResponse, right: Session.Model.RestorationResponse) -> Bool { return
+  static func ==(
+    left: Session.Model.RestorationResponse,
+    right: Session.Model.RestorationResponse
+  ) -> Bool { return
     left.identifier == right.identifier &&
-      left.view == right.view
+    left.view == right.view
   }
 }
 
@@ -1216,11 +1234,11 @@ extension Session.Model.TargetAction: Equatable {
   static func ==(
     left: Session.Model.TargetAction,
     right: Session.Model.TargetAction
-    ) -> Bool { return
+  ) -> Bool { return
     left.action == right.action
-      && left.event === right.event
-      && (left.sender as? NSObject) === (right.sender as? NSObject)
-      && (left.target as? NSObject) === (right.target as? NSObject)
+    && left.event === right.event
+    && (left.sender as? NSObject) === (right.sender as? NSObject)
+    && (left.target as? NSObject) === (right.target as? NSObject)
   }
 }
 
@@ -1228,7 +1246,7 @@ extension Session.Model.FetchInterval: Equatable {
   static func ==(
     left: Session.Model.FetchInterval,
     right: Session.Model.FetchInterval
-    ) -> Bool {
+  ) -> Bool {
     switch (left, right) {
     case (.minimum, .minimum): return
       true
@@ -1246,7 +1264,7 @@ extension Session.Model.ActionID: Equatable {
   static func ==(
     left: Session.Model.ActionID,
     right: Session.Model.ActionID
-    ) -> Bool {
+  ) -> Bool {
     switch (left, right) {
     case (.some(let a), .some(let b)): return
       a == b
@@ -1262,15 +1280,15 @@ extension Session.Model.ActionRemote: Equatable {
   static func ==(
     left: Session.Model.ActionRemote,
     right: Session.Model.ActionRemote
-    ) -> Bool {
+  ) -> Bool {
     switch (left, right) {
     case (.ios9(let a), ios9(let b)): return
       NSDictionary(dictionary: a.1) == NSDictionary(dictionary: b.1) &&
-        NSDictionary(dictionary: a.2) == NSDictionary(dictionary: b.2) &&
-        a.0 == b.0
+      NSDictionary(dictionary: a.2) == NSDictionary(dictionary: b.2) &&
+      a.0 == b.0
     case (.ios8(let a), .ios8(let b)): return
       NSDictionary(dictionary: a.1) == NSDictionary(dictionary: b.1) &&
-        a.0 == b.0
+      a.0 == b.0
     default: return
       false
     }
@@ -1281,15 +1299,15 @@ extension Session.Model.ActionLocal: Equatable {
   static func ==(
     left: Session.Model.ActionLocal,
     right: Session.Model.ActionLocal
-    ) -> Bool {
+  ) -> Bool {
     switch (left, right) {
     case (.ios9(let a), ios9(let b)): return
       a.0 == b.0 &&
-        a.1 == b.1 &&
-        NSDictionary(dictionary: a.2) == NSDictionary(dictionary: b.2)
+      a.1 == b.1 &&
+      NSDictionary(dictionary: a.2) == NSDictionary(dictionary: b.2)
     case (.ios8(let a), .ios8(let b)): return
       a.0 == b.0 &&
-        a.1 == b.1
+      a.1 == b.1
     default: return
       false
     }
@@ -1300,7 +1318,7 @@ extension Session.Model.Notification: Equatable {
   static func ==(
     left: Session.Model.Notification,
     right: Session.Model.Notification
-    ) -> Bool {
+  ) -> Bool {
     switch (left, right) {
     case (.local(let a), .local(let b)): return
       a == b
@@ -1316,7 +1334,7 @@ extension Session.Model.FetchAction: Equatable {
   static func == (
     lhs: Session.Model.FetchAction,
     rhs: Session.Model.FetchAction
-    ) -> Bool { return
+  ) -> Bool { return
     lhs.hash == rhs.hash
   }
 }
@@ -1325,9 +1343,9 @@ extension Session.Model.RemoteNofiticationAction: Equatable {
   static func == (
     lhs: Session.Model.RemoteNofiticationAction,
     rhs: Session.Model.RemoteNofiticationAction
-    ) -> Bool { return
+  ) -> Bool { return
     NSDictionary(dictionary: lhs.notification) ==
-      NSDictionary(dictionary: rhs.notification)
+    NSDictionary(dictionary: rhs.notification)
   }
 }
 
@@ -1335,7 +1353,7 @@ extension Session.Model.UserActivityState: Equatable {
   static func ==(
     left: Session.Model.UserActivityState,
     right: Session.Model.UserActivityState
-    ) -> Bool {
+  ) -> Bool {
     switch (left, right) {
     case (.idle, .idle): return true
     case (.willContinue(let a), .willContinue(let b)): return a == b
@@ -1351,7 +1369,7 @@ extension Session.Model.StateRestoration: Equatable {
   static func == (
     left: Session.Model.StateRestoration,
     right: Session.Model.StateRestoration
-    ) -> Bool {
+  ) -> Bool {
     switch (left, right) {
     case (.idle, .idle): return true
     case (.willEncode(let a), .willEncode(let b)): return a == b
@@ -1365,24 +1383,30 @@ extension Session.Model.WatchKitExtensionRequest: Equatable {
   static func ==(
     left: Session.Model.WatchKitExtensionRequest,
     right: Session.Model.WatchKitExtensionRequest
-    ) -> Bool { return
+  ) -> Bool { return
     left.userInfo.map { NSDictionary(dictionary: $0) } ==
-      right.userInfo.map { NSDictionary(dictionary: $0) }
+    right.userInfo.map { NSDictionary(dictionary: $0) }
   }
 }
 
 extension Session.Model.WindowResponse: Equatable {
-  static func ==(left: Session.Model.WindowResponse, right: Session.Model.WindowResponse) -> Bool { return
+  static func ==(
+    left: Session.Model.WindowResponse,
+    right: Session.Model.WindowResponse
+  ) -> Bool { return
     left.window == right.window &&
-      left.orientation == left.orientation
+    left.orientation == left.orientation
   }
 }
 
-extension Result: Equatable {
-  static func ==(left: Result, right: Result) -> Bool {
+extension RemoteNotificationRegistration: Equatable {
+  static func ==(
+    left: RemoteNotificationRegistration,
+    right: RemoteNotificationRegistration
+  ) -> Bool {
     switch (left, right) {
-    case (.none, .none): return true
-    case (.some(let a), .some(let b)): return a == b
+    case (.idle, .idle): return true
+    case (.token(let a), .token(let b)): return a == b
     case (.error, .error): return true // Needs to compare errors
     default: return false
     }
@@ -1393,7 +1417,7 @@ extension Session.Model.ShortcutItem.Action: Equatable {
   static func ==(
     left: Session.Model.ShortcutItem.Action,
     right: Session.Model.ShortcutItem.Action
-    ) -> Bool { return
+  ) -> Bool { return
     left.id == right.id
   }
 }
@@ -1402,9 +1426,9 @@ extension Session.Model.ShortcutItem: Equatable {
   static func ==(
     left: Session.Model.ShortcutItem,
     right: Session.Model.ShortcutItem
-    ) -> Bool { return
+  ) -> Bool { return
     left.value == right.value &&
-      left.action == right.action
+    left.action == right.action
   }
 }
 
