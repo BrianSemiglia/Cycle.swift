@@ -14,7 +14,7 @@ import Changeset
 class Session: NSObject, UIApplicationDelegate {
   
   struct Model {
-    var backgroundURLSessionAction: AsyncAction<BackgroundURLSessionAction>
+    var backgroundURLSessionAction: BackgroundURLSessionAction
     var fetch: AsyncAction<FetchAction>
     var remoteAction: AsyncAction<ActionRemote>
     var localAction: AsyncAction<ActionLocal>
@@ -93,9 +93,10 @@ class Session: NSObject, UIApplicationDelegate {
       let url: URL
       let success: Bool
     }
-    struct BackgroundURLSessionAction {
-      var identifier: String
-      var completion: (Void) -> Void
+    enum BackgroundURLSessionAction {
+      case idle
+      case progressing(String, (Void) -> Void)
+      case complete
     }
     struct FetchAction {
       var hash: Int
@@ -196,6 +197,9 @@ class Session: NSObject, UIApplicationDelegate {
   fileprivate let output: BehaviorSubject<Session.Model>
   fileprivate var model: Session.Model {
     didSet {
+
+      var edit = model
+
       if model.isIgnoringUserEvents != oldValue.isIgnoringUserEvents {
         model.isIgnoringUserEvents
           ? UIApplication.shared.beginIgnoringInteractionEvents()
@@ -206,24 +210,24 @@ class Session: NSObject, UIApplicationDelegate {
       
       if case .considering(let url) = model.urlAction {
         let didOpen = UIApplication.shared.openURL(url)
-        var edit = model
         edit.urlAction = .allowing(
           Session.Model.URLActionResponse(url: url, success: didOpen)
         )
-        output.on(.next(edit))
         // Model may change in response to output. Reevaluate before sending further output.
-        if case .allowing(let x) = model.urlAction, x.url == url {
-          var edit = model
-          edit.urlAction = .idle
-          output.on(.next(edit))
+        DispatchQueue.main.async { [weak self] in
+          if let strong = self {
+            if case .allowing(let x) = strong.model.urlAction, x.url == url {
+              var edit = strong.model
+              edit.urlAction = .idle
+              strong.output.on(.next(edit))
+            }
+          }
         }
       }
       
       if let new = model.sendingEvent {
         UIApplication.shared.sendEvent(new)
-        var edit = model
         edit.sendingEvent = nil
-        output.on(.next(edit))
       }
       
       if case .sending(let new) = model.sendingAction {
@@ -233,13 +237,15 @@ class Session: NSObject, UIApplicationDelegate {
           from: new.sender,
           for: new.event
         )
-        var edit = model
         edit.sendingAction = .responding(new, didSend)
-        output.on(.next(edit))
-        if case .responding(let action, _) = model.sendingAction, action == new {
-          var edit = model
-          edit.sendingAction = .idle
-          output.on(.next(edit))
+        DispatchQueue.main.async { [weak self] in
+          if let strong = self {
+            if case .responding(let action, _) = strong.model.sendingAction, action == new {
+              var edit = strong.model
+              edit.sendingAction = .idle
+              strong.output.on(.next(edit))
+            }
+          }
         }
       }
       
@@ -251,7 +257,6 @@ class Session: NSObject, UIApplicationDelegate {
        Tasks marked in-progress are begun.
        Tasks begun are marked expired and output on expiration.
        */
-      var edit = model
       edit.backgroundTasks = Set(
         Session.additions(
           new: Array(model.backgroundTasks),
@@ -268,19 +273,21 @@ class Session: NSObject, UIApplicationDelegate {
           var ID: UIBackgroundTaskIdentifier = 0
           ID = UIApplication.shared.beginBackgroundTask( // SIDE EFFECT!
             withName: task.name,
-            expirationHandler: {
-              UIApplication.shared.endBackgroundTask(ID) // SIDE EFFECT!
-              var edit = self.model
-              edit.backgroundTasks = Set(
-                edit.backgroundTasks
-                .filter { $0.name == task.name }
-                .map {
-                  var edit = $0
-                  edit.state = .expired
-                  return edit
-                }
-              )
-              self.output.on(.next(edit))
+            expirationHandler: { [weak self] in
+              if let strong = self {
+                UIApplication.shared.endBackgroundTask(ID) // SIDE EFFECT!
+                var edit = strong.model
+                edit.backgroundTasks = Set(
+                  edit.backgroundTasks
+                  .filter { $0.name == task.name }
+                  .map {
+                    var edit = $0
+                    edit.state = .expired
+                    return edit
+                  }
+                )
+                strong.output.on(.next(edit))
+              }
             }
           )
           var edit = task
@@ -288,7 +295,6 @@ class Session: NSObject, UIApplicationDelegate {
           return edit
         }
       )
-      output.on(.next(edit))
       
       /* 
        Tasks marked completed are ended.
@@ -367,17 +373,21 @@ class Session: NSObject, UIApplicationDelegate {
       .flatMap { completionHandler(type: .substitution, edit: $0) }
       .forEach { $0(true) }
 
-      if case .complete(let handler) = model.backgroundURLSessionAction {
-        handler.completion()
-        var edit = model
+      if
+      case .complete = model.backgroundURLSessionAction,
+      model.backgroundURLSessionAction != oldValue.backgroundURLSessionAction {
+        if case .progressing(let handler) = oldValue.backgroundURLSessionAction {
+          handler.1()
+        }
         edit.backgroundURLSessionAction = .idle
-        output.on(.next(edit))
       }
+      
+      output.on(.next(edit))
     }
   }
   
   func rendered(_ input: Observable<Model>) -> Observable<Model> { return
-    input.flatMap { model in
+    input.distinctUntilChanged().flatMap { model in
       Observable.create { [weak self] observer in
         self?.model = model
         if self?.disposable == nil {
@@ -687,12 +697,7 @@ class Session: NSObject, UIApplicationDelegate {
     completionHandler: @escaping () -> Void
   ) {
     var edit = model
-    edit.backgroundURLSessionAction = .progressing(
-      Session.Model.BackgroundURLSessionAction(
-        identifier: identifier,
-        completion: completionHandler
-      )
-    )
+    edit.backgroundURLSessionAction = .progressing(identifier, completionHandler)
     output.on(.next(edit))
   }
 
@@ -1130,7 +1135,7 @@ extension Session.Model {
       isProtectedDataAvailable: .none(false),
       remoteNotificationRegistration: .idle,
       statusBarOrientation: .none(.unknown),
-      backgroundTasks: [],
+      backgroundTasks: Set(),
       isExperiencingHealthAuthorizationRequest: false,
       isIgnoringUserEvents: false,
       isIdleTimerDisabled: false,
@@ -1184,8 +1189,17 @@ extension Session.Model.BackgroundURLSessionAction: Equatable {
   static func ==(
     left: Session.Model.BackgroundURLSessionAction,
     right: Session.Model.BackgroundURLSessionAction
-  ) -> Bool { return
-    left.identifier == right.identifier
+  ) -> Bool {
+    switch (left, right) {
+    case (.idle, .idle): return
+      true
+    case (.progressing(let a), .progressing(let b)): return
+      a.0 == b.0
+    case (.complete, .complete): return
+      true
+    default: return
+      false
+    }
   }
 }
 
