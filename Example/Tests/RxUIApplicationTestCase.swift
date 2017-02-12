@@ -25,6 +25,19 @@ class SessionTestCase: XCTestCase {
     return output
   }
   
+  static func statesFromStream(stream: Observable<Session.Model>) -> [Session.Model] {
+    var output: [Session.Model] = []
+    let session = Session(.empty)
+    _ = session
+      .rendered(stream)
+      .subscribe {
+        if let new = $0.element {
+          output += [new]
+        }
+    }
+    return output
+  }
+  
   func testConversionCallbacks() {
     
     XCTAssert(
@@ -1039,6 +1052,27 @@ class SessionTestCase: XCTestCase {
     )
   }
   
+  func testRenderingCallbacks() {
+    
+    let x = Session.Model.empty
+    var y = x
+    y.backgroundURLSessionAction = .progressing("id", {})
+    var z = y
+    z.backgroundURLSessionAction = .complete
+    
+    let foo = SessionTestCase.statesFromStream(stream: Observable.of(x, y, z))
+    
+    XCTAssert(
+      SessionTestCase.statesFromStream(stream: Observable.of(x, y, z))
+      .map { $0.backgroundURLSessionAction }
+      ==
+      [
+        .idle,
+        .idle
+      ]
+    )
+  }
+  
   func testDictionaryConcatenation() {
     XCTAssert(
       [WindowStub(id: "x"): UIInterfaceOrientationMask.allButUpsideDown] +
@@ -1070,15 +1104,15 @@ class SessionTestCase: XCTestCase {
   }
   
   func testAdditions() {
-    let x = [Session.Model.BackgroundTask(name: "x", state: .progressing(2017))]
-    let y: [Session.Model.BackgroundTask] = []
+    let x = ["x"]
+    let y: [String] = []
     let z = Session.additions(new: x, old: y)
     XCTAssert(z.count == 1)
   }
   
   func testDeletions() {
-    let x = [Session.Model.BackgroundTask(name: "x", state: .progressing(2017))]
-    let y: [Session.Model.BackgroundTask] = []
+    let x = ["x"]
+    let y: [String] = []
     let z = Session.deletions(old: x, new: y)
     XCTAssert(z.count == 1)
   }
