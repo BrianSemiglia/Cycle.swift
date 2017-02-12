@@ -1068,6 +1068,33 @@ class SessionTestCase: XCTestCase {
       [same: UIInterfaceOrientationMask.allButUpsideDown]
     )
   }
+  
+  func testAdditions() {
+    let x = [Session.Model.BackgroundTask(name: "x", state: .progressing(2017))]
+    let y: [Session.Model.BackgroundTask] = []
+    let z = Session.additions(new: x, old: y)
+    XCTAssert(z.count == 1)
+  }
+  
+  func testDeletions() {
+    let x = [Session.Model.BackgroundTask(name: "x", state: .progressing(2017))]
+    let y: [Session.Model.BackgroundTask] = []
+    let z = Session.deletions(old: x, new: y)
+    XCTAssert(z.count == 1)
+  }
+  
+  func testCompletedBackgroundIDs() {
+    let x = [Session.Model.BackgroundTask(name: "x", state: .complete(2017))]
+    let z = x.flatMap { $0.ID }
+    XCTAssert(z == [2017])
+  }
+  
+  func testDeletedBackgroundTaskIDs() {
+    let x = [Session.Model.BackgroundTask(name: "x", state: .progressing(2017))]
+    let y: [Session.Model.BackgroundTask] = []
+    let z = Session.deletions(old: x, new: y).flatMap { $0.ID }
+    XCTAssert(z == [2017])
+  }
 
   struct ErrorStub: Error, Equatable {
     let id: String
