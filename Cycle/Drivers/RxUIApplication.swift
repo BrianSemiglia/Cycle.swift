@@ -33,7 +33,7 @@ class Session: NSObject, UIApplicationDelegate {
     var isProtectedDataAvailable: Change<Bool>
     var deviceToken: Result<Data>
     var statusBarOrientation: Change<UIInterfaceOrientation>
-    var backgroundTasks: [BackgroundTask] // TODO: should be a Set (via _name_ member)
+    var backgroundTasks: Set<BackgroundTask>
     var isExperiencingHealthAuthorizationRequest: Bool
     var isIgnoringUserEvents: Bool
     var isIdleTimerDisabled: Bool
@@ -170,7 +170,8 @@ class Session: NSObject, UIApplicationDelegate {
       enum State {
         case pending
         case progressing(UIBackgroundTaskIdentifier)
-        case complete
+        case complete(UIBackgroundTaskIdentifier)
+        case expired
       }
     }
     enum TartgetActionProcess {
@@ -247,45 +248,62 @@ class Session: NSObject, UIApplicationDelegate {
       UIApplication.shared.applicationIconBadgeNumber = model.iconBadgeNumber
       UIApplication.shared.applicationSupportsShakeToEdit = model.supportsShakeToEdit
       
-      // Needs to returned at some point
+      /*
+       Tasks marked in-progress are begun.
+       Tasks begun are marked expired and output on expiration.
+       */
       var edit = model
-      edit.backgroundTasks = Session.additions(
-        new: model.backgroundTasks,
-        old: oldValue.backgroundTasks
-      )
-      .filter {
-        if case .progressing = $0.state {
-          return true
-        } else {
-          return false
-        }
-      }
-      .map { task in
-        var ID: UIBackgroundTaskIdentifier = 0
-        ID = UIApplication.shared.beginBackgroundTask( // SIDE EFFECT!
-          withName: task.name,
-          expirationHandler: {
-            UIApplication.shared.endBackgroundTask(ID)
-            var edit = self.model
-            edit.backgroundTasks = edit.backgroundTasks.filter { $0.name != task.name }
-            self.output.on(.next(edit))
-          }
+      edit.backgroundTasks = Set(
+        Session.additions(
+          new: Array(model.backgroundTasks),
+          old: Array(oldValue.backgroundTasks)
         )
-        var edit = task
-        edit.state = .progressing(ID)
-        return edit
-      }
-      
-      Session.deletions(
-        new: model.backgroundTasks,
-        old: oldValue.backgroundTasks
-      )
-      .forEach {
-        if case .progressing(let id) = $0.state {
-          UIApplication.shared.endBackgroundTask(id)
+        .filter {
+          if case .progressing = $0.state {
+            return true
+          } else {
+            return false
+          }
         }
+        .map { task in
+          var ID: UIBackgroundTaskIdentifier = 0
+          ID = UIApplication.shared.beginBackgroundTask( // SIDE EFFECT!
+            withName: task.name,
+            expirationHandler: {
+              UIApplication.shared.endBackgroundTask(ID) // SIDE EFFECT!
+              var edit = self.model
+              edit.backgroundTasks = Set(
+                edit.backgroundTasks
+                .filter { $0.name == task.name }
+                .map {
+                  var edit = $0
+                  edit.state = .expired
+                  return edit
+                }
+              )
+              self.output.on(.next(edit))
+            }
+          )
+          var edit = task
+          edit.state = .progressing(ID)
+          return edit
+        }
+      )
+      output.on(.next(edit))
+      
+      /* 
+       Tasks marked completed are ended.
+       Tasks marked in-progress that were removed are considered canceled and are removed.
+       */
+      let complete = model.backgroundTasks.complete().flatMap { $0.ID }
+      let deletions = Session.deletions(
+        old: Array(oldValue.backgroundTasks),
+        new: Array(model.backgroundTasks)
+        ).progressing().flatMap { $0.ID }
+      
+      (complete + deletions).forEach {
+        UIApplication.shared.endBackgroundTask($0)
       }
-      // Don't need .completed state anymore
       
       UIApplication.shared.setMinimumBackgroundFetchInterval(
         model.minimumBackgroundFetchInterval.asUIApplicationBackgroundFetchInterval()
@@ -308,19 +326,19 @@ class Session: NSObject, UIApplicationDelegate {
         new: model.scheduledLocalNotifications,
         old: oldValue.scheduledLocalNotifications
       ).forEach {
-          UIApplication.shared.scheduleLocalNotification($0)
+        UIApplication.shared.scheduleLocalNotification($0)
       }
       
       Session.deletions(
-        new: model.scheduledLocalNotifications,
-        old: oldValue.scheduledLocalNotifications
+        old: oldValue.scheduledLocalNotifications,
+        new: model.scheduledLocalNotifications
       ).forEach {
-          UIApplication.shared.cancelLocalNotification($0)
+        UIApplication.shared.cancelLocalNotification($0)
       }
       
       if
-        let new = model.registeredUserNotificationSettings,
-        oldValue.registeredUserNotificationSettings != new {
+      let new = model.registeredUserNotificationSettings,
+      oldValue.registeredUserNotificationSettings != new {
         UIApplication.shared.registerUserNotificationSettings(new)
       }
       
@@ -876,8 +894,8 @@ func +<Key, Value> (left: [Key: Value], right: [Key: Value]) -> [Key: Value] {
 
 extension Session {
   static func deletions<T: Equatable>(
-    new: [T],
-    old: [T]?
+    old: [T]?,
+    new: [T]
   ) -> [T] { return
     old.flatMap {
       Changeset<[T]>(
@@ -1423,13 +1441,16 @@ extension Session.Model.TartgetActionProcess: Equatable {
   }
 }
 
-extension Session.Model.BackgroundTask: Equatable {
+extension Session.Model.BackgroundTask: Hashable {
+  var hashValue: Int { return
+    name.hashValue
+  }
   static func ==(
     left: Session.Model.BackgroundTask,
     right: Session.Model.BackgroundTask
-    ) -> Bool { return
+  ) -> Bool { return
     left.name == right.name &&
-      left.state == right.state
+    left.state == right.state
   }
 }
 
@@ -1457,5 +1478,28 @@ extension Session.Model.FetchInterval {
     case .some(let value):
       return value
     }
+  }
+}
+
+extension Collection where Iterator.Element == Session.Model.BackgroundTask {
+  func progressing() -> [Session.Model.BackgroundTask] { return
+    flatMap {
+      if case .progressing = $0.state { return $0 }
+      else { return nil }
+    }
+  }
+  func complete() -> [Session.Model.BackgroundTask] { return
+    flatMap {
+      if case .complete = $0.state { return $0 }
+      else { return nil }
+    }
+  }
+}
+
+extension Session.Model.BackgroundTask {
+  var ID: UIBackgroundTaskIdentifier? {
+    if case .progressing(let id) = state { return id }
+    else if case .complete(let id) = state { return id }
+    else { return nil }
   }
 }
