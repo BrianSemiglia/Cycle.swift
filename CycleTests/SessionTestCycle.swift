@@ -18,8 +18,8 @@ class SessionTestDelegate: CycledApplicationDelegate<SessionTestFilter> {
       session: Session.shared
     )
   }
-  var events: [Session.Model] {
-    return filter.events.map { $0.session }
+  var events: [Session.Model] { return
+    filter.events.map { $0.session }
   }
 }
 
