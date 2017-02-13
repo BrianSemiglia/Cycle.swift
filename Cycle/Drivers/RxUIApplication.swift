@@ -262,11 +262,7 @@ class Session: NSObject, UIApplicationDelegate {
           old: Array(oldValue.backgroundTasks)
         )
         .filter {
-          if case .progressing = $0.state {
-            return true
-          } else {
-            return false
-          }
+          $0.state == .pending
         }
         .map { task in
           var ID: UIBackgroundTaskIdentifier = 0
@@ -294,6 +290,7 @@ class Session: NSObject, UIApplicationDelegate {
           return edit
         }
       )
+      model = edit
       
       /* 
        Tasks marked completed are ended.
@@ -303,7 +300,7 @@ class Session: NSObject, UIApplicationDelegate {
       let deletions = Session.deletions(
         old: Array(oldValue.backgroundTasks),
         new: Array(model.backgroundTasks)
-        ).progressing().flatMap { $0.ID }
+      ).progressing().flatMap { $0.ID }
       
       (complete + deletions).forEach {
         application.endBackgroundTask($0)
