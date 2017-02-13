@@ -1111,8 +1111,43 @@ class SessionTestCase: XCTestCase {
         ==
         [
           .attempting(URL(string: "https://www.duckduckgo.com")!),
-          .opening(URL(string: "https://www.duckduckgo.com")!), // willFinishLaunching
+          .opening(URL(string: "https://www.duckduckgo.com")!), // .will(.launched)
           .opening(URL(string: "https://www.duckduckgo.com")!),
+          .idle
+        ]
+      )
+      asyncCallbacks.fulfill()
+      let retained = delegate
+    }
+    waitForExpectations(timeout: 30)
+  }
+  
+  func testRenderingSendAction() {
+    
+    let action = Session.Model.TargetAction(
+      action: #selector(getter: UIApplication.isIdleTimerDisabled),
+      target: UIApplication.shared,
+      sender: nil,
+      event: nil
+    )
+    let asyncCallbacks = expectation(description: "...")
+    let empty = Session.Model.empty
+    var y = empty; y.targetAction = .sending(action)
+    
+    let delegate = SessionTestDelegate(start: y)
+    delegate.application(
+      UIApplication.shared,
+      willFinishLaunchingWithOptions: nil
+    )
+    
+    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+      XCTAssert(
+        delegate.events.map { $0.targetAction }
+        ==
+        [
+          .sending(action),
+          .responding(action, true),
+          .responding(action, true), // .will(.launched)
           .idle
         ]
       )

@@ -39,7 +39,7 @@ class Session: NSObject, UIApplicationDelegate {
     var isIdleTimerDisabled: Bool
     var urlActionOutgoing: URLActionOutgoing
     var sendingEvent: UIEvent?
-    var sendingAction: TartgetActionProcess
+    var targetAction: TartgetActionProcess
     var isNetworkActivityIndicatorVisible: Bool
     var iconBadgeNumber: Int
     var supportsShakeToEdit: Bool
@@ -228,19 +228,20 @@ class Session: NSObject, UIApplicationDelegate {
         edit.sendingEvent = nil
       }
       
-      if case .sending(let new) = model.sendingAction {
+      if case .sending(let new) = model.targetAction {
         let didSend = application.sendAction(
           new.action,
           to: new.target,
           from: new.sender,
           for: new.event
         )
-        edit.sendingAction = .responding(new, didSend)
+        edit.targetAction = .responding(new, didSend)
+        model = edit
         DispatchQueue.main.async { [weak self] in
           if let strong = self {
-            if case .responding(let action, _) = strong.model.sendingAction, action == new {
+            if case .responding(let action, _) = strong.model.targetAction, action == new {
               var edit = strong.model
-              edit.sendingAction = .idle
+              edit.targetAction = .idle
               strong.output.on(.next(edit))
             }
           }
@@ -1017,7 +1018,7 @@ extension Session.Model: Equatable {
     left.isIdleTimerDisabled == right.isIdleTimerDisabled &&
     left.urlActionOutgoing == right.urlActionOutgoing &&
     left.sendingEvent == right.sendingEvent &&
-    left.sendingAction == right.sendingAction &&
+    left.targetAction == right.targetAction &&
     left.isNetworkActivityIndicatorVisible == right.isNetworkActivityIndicatorVisible &&
     left.iconBadgeNumber == right.iconBadgeNumber &&
     left.supportsShakeToEdit == right.supportsShakeToEdit &&
@@ -1177,7 +1178,7 @@ extension Session.Model {
       isIdleTimerDisabled: false,
       urlActionOutgoing: .idle,
       sendingEvent: nil,
-      sendingAction: .idle,
+      targetAction: .idle,
       isNetworkActivityIndicatorVisible: false,
       iconBadgeNumber: 0,
       supportsShakeToEdit: true,
