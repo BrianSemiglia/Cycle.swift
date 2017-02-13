@@ -1157,6 +1157,78 @@ class SessionTestCase: XCTestCase {
     waitForExpectations(timeout: 30)
   }
   
+  func testRenderingBackgroundTasksMarkInProgress() {
+    
+    let asyncCallbacks = expectation(description: "...")
+    let empty = Session.Model.empty
+    var y = empty; y.backgroundTasks = [
+      Session.Model.BackgroundTask(name: "x", state: .pending)
+    ]
+    
+    let delegate = SessionTestDelegate(start: y)
+    delegate.application(
+      UIApplication.shared,
+      willFinishLaunchingWithOptions: nil
+    )
+    
+    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+      XCTAssert(
+        delegate.events.map { $0.backgroundTasks }.flatMap { $0 }
+        ==
+        [
+          Session.Model.BackgroundTask(name: "x", state: .pending),
+          Session.Model.BackgroundTask(name: "x", state: .progressing(1)), // .will(.launch)
+          Session.Model.BackgroundTask(name: "x", state: .progressing(1))
+        ]
+      )
+      asyncCallbacks.fulfill()
+      let retained = delegate
+    }
+    waitForExpectations(timeout: 30)
+  }
+
+  func testRenderingBackgroundTasksMarkComplete() {
+    
+    let asyncCallbacks = expectation(description: "...")
+    let empty = Session.Model.empty
+    var y = empty; y.backgroundTasks = [
+      Session.Model.BackgroundTask(name: "x", state: .pending)
+    ]
+    
+    let delegate = SessionTestDelegate(start: y) {
+      var edit = $0
+      edit.backgroundTasks = Set(
+        edit.backgroundTasks.map { x in
+          var new = x
+          if case .progressing(let a) = x.state {
+            new.state = .complete(a)
+          }
+          return new
+        }
+      )
+      return edit
+    }
+    delegate.application(
+      UIApplication.shared,
+      willFinishLaunchingWithOptions: nil
+    )
+    
+    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+      XCTAssert(
+        delegate.events.map { $0.backgroundTasks }.flatMap { $0 }
+        ==
+        [
+          Session.Model.BackgroundTask(name: "x", state: .pending),
+          Session.Model.BackgroundTask(name: "x", state: .complete(1)), // .will(.launch)
+          Session.Model.BackgroundTask(name: "x", state: .complete(1))
+        ]
+      )
+      asyncCallbacks.fulfill()
+      let retained = delegate
+    }
+    waitForExpectations(timeout: 30)
+  }
+  
   func testRenderingBackgroundURLSessionAction() {
     /* .complete is a read-only selection and is normally set internally.
      Session should follow .complete callbacks with state of .idle */
