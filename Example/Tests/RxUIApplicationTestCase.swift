@@ -14,6 +14,7 @@ class SessionTestCase: XCTestCase {
   static func statesFrom(model: Session.Model = .empty, call: (Session) -> Any) -> [Session.Model] {
     var output: [Session.Model] = []
     let session = Session(model)
+    session.application = UIApplication.shared
     _ = session
       .rendered(Observable<Session.Model>.just(model))
       .subscribe {
@@ -28,6 +29,7 @@ class SessionTestCase: XCTestCase {
   static func statesFromStream(stream: Observable<Session.Model>) -> [Session.Model] {
     var output: [Session.Model] = []
     let session = Session(.empty)
+    session.application = UIApplication.shared
     _ = session
       .rendered(stream)
       .subscribe {
@@ -53,7 +55,7 @@ class SessionTestCase: XCTestCase {
       .statesFrom { $0.applicationDidBecomeActive(UIApplication.shared) }
       .map { $0.state }
       ==
-      [.none(.awaitingLaunch), .did(.active)]
+      [.none(.awaitingLaunch), .did(.active), .none(.active)]
     )
 
     XCTAssert(
@@ -69,7 +71,7 @@ class SessionTestCase: XCTestCase {
       .statesFrom { $0.applicationDidEnterBackground(UIApplication.shared) }
       .map { $0.state }
       ==
-      [.none(.awaitingLaunch), .did(.resigned)]
+      [.none(.awaitingLaunch), .did(.resigned), .none(.resigned)]
     )
     
     XCTAssert(
@@ -95,7 +97,7 @@ class SessionTestCase: XCTestCase {
       }
       .map { $0.state }
       ==
-      [.none(.awaitingLaunch), .did(.launched(nil))]
+      [.none(.awaitingLaunch), .did(.launched(nil)), .none(.launched(nil))]
     )
     
     XCTAssert(
@@ -135,7 +137,7 @@ class SessionTestCase: XCTestCase {
       .statesFrom { $0.applicationProtectedDataDidBecomeAvailable(UIApplication.shared) }
       .map { $0.isProtectedDataAvailable }
       ==
-      [.none(false), .did(true)]
+      [.none(false), .did(true), .none(true)]
     )
     
     XCTAssert(
@@ -143,7 +145,7 @@ class SessionTestCase: XCTestCase {
       .statesFrom { $0.applicationProtectedDataWillBecomeUnavailable(UIApplication.shared) }
       .map { $0.isProtectedDataAvailable }
       ==
-      [.none(false), .will(false)]
+      [.none(false), .will(false), .none(false)]
     )
     
     print(SessionTestCase
@@ -207,7 +209,7 @@ class SessionTestCase: XCTestCase {
       }
       .map { $0.stateRestoration }
       ==
-      [.idle, .didDecode(CoderStub(id: "x"))]
+      [.idle, .didDecode(CoderStub(id: "x")), .idle]
     )
 
     XCTAssert(
@@ -220,7 +222,7 @@ class SessionTestCase: XCTestCase {
       }
       .map { $0.stateRestoration }
       ==
-      [.idle, .willEncode(CoderStub(id: "x"))]
+      [.idle, .willEncode(CoderStub(id: "x")), .idle]
     )
 
     XCTAssert(
@@ -273,7 +275,7 @@ class SessionTestCase: XCTestCase {
       }
       .map { $0.userActivityState }
       ==
-      [.idle, .didFail("x", ErrorStub(id: "y"))]
+      [.idle, .didFail("x", ErrorStub(id: "y")), .idle]
     )
     
     let activity = NSUserActivity(activityType: "x")
@@ -287,7 +289,7 @@ class SessionTestCase: XCTestCase {
       }
       .map { $0.userActivityState }
       ==
-      [.idle, .didContinue(activity)]
+      [.idle, .didContinue(activity), .idle]
     )
     
     XCTAssert(
@@ -336,7 +338,7 @@ class SessionTestCase: XCTestCase {
       }
       .map { $0.statusBarOrientation }
       ==
-      [.none(.unknown), .did(.landscapeLeft)]
+      [.none(.unknown), .did(.landscapeLeft), .none(.landscapeLeft)]
     )
     
     XCTAssert(
@@ -1038,7 +1040,7 @@ class SessionTestCase: XCTestCase {
     let delegate = CycledApplicationDelegate(
       filter: cycle,
       session: session
-      ) as UIApplicationDelegate
+    ) as UIApplicationDelegate
     
     delegate.application!(
       UIApplication.shared,
@@ -1056,7 +1058,71 @@ class SessionTestCase: XCTestCase {
     )
   }
   
-  func testRenderingCallbacks() {
+  func testRenderingIsIgnoringUserEvents() {
+
+    let x = Session.Model.empty
+    var y = x; y.isIgnoringUserEvents = true
+    var z = y; z.isIgnoringUserEvents = false
+    
+    XCTAssert(
+      SessionTestCase.statesFromStream(stream: Observable.of(x, y, x))
+      .map { $0.isIgnoringUserEvents }
+      ==
+      [
+        false,
+        true,
+        false
+      ]
+    )
+  }
+  
+  func testRenderingIsIdleTimerDisabled() {
+    
+    let x = Session.Model.empty
+    var y = x; y.isIdleTimerDisabled = true
+    var z = y; z.isIdleTimerDisabled = false
+    
+    XCTAssert(
+      SessionTestCase.statesFromStream(stream: Observable.of(x, y, x))
+      .map { $0.isIdleTimerDisabled }
+      ==
+      [
+        false,
+        true,
+        false
+      ]
+    )
+  }
+  
+  func testRenderingURLAction() {
+    
+    let asyncCallbacks = expectation(description: "...")
+    let empty = Session.Model.empty
+    var y = empty; y.urlAction = .attempting(URL(string: "https://www.duckduckgo.com")!)
+    let delegate = SessionTestDelegate(start: y)
+    delegate.application(
+      UIApplication.shared,
+      willFinishLaunchingWithOptions: nil
+    )
+
+    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+      XCTAssert(
+        delegate.events.map { $0.urlAction }
+        ==
+        [
+          .attempting(URL(string: "https://www.duckduckgo.com")!),
+          .opening(URL(string: "https://www.duckduckgo.com")!), // willFinishLaunching
+          .opening(URL(string: "https://www.duckduckgo.com")!),
+          .idle
+        ]
+      )
+      asyncCallbacks.fulfill()
+      let retained = delegate
+    }
+    waitForExpectations(timeout: 30)
+  }
+  
+  func testRenderingBackgroundURLSessionAction() {
     /* .complete is a read-only selection and is normally set internally.
      Session should follow .complete callbacks with state of .idle */
     let x = Session.Model.empty
