@@ -53,7 +53,7 @@ class Session: NSObject, UIApplicationDelegate {
     var shouldSaveApplicationState: Filtered<NSCoder, Bool>
     var shouldRestoreApplicationState: Filtered<NSCoder, Bool>
     var shouldLaunch: Bool
-    var URL: Filtered<Session.Model.URLLaunch, URL>
+    var urlActionIncoming: Filtered<Session.Model.URLLaunch, URL>
     var extensionPointIdentifier: Filtered<UIApplicationExtensionPointIdentifier, UIApplicationExtensionPointIdentifier>
     var interfaceOrientations: [Filtered<UIWindow, WindowResponse>]
     var viewControllerRestoration: Filtered<RestorationQuery, RestorationResponse>
@@ -445,7 +445,7 @@ class Session: NSObject, UIApplicationDelegate {
     annotation: Any
   ) -> Bool {
     var edit = model
-    edit.URL = .considering(
+    edit.urlActionIncoming = .considering(
       .ios4(
         url: url,
         app: sourceApplication,
@@ -453,7 +453,7 @@ class Session: NSObject, UIApplicationDelegate {
       )
     )
     output.on(.next(edit))
-    if case .allowing(let allowed) = model.URL {
+    if case .allowing(let allowed) = model.urlActionIncoming {
       return url == allowed
     } else {
       return false
@@ -466,9 +466,9 @@ class Session: NSObject, UIApplicationDelegate {
     options: [UIApplicationOpenURLOptionsKey : Any] = [:]
   ) -> Bool {
     var edit = model
-    edit.URL = .considering(.ios9(url: url, options: options))
+    edit.urlActionIncoming = .considering(.ios9(url: url, options: options))
     output.on(.next(edit))
-    if case .allowing(let allowed) = model.URL {
+    if case .allowing(let allowed) = model.urlActionIncoming {
       return url == allowed
     } else {
       return false
@@ -1031,7 +1031,7 @@ extension Session.Model: Equatable {
     left.shouldSaveApplicationState == right.shouldSaveApplicationState &&
     left.shouldRestoreApplicationState == right.shouldRestoreApplicationState &&
     left.shouldLaunch == right.shouldLaunch &&
-    left.URL == right.URL &&
+    left.urlActionIncoming == right.urlActionIncoming &&
     left.extensionPointIdentifier == right.extensionPointIdentifier &&
     left.interfaceOrientations == right.interfaceOrientations &&
     left.viewControllerRestoration == right.viewControllerRestoration
@@ -1191,7 +1191,7 @@ extension Session.Model {
       shouldSaveApplicationState: .idle,
       shouldRestoreApplicationState: .idle,
       shouldLaunch: false,
-      URL: .idle,
+      urlActionIncoming: .idle,
       extensionPointIdentifier: .idle,
       interfaceOrientations: [],
       viewControllerRestoration: .idle
