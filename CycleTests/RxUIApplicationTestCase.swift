@@ -676,10 +676,10 @@ class SessionTestCase: XCTestCase {
       .map { model -> Session.Model in
         var new = model
         new.shouldLaunch = true
-        if case .considering(let query) = model.URL {
+        if case .considering(let query) = model.urlActionIncoming {
           switch query {
           case .ios4(let URL, let app, let annotation):
-            new.URL = .allowing(URL)
+            new.urlActionIncoming = .allowing(URL)
           default: break
           }
         }
@@ -721,10 +721,10 @@ class SessionTestCase: XCTestCase {
       .map { model -> Session.Model in
         var new = model
         new.shouldLaunch = true
-        if case .considering(let query) = model.URL {
+        if case .considering(let query) = model.urlActionIncoming {
           switch query {
           case .ios9(let URL, let options):
-            new.URL = .allowing(URL)
+            new.urlActionIncoming = .allowing(URL)
           default: break
           }
         }
@@ -1094,11 +1094,11 @@ class SessionTestCase: XCTestCase {
     )
   }
   
-  func testRenderingURLAction() {
+  func testRenderingURLActionOutgoing() {
     
     let asyncCallbacks = expectation(description: "...")
     let empty = Session.Model.empty
-    var y = empty; y.urlAction = .attempting(URL(string: "https://www.duckduckgo.com")!)
+    var y = empty; y.urlActionOutgoing = .attempting(URL(string: "https://www.duckduckgo.com")!)
     let delegate = SessionTestDelegate(start: y)
     delegate.application(
       UIApplication.shared,
@@ -1107,7 +1107,7 @@ class SessionTestCase: XCTestCase {
 
     DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
       XCTAssert(
-        delegate.events.map { $0.urlAction }
+        delegate.events.map { $0.urlActionOutgoing }
         ==
         [
           .attempting(URL(string: "https://www.duckduckgo.com")!),
