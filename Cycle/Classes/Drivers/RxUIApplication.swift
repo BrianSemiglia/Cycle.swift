@@ -37,7 +37,7 @@ class Session: NSObject, UIApplicationDelegate {
     var isExperiencingHealthAuthorizationRequest: Bool
     var isIgnoringUserEvents: Bool
     var isIdleTimerDisabled: Bool
-    var urlAction: Filtered<URL, URLActionResponse>
+    var urlActionOutgoing: URLActionOutgoing
     var sendingEvent: UIEvent?
     var sendingAction: TartgetActionProcess
     var isNetworkActivityIndicatorVisible: Bool
@@ -87,9 +87,11 @@ class Session: NSObject, UIApplicationDelegate {
       case ios8(ActionID, UILocalNotification, () -> Void)
       case ios9(ActionID, UILocalNotification, [AnyHashable: Any], () -> Void)
     }
-    struct URLActionResponse {
-      let url: URL
-      let success: Bool
+    enum URLActionOutgoing {
+      case idle
+      case attempting(URL)
+      case opening(URL)
+      case failing(URL)
     }
     enum BackgroundURLSessionAction {
       case idle
@@ -193,6 +195,7 @@ class Session: NSObject, UIApplicationDelegate {
   }
   
   static let shared = Session(.empty)
+  var application: UIApplication!
   fileprivate var disposable: Disposable?
   fileprivate let output: BehaviorSubject<Session.Model>
   fileprivate var model: Session.Model {
@@ -202,36 +205,31 @@ class Session: NSObject, UIApplicationDelegate {
 
       if model.isIgnoringUserEvents != oldValue.isIgnoringUserEvents {
         model.isIgnoringUserEvents
-          ? UIApplication.shared.beginIgnoringInteractionEvents()
-          : UIApplication.shared.endIgnoringInteractionEvents()
+          ? application.beginIgnoringInteractionEvents()
+          : application.endIgnoringInteractionEvents()
       }
       
-      UIApplication.shared.isIdleTimerDisabled = model.isIdleTimerDisabled
+      application.isIdleTimerDisabled = model.isIdleTimerDisabled
       
-      if case .considering(let url) = model.urlAction {
-        let didOpen = UIApplication.shared.openURL(url)
-        edit.urlAction = .allowing(
-          Session.Model.URLActionResponse(url: url, success: didOpen)
-        )
-        // Model may change in response to output. Reevaluate before sending further output.
-        DispatchQueue.main.async { [weak self] in
-          if let strong = self {
-            if case .allowing(let x) = strong.model.urlAction, x.url == url {
-              var edit = strong.model
-              edit.urlAction = .idle
-              strong.output.on(.next(edit))
-            }
-          }
-        }
+      switch model.urlActionOutgoing {
+      case .attempting(let url):
+        edit.urlActionOutgoing = .opening(url)
+        model = edit
+        application.openURL(url)
+      case .opening:
+        edit.urlActionOutgoing = .idle
+        model = edit
+      default:
+        break
       }
       
       if let new = model.sendingEvent {
-        UIApplication.shared.sendEvent(new)
+        application.sendEvent(new)
         edit.sendingEvent = nil
       }
       
       if case .sending(let new) = model.sendingAction {
-        let didSend = UIApplication.shared.sendAction(
+        let didSend = application.sendAction(
           new.action,
           to: new.target,
           from: new.sender,
@@ -249,9 +247,9 @@ class Session: NSObject, UIApplicationDelegate {
         }
       }
       
-      UIApplication.shared.isNetworkActivityIndicatorVisible = model.isNetworkActivityIndicatorVisible
-      UIApplication.shared.applicationIconBadgeNumber = model.iconBadgeNumber
-      UIApplication.shared.applicationSupportsShakeToEdit = model.supportsShakeToEdit
+      application.isNetworkActivityIndicatorVisible = model.isNetworkActivityIndicatorVisible
+      application.applicationIconBadgeNumber = model.iconBadgeNumber
+      application.applicationSupportsShakeToEdit = model.supportsShakeToEdit
       
       /*
        Tasks marked in-progress are begun.
@@ -271,11 +269,11 @@ class Session: NSObject, UIApplicationDelegate {
         }
         .map { task in
           var ID: UIBackgroundTaskIdentifier = 0
-          ID = UIApplication.shared.beginBackgroundTask( // SIDE EFFECT!
+          ID = application.beginBackgroundTask( // SIDE EFFECT!
             withName: task.name,
             expirationHandler: { [weak self] in
               if let strong = self {
-                UIApplication.shared.endBackgroundTask(ID) // SIDE EFFECT!
+                strong.application.endBackgroundTask(ID) // SIDE EFFECT!
                 var edit = strong.model
                 edit.backgroundTasks = Set(
                   edit.backgroundTasks
@@ -307,18 +305,18 @@ class Session: NSObject, UIApplicationDelegate {
         ).progressing().flatMap { $0.ID }
       
       (complete + deletions).forEach {
-        UIApplication.shared.endBackgroundTask($0)
+        application.endBackgroundTask($0)
       }
       
-      UIApplication.shared.setMinimumBackgroundFetchInterval(
+      application.setMinimumBackgroundFetchInterval(
         model.minimumBackgroundFetchInterval.asUIApplicationBackgroundFetchInterval()
       )
       
       switch model.remoteNotificationRegistration {
       case .attempting:
-        UIApplication.shared.registerForRemoteNotifications()
+        application.registerForRemoteNotifications()
       case .unregistering:
-        UIApplication.shared.unregisterForRemoteNotifications()
+        application.unregisterForRemoteNotifications()
       default:
         break
       }
@@ -326,40 +324,40 @@ class Session: NSObject, UIApplicationDelegate {
       if
       let new = model.presentedLocalNotification,
       oldValue.presentedLocalNotification != new {
-        UIApplication.shared.presentLocalNotificationNow(new)
+        application.presentLocalNotificationNow(new)
       }
       
       Session.additions(
         new: model.scheduledLocalNotifications,
         old: oldValue.scheduledLocalNotifications
       ).forEach {
-        UIApplication.shared.scheduleLocalNotification($0)
+        application.scheduleLocalNotification($0)
       }
       
       Session.deletions(
         old: oldValue.scheduledLocalNotifications,
         new: model.scheduledLocalNotifications
       ).forEach {
-        UIApplication.shared.cancelLocalNotification($0)
+        application.cancelLocalNotification($0)
       }
       
       if
       let new = model.registeredUserNotificationSettings,
       oldValue.registeredUserNotificationSettings != new {
-        UIApplication.shared.registerUserNotificationSettings(new)
+        application.registerUserNotificationSettings(new)
       }
       
       if oldValue.isReceivingRemoteControlEvents != model.isReceivingRemoteControlEvents {
         model.isReceivingRemoteControlEvents
-          ? UIApplication.shared.beginReceivingRemoteControlEvents()
-          : UIApplication.shared.endReceivingRemoteControlEvents()
+          ? application.beginReceivingRemoteControlEvents()
+          : application.endReceivingRemoteControlEvents()
       }
       
       if oldValue.newsStandIconImage != model.newsStandIconImage {
-        UIApplication.shared.setNewsstandIconImage(model.newsStandIconImage)
+        application.setNewsstandIconImage(model.newsStandIconImage)
       }
       
-      UIApplication.shared.shortcutItems = model.shortcutItems.map { $0.value }
+      application.shortcutItems = model.shortcutItems.map { $0.value }
       
       let change = Changeset(source: oldValue.shortcutItems, target: model.shortcutItems)
         
@@ -388,15 +386,15 @@ class Session: NSObject, UIApplicationDelegate {
   
   func rendered(_ input: Observable<Model>) -> Observable<Model> { return
     input.distinctUntilChanged().flatMap { model in
-      Observable.create { [weak self] observer in
-        self?.model = model
-        if self?.disposable == nil {
-          self?.disposable = self?.output.subscribe {
+      Observable.create { [weak self] observer in if let strong = self {
+        strong.model = model
+        if strong.disposable == nil {
+          strong.disposable = strong.output.distinctUntilChanged().subscribe {
             if let new = $0.element {
               observer.on(.next(new))
             }
           }
-        }
+        }}
         return Disposables.create()
       }
     }
@@ -419,6 +417,9 @@ class Session: NSObject, UIApplicationDelegate {
     var edit = model
     edit.state = .did(.launched(launchOptions))
     output.on(.next(edit))
+    var edit2 = model
+    edit2.state = .none(.launched(launchOptions))
+    output.on(.next(edit2))
     return model.shouldLaunch == true
   }
 
@@ -426,6 +427,9 @@ class Session: NSObject, UIApplicationDelegate {
     var edit = model
     edit.state = .did(.active)
     output.on(.next(edit))
+    var edit2 = model
+    edit2.state = .none(.active)
+    output.on(.next(edit2))
   }
 
   func applicationWillResignActive(_ application: UIApplication) {
@@ -510,6 +514,9 @@ class Session: NSObject, UIApplicationDelegate {
     var edit = model
     edit.statusBarOrientation = .did(oldStatusBarOrientation)
     output.on(.next(edit))
+    var edit2 = model
+    edit2.statusBarOrientation = .none(oldStatusBarOrientation)
+    output.on(.next(edit2))
   }
 
   func application(
@@ -526,8 +533,11 @@ class Session: NSObject, UIApplicationDelegate {
     didChangeStatusBarFrame old: CGRect
   ) {
     var edit = model
-    edit.statusBarFrame = Change.did(UIApplication.shared.statusBarFrame)
+    edit.statusBarFrame = .did(application.statusBarFrame)
     output.on(.next(edit))
+    var edit2 = model
+    edit2.statusBarFrame = .none(application.statusBarFrame)
+    output.on(.next(edit2))
   }
 
   func application(
@@ -728,6 +738,9 @@ class Session: NSObject, UIApplicationDelegate {
     var edit = model
     edit.state = .did(.resigned)
     output.on(.next(edit))
+    var edit2 = model
+    edit2.state = .none(.resigned)
+    output.on(.next(edit2))
   }
 
   func applicationWillEnterForeground(_ application: UIApplication) {
@@ -740,12 +753,18 @@ class Session: NSObject, UIApplicationDelegate {
     var edit = model
     edit.isProtectedDataAvailable = .will(false)
     output.on(.next(edit))
+    var edit2 = model
+    edit.isProtectedDataAvailable = .none(false)
+    output.on(.next(edit2))
   }
 
   func applicationProtectedDataDidBecomeAvailable(_ application: UIApplication) {
     var edit = model
     edit.isProtectedDataAvailable = .did(true)
     output.on(.next(edit))
+    var edit2 = model
+    edit2.isProtectedDataAvailable = .none(true)
+    output.on(.next(edit2))
   }
 
   func application(
@@ -832,6 +851,8 @@ class Session: NSObject, UIApplicationDelegate {
     var edit = model
     edit.stateRestoration = .willEncode(coder)
     output.on(.next(edit))
+    edit.stateRestoration = .idle
+    output.on(.next(edit))
   }
 
   func application(
@@ -841,6 +862,9 @@ class Session: NSObject, UIApplicationDelegate {
     var edit = model
     edit.stateRestoration = .didDecode(coder)
     output.on(.next(edit))
+    var edit2 = model
+    edit2.stateRestoration = .idle
+    output.on(.next(edit2))
   }
 
   func application(
@@ -880,6 +904,9 @@ class Session: NSObject, UIApplicationDelegate {
     var edit = model
     edit.userActivityState = .didFail(userActivityType, error)
     output.on(.next(edit))
+    var edit2 = model
+    edit2.userActivityState = .idle
+    output.on(.next(edit2))
   }
 
   func application(
@@ -889,6 +916,9 @@ class Session: NSObject, UIApplicationDelegate {
     var edit = model
     edit.userActivityState = .didContinue(userActivity)
     output.on(.next(edit))
+    var edit2 = model
+    edit2.userActivityState = .idle
+    output.on(.next(edit2))
   }
 
 //  func application(
@@ -985,7 +1015,7 @@ extension Session.Model: Equatable {
     left.isExperiencingHealthAuthorizationRequest == right.isExperiencingHealthAuthorizationRequest &&
     left.isIgnoringUserEvents == right.isIgnoringUserEvents &&
     left.isIdleTimerDisabled == right.isIdleTimerDisabled &&
-    left.urlAction == right.urlAction &&
+    left.urlActionOutgoing == right.urlActionOutgoing &&
     left.sendingEvent == right.sendingEvent &&
     left.sendingAction == right.sendingAction &&
     left.isNetworkActivityIndicatorVisible == right.isNetworkActivityIndicatorVisible &&
@@ -1145,7 +1175,7 @@ extension Session.Model {
       isExperiencingHealthAuthorizationRequest: false,
       isIgnoringUserEvents: false,
       isIdleTimerDisabled: false,
-      urlAction: .idle,
+      urlActionOutgoing: .idle,
       sendingEvent: nil,
       sendingAction: .idle,
       isNetworkActivityIndicatorVisible: false,
@@ -1478,10 +1508,20 @@ extension EditOperation: Equatable {
   }
 }
 
-extension Session.Model.URLActionResponse: Equatable {
-  static func ==(left: Session.Model.URLActionResponse, right: Session.Model.URLActionResponse) -> Bool { return
-    left.url == right.url &&
-      left.success == right.success
+extension Session.Model.URLActionOutgoing: Equatable {
+  static func ==(left: Session.Model.URLActionOutgoing, right: Session.Model.URLActionOutgoing) -> Bool {
+    switch (left, right) {
+    case (.idle, .idle): return
+      true
+    case (.attempting(let a), .attempting(let b)): return
+      a == b
+    case (.opening(let a), .opening(let b)): return
+      a == b
+    case (.failing(let a), .failing(let b)): return
+      a == b
+    default: return
+      false
+    }
   }
 }
 

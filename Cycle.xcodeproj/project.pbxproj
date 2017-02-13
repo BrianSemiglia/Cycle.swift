@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		4D554EA47F01A51A5D8E59DE /* Pods_CycleTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E1698EFB7DD5E9EBB517E954 /* Pods_CycleTests.framework */; };
 		D30354D71E425F6300E0A43C /* Cycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D349A9D51E37CE9F005F521E /* Cycle.swift */; };
+		D30D877F1E51849B00F050C8 /* SessionTestCycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D30D877E1E51849B00F050C8 /* SessionTestCycle.swift */; };
+		D3131FE91E521D2D00E63101 /* URLActionOutgoing.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3131FE81E521D2D00E63101 /* URLActionOutgoing.swift */; };
 		D349A9BD1E37CE24005F521E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D349A9BB1E37CE24005F521E /* LaunchScreen.storyboard */; };
 		D349A9D41E37CE7A005F521E /* IntegerMutatingApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D349A9D31E37CE7A005F521E /* IntegerMutatingApp.swift */; };
 		D349A9D61E37CE9F005F521E /* Cycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D349A9D51E37CE9F005F521E /* Cycle.swift */; };
@@ -37,6 +39,8 @@
 		BA7384111A59B2C4111A97CA /* Pods-Cycle.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Cycle.release.xcconfig"; path = "Pods/Target Support Files/Pods-Cycle/Pods-Cycle.release.xcconfig"; sourceTree = "<group>"; };
 		BA991E8A4E0A374CFC26F41F /* Pods_Cycle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Cycle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDA09798D995F91F56702078 /* Pods-Cycle.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Cycle.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Cycle/Pods-Cycle.debug.xcconfig"; sourceTree = "<group>"; };
+		D30D877E1E51849B00F050C8 /* SessionTestCycle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionTestCycle.swift; sourceTree = "<group>"; };
+		D3131FE81E521D2D00E63101 /* URLActionOutgoing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = URLActionOutgoing.swift; sourceTree = "<group>"; };
 		D349A9AF1E37CE24005F521E /* Cycle.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cycle.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D349A9BC1E37CE24005F521E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D349A9BE1E37CE24005F521E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -130,6 +134,7 @@
 			isa = PBXGroup;
 			children = (
 				D36E49201E3BF0B500CD0590 /* SessionTestCase.swift */,
+				D30D877E1E51849B00F050C8 /* SessionTestCycle.swift */,
 				D349A9C91E37CE25005F521E /* Info.plist */,
 			);
 			path = CycleTests;
@@ -169,6 +174,7 @@
 			isa = PBXGroup;
 			children = (
 				D3E273761E4C363A00B90946 /* ShortcutItems.swift */,
+				D3131FE81E521D2D00E63101 /* URLActionOutgoing.swift */,
 			);
 			name = ShortcutItems;
 			sourceTree = "<group>";
@@ -382,6 +388,7 @@
 				D349A9D61E37CE9F005F521E /* Cycle.swift in Sources */,
 				D3AEBA561E4D0A6000F98346 /* Timer.swift in Sources */,
 				D349A9D41E37CE7A005F521E /* IntegerMutatingApp.swift in Sources */,
+				D3131FE91E521D2D00E63101 /* URLActionOutgoing.swift in Sources */,
 				D349A9DA1E37D079005F521E /* ValueToggler.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -391,6 +398,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D36E49221E3BF32800CD0590 /* Session.swift in Sources */,
+				D30D877F1E51849B00F050C8 /* SessionTestCycle.swift in Sources */,
 				D36E49211E3BF0B500CD0590 /* SessionTestCase.swift in Sources */,
 				D30354D71E425F6300E0A43C /* Cycle.swift in Sources */,
 			);
