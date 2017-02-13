@@ -7,7 +7,6 @@
 //
 
 import Foundation
-//import CloudKit
 import RxSwift
 import Changeset
 
@@ -18,7 +17,6 @@ class Session: NSObject, UIApplicationDelegate {
     var fetch: AsyncAction<FetchAction>
     var remoteAction: AsyncAction<ActionRemote>
     var localAction: AsyncAction<ActionLocal>
-    //    var cloudKitShare: CKShareMetadata?
     var userActivityState: UserActivityState
     var stateRestoration: StateRestoration
     var userActivityContinuation: UserActivityState
@@ -919,15 +917,6 @@ class Session: NSObject, UIApplicationDelegate {
     output.on(.next(edit2))
   }
 
-//  func application(
-//    _ application: UIApplication,
-//    userDidAcceptCloudKitShareWith cloudKitShareMetadata: CKShareMetadata
-//    ) {
-//    if var model = model {
-//      model.cloudKitShare = cloudKitShareMetadata
-//      output.on(.next(model))
-//    }
-//  }
 }
 
 func +=<Key, Value> (left: inout [Key: Value], right: [Key: Value]) {
@@ -994,7 +983,6 @@ extension Session.Model: Equatable {
     left.fetch == right.fetch &&
     left.remoteAction == right.remoteAction &&
     left.localAction == right.localAction &&
-//    left.cloudKitShare == right.cloudKitShare &&
     left.userActivityState == right.userActivityState &&
     left.stateRestoration == right.stateRestoration &&
     left.userActivityContinuation == right.userActivityContinuation &&
