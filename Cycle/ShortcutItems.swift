@@ -9,7 +9,6 @@
 import Foundation
 import RxSwift
 
-@UIApplicationMain
 class ShortcutItemsExampleDelegate: CycledApplicationDelegate<ShortcutItemsExample> {
   init() {
     super.init(
@@ -57,7 +56,7 @@ extension ObservableType where E == (Session.Model, ShortcutItemsExample.Model) 
     map { event, global in
       
       var e = event
-      if case .will(let a) = e.state, case .resigned = a {
+      if case .will(.resigned) = e.state {
         e.shortcutItems = Array(0...arc4random_uniform(3)).map {
           Session.Model.ShortcutItem(
             value: UIApplicationShortcutItem(

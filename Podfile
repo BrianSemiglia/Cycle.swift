@@ -12,6 +12,9 @@ target 'Cycle' do
   target 'CycleTests' do
     inherit! :search_paths
     # Pods for testing
+    pod 'RxSwift'
+    pod 'RxCocoa'
+    pod 'Changeset'
   end
 
 end

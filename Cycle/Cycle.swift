@@ -29,6 +29,8 @@ class CycledApplicationDelegate<T: SinkSourceConverting>: UIResponder, UIApplica
     window = UIWindow(frame: UIScreen.main.bounds, root: .empty)
     window?.makeKeyAndVisible()
 
+    session.application = application
+    
     // Cycle is deferred to make sure window is ready for drivers.
     realized = deferred?()
     deferred = nil
