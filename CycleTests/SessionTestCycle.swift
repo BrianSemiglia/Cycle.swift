@@ -11,8 +11,11 @@ import RxSwift
 
 class SessionTestDelegate: CycledApplicationDelegate<SessionTestFilter> {
   let filter: SessionTestFilter
-  init(start: Session.Model) {
-    filter = SessionTestFilter(seed: SessionTestFilter.Model(session: start))
+  init(start: Session.Model, reducer: @escaping ((Session.Model) -> Session.Model) = { $0 }) {
+    filter = SessionTestFilter(
+      seed: SessionTestFilter.Model(session: start),
+      reducer: reducer
+    )
     super.init(
       filter: filter,
       session: Session.shared
@@ -25,12 +28,14 @@ class SessionTestDelegate: CycledApplicationDelegate<SessionTestFilter> {
 
 class SessionTestFilter: SinkSourceConverting {
   let seed: Model
+  let reducer: (Session.Model) -> Session.Model
   var events: [Model] = []
   struct Model {
     var session: Session.Model
   }
-  init(seed: Model) {
+  init(seed: Model, reducer: @escaping (Session.Model) -> Session.Model) {
     self.seed = seed
+    self.reducer = reducer
   }
   func effectsFrom(events: Observable<Model>) -> Observable<Model> {
     events.subscribe {
@@ -42,7 +47,7 @@ class SessionTestFilter: SinkSourceConverting {
       .rendered(events.map { $0.session })
       .withLatestFrom(events) {
         var edit = $0.1
-        edit.session = $0.0
+        edit.session = self.reducer($0.0)
         return edit
     }
   }
