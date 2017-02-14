@@ -13,8 +13,7 @@ class SessionTestCase: XCTestCase {
   
   static func statesFrom(model: Session.Model = .empty, call: (Session) -> Any) -> [Session.Model] {
     var output: [Session.Model] = []
-    let session = Session(model)
-    session.application = UIApplication.shared
+    let session = Session(model: model, application: UIApplication.shared)
     _ = session
       .rendered(Observable<Session.Model>.just(model))
       .subscribe {
@@ -28,8 +27,7 @@ class SessionTestCase: XCTestCase {
   
   static func statesFromStream(stream: Observable<Session.Model>) -> [Session.Model] {
     var output: [Session.Model] = []
-    let session = Session(.empty)
-    session.application = UIApplication.shared
+    let session = Session(model: .empty, application: UIApplication.shared)
     _ = session
       .rendered(stream)
       .subscribe {
@@ -631,8 +629,7 @@ class SessionTestCase: XCTestCase {
   }
   
   func testWillFinishLaunching() {
-    let session = Session(.empty)
-    let cycle = SessionCycle { events -> Observable<SessionTestCase.SessionCycle.DriverModels> in
+    let cycle = SessionCycle { events, session -> Observable<SessionTestCase.SessionCycle.DriverModels> in
       session
       .rendered(events.map { $0.session })
       .map { model -> Session.Model in
@@ -657,8 +654,7 @@ class SessionTestCase: XCTestCase {
       }
     }
     let delegate = CycledApplicationDelegate(
-      filter: cycle,
-      session: session
+      filter: cycle
     ) as UIApplicationDelegate
     XCTAssertFalse(
       delegate.application!(
@@ -669,8 +665,7 @@ class SessionTestCase: XCTestCase {
   }
   
   func testShouldOpenURLs4() {
-    let session = Session(.empty)
-    let cycle = SessionCycle { events -> Observable<SessionTestCase.SessionCycle.DriverModels> in
+    let cycle = SessionCycle { events, session -> Observable<SessionTestCase.SessionCycle.DriverModels> in
       session
       .rendered(events.map { $0.session })
       .map { model -> Session.Model in
@@ -692,8 +687,7 @@ class SessionTestCase: XCTestCase {
       }
     }
     let delegate = CycledApplicationDelegate(
-      filter: cycle,
-      session: session
+      filter: cycle
     ) as UIApplicationDelegate
     
     delegate.application!(
@@ -714,8 +708,7 @@ class SessionTestCase: XCTestCase {
   }
   
   func testShouldOpenURLs9() {
-    let session = Session(.empty)
-    let cycle = SessionCycle { events -> Observable<SessionTestCase.SessionCycle.DriverModels> in
+    let cycle = SessionCycle { events, session -> Observable<SessionTestCase.SessionCycle.DriverModels> in
       session
       .rendered(events.map { $0.session })
       .map { model -> Session.Model in
@@ -737,9 +730,8 @@ class SessionTestCase: XCTestCase {
       }
     }
     let delegate = CycledApplicationDelegate(
-      filter: cycle,
-      session: session
-      ) as UIApplicationDelegate
+      filter: cycle
+    ) as UIApplicationDelegate
     
     delegate.application!(
       UIApplication.shared,
@@ -758,8 +750,7 @@ class SessionTestCase: XCTestCase {
   }
 
   func testSupportedInterfaceOrientations() {
-    let session = Session(.empty)
-    let cycle = SessionCycle { events -> Observable<SessionTestCase.SessionCycle.DriverModels> in
+    let cycle = SessionCycle { events, session -> Observable<SessionTestCase.SessionCycle.DriverModels> in
       session
       .rendered(events.map { $0.session })
       .map { model -> Session.Model in
@@ -786,8 +777,7 @@ class SessionTestCase: XCTestCase {
       }
     }
     let delegate = CycledApplicationDelegate(
-      filter: cycle,
-      session: session
+      filter: cycle
     ) as UIApplicationDelegate
     
     delegate.application!(
@@ -806,8 +796,7 @@ class SessionTestCase: XCTestCase {
   }
   
   func testextensionPointIdentifier() {
-    let session = Session(.empty)
-    let cycle = SessionCycle { events -> Observable<SessionTestCase.SessionCycle.DriverModels> in
+    let cycle = SessionCycle { events, session -> Observable<SessionTestCase.SessionCycle.DriverModels> in
       session
       .rendered(events.map { $0.session })
       .map { model -> Session.Model in
@@ -825,8 +814,7 @@ class SessionTestCase: XCTestCase {
       }
     }
     let delegate = CycledApplicationDelegate(
-      filter: cycle,
-      session: session
+      filter: cycle
     ) as UIApplicationDelegate
     
     delegate.application!(
@@ -845,8 +833,7 @@ class SessionTestCase: XCTestCase {
   }
   
   func testViewControllerWithRestorationIdentifierPath() {
-    let session = Session(.empty)
-    let cycle = SessionCycle { events -> Observable<SessionTestCase.SessionCycle.DriverModels> in
+    let cycle = SessionCycle { events, session -> Observable<SessionTestCase.SessionCycle.DriverModels> in
       session
       .rendered(events.map { $0.session })
       .map { model -> Session.Model in
@@ -869,8 +856,7 @@ class SessionTestCase: XCTestCase {
       }
     }
     let delegate = CycledApplicationDelegate(
-      filter: cycle,
-      session: session
+      filter: cycle
       ) as UIApplicationDelegate
     
     delegate.application!(
@@ -890,8 +876,7 @@ class SessionTestCase: XCTestCase {
   }
   
   func testShouldSaveApplicationState() {
-    let session = Session(.empty)
-    let cycle = SessionCycle { events -> Observable<SessionTestCase.SessionCycle.DriverModels> in
+    let cycle = SessionCycle { events, session -> Observable<SessionTestCase.SessionCycle.DriverModels> in
       session
       .rendered(events.map { $0.session })
       .map { model -> Session.Model in
@@ -912,8 +897,7 @@ class SessionTestCase: XCTestCase {
       }
     }
     let delegate = CycledApplicationDelegate(
-      filter: cycle,
-      session: session
+      filter: cycle
     ) as UIApplicationDelegate
     
     delegate.application!(
@@ -932,8 +916,7 @@ class SessionTestCase: XCTestCase {
   }
   
   func testShouldRestoreApplicationState() {
-    let session = Session(.empty)
-    let cycle = SessionCycle { events -> Observable<SessionTestCase.SessionCycle.DriverModels> in
+    let cycle = SessionCycle { events, session -> Observable<SessionTestCase.SessionCycle.DriverModels> in
       session
       .rendered(events.map { $0.session })
       .map { model -> Session.Model in
@@ -954,8 +937,7 @@ class SessionTestCase: XCTestCase {
       }
     }
     let delegate = CycledApplicationDelegate(
-      filter: cycle,
-      session: session
+      filter: cycle
       ) as UIApplicationDelegate
     
     delegate.application!(
@@ -974,8 +956,7 @@ class SessionTestCase: XCTestCase {
   }
   
   func testShouldNotifyUserActivitiesWithTypes() {
-    let session = Session(.empty)
-    let cycle = SessionCycle { events -> Observable<SessionTestCase.SessionCycle.DriverModels> in
+    let cycle = SessionCycle { events, session -> Observable<SessionTestCase.SessionCycle.DriverModels> in
       session
       .rendered(events.map { $0.session })
       .map { model -> Session.Model in
@@ -996,8 +977,7 @@ class SessionTestCase: XCTestCase {
       }
     }
     let delegate = CycledApplicationDelegate(
-      filter: cycle,
-      session: session
+      filter: cycle
       ) as UIApplicationDelegate
     
     delegate.application!(
@@ -1016,8 +996,7 @@ class SessionTestCase: XCTestCase {
   }
   
   func testActivitiesWithAvaliableData() {
-    let session = Session(.empty)
-    let cycle = SessionCycle { events -> Observable<SessionTestCase.SessionCycle.DriverModels> in
+    let cycle = SessionCycle { events, session -> Observable<SessionTestCase.SessionCycle.DriverModels> in
       session
       .rendered(events.map { $0.session })
       .map { model -> Session.Model in
@@ -1038,8 +1017,7 @@ class SessionTestCase: XCTestCase {
       }
     }
     let delegate = CycledApplicationDelegate(
-      filter: cycle,
-      session: session
+      filter: cycle
     ) as UIApplicationDelegate
     
     delegate.application!(
@@ -1094,9 +1072,32 @@ class SessionTestCase: XCTestCase {
     )
   }
   
-  func testRenderingURLActionOutgoing() {
-    
+  func testAsyncRendering() {
     let asyncCallbacks = expectation(description: "...")
+    var success = 0
+    
+    renderingBackgroundTasksMarkInProgress { success += $0 ? 1 : 0 }
+    
+    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+      self.renderingSendAction { success += $0 ? 1 : 0 }
+    }
+    DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
+      self.renderingURLActionOutgoing { success += $0 ? 1 : 0 }
+    }
+    DispatchQueue.main.asyncAfter(deadline: .now() + 6) {
+      self.renderingBackgroundTasksMarkComplete { success += $0 ? 1 : 0 }
+    }
+
+    DispatchQueue.main.asyncAfter(deadline: .now() + 8) {
+      XCTAssert(success == 4)
+      asyncCallbacks.fulfill()
+    }
+
+    waitForExpectations(timeout: 30)
+  }
+  
+  func renderingURLActionOutgoing(_ complete: @escaping (Bool) -> Void) {
+    
     let empty = Session.Model.empty
     var y = empty; y.urlActionOutgoing = .attempting(URL(string: "https://www.duckduckgo.com")!)
     let delegate = SessionTestDelegate(start: y)
@@ -1105,8 +1106,8 @@ class SessionTestCase: XCTestCase {
       willFinishLaunchingWithOptions: nil
     )
 
-    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-      XCTAssert(
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+      let success = (
         delegate.events.map { $0.urlActionOutgoing }
         ==
         [
@@ -1116,13 +1117,12 @@ class SessionTestCase: XCTestCase {
           .idle
         ]
       )
-      asyncCallbacks.fulfill()
+      complete(success)
       let retained = delegate
     }
-    waitForExpectations(timeout: 30)
   }
   
-  func testRenderingSendAction() {
+  func renderingSendAction(_ complete: @escaping (Bool) -> Void) {
     
     let action = Session.Model.TargetAction(
       action: #selector(getter: UIApplication.isIdleTimerDisabled),
@@ -1130,7 +1130,6 @@ class SessionTestCase: XCTestCase {
       sender: nil,
       event: nil
     )
-    let asyncCallbacks = expectation(description: "...")
     let empty = Session.Model.empty
     var y = empty; y.targetAction = .sending(action)
     
@@ -1140,8 +1139,8 @@ class SessionTestCase: XCTestCase {
       willFinishLaunchingWithOptions: nil
     )
     
-    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-      XCTAssert(
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+      let success = (
         delegate.events.map { $0.targetAction }
         ==
         [
@@ -1151,15 +1150,13 @@ class SessionTestCase: XCTestCase {
           .idle
         ]
       )
-      asyncCallbacks.fulfill()
-      let retained = delegate
+      complete(success)
+      let _ = delegate
     }
-    waitForExpectations(timeout: 30)
   }
   
-  func testRenderingBackgroundTasksMarkInProgress() {
+  func renderingBackgroundTasksMarkInProgress(_ complete: @escaping (Bool) -> Void) {
     
-    let asyncCallbacks = expectation(description: "...")
     let empty = Session.Model.empty
     var y = empty; y.backgroundTasks = [
       Session.Model.BackgroundTask(name: "x", state: .pending)
@@ -1171,8 +1168,8 @@ class SessionTestCase: XCTestCase {
       willFinishLaunchingWithOptions: nil
     )
     
-    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-      XCTAssert(
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+      let success = (
         delegate.events.map { $0.backgroundTasks }.flatMap { $0 }
         ==
         [
@@ -1181,15 +1178,13 @@ class SessionTestCase: XCTestCase {
           Session.Model.BackgroundTask(name: "x", state: .progressing(1))
         ]
       )
-      asyncCallbacks.fulfill()
-      let retained = delegate
+      complete(success)
+      let _ = delegate
     }
-    waitForExpectations(timeout: 30)
   }
 
-  func testRenderingBackgroundTasksMarkComplete() {
+  func renderingBackgroundTasksMarkComplete(_ complete: @escaping (Bool) -> Void) {
     
-    let asyncCallbacks = expectation(description: "...")
     let empty = Session.Model.empty
     var y = empty; y.backgroundTasks = [
       Session.Model.BackgroundTask(name: "x", state: .pending)
@@ -1213,8 +1208,8 @@ class SessionTestCase: XCTestCase {
       willFinishLaunchingWithOptions: nil
     )
     
-    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-      XCTAssert(
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+      let success = (
         delegate.events.map { $0.backgroundTasks }.flatMap { $0 }
         ==
         [
@@ -1223,10 +1218,9 @@ class SessionTestCase: XCTestCase {
           Session.Model.BackgroundTask(name: "x", state: .complete(1))
         ]
       )
-      asyncCallbacks.fulfill()
-      let retained = delegate
+      complete(success)
+      let _ = delegate
     }
-    waitForExpectations(timeout: 30)
   }
   
   func testRenderingBackgroundURLSessionAction() {
@@ -1370,12 +1364,12 @@ class SessionTestCase: XCTestCase {
     struct DriverModels {
       var session: Session.Model
     }
-    let filter: (Observable<DriverModels>) -> Observable<DriverModels>
-    init(filter: @escaping (Observable<DriverModels>) -> Observable<DriverModels>) {
+    let filter: (Observable<DriverModels>, Session) -> Observable<DriverModels>
+    init(filter: @escaping (Observable<DriverModels>, Session) -> Observable<DriverModels>) {
       self.filter = filter
     }
-    func effectsFrom(events: Observable<DriverModels>) -> Observable<DriverModels> {
-      return filter(events)
+    func effectsFrom(events: Observable<DriverModels>, session: Session) -> Observable<DriverModels> { return
+      filter(events, session)
     }
     func start() -> DriverModels { return
       DriverModels(

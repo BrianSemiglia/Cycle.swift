@@ -12,8 +12,7 @@ import RxSwift
 class Example: CycledApplicationDelegate<IntegerMutatingApp> {
   init() {
     super.init(
-      filter: IntegerMutatingApp(),
-      session: Session.shared
+      filter: IntegerMutatingApp()
     )
   }
 }
@@ -23,13 +22,13 @@ struct IntegerMutatingApp: SinkSourceConverting {
     var screen: ValueToggler.Model
     var session: Session.Model
   }
-  func effectsFrom(events: Observable<Model>) -> Observable<Model> {
+  func effectsFrom(events: Observable<Model>, session: Session) -> Observable<Model> {
     let value = ValueToggler.shared
       .rendered(events.map { $0.screen })
       .withLatestFrom(events) { ($0.0, $0.1) }
       .reduced()
     
-    let session = Session.shared
+    let session = session
       .rendered(events.map { $0.session })
       .withLatestFrom(events) { ($0.0, $0.1) }
       .reduced()
