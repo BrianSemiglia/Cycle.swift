@@ -13,7 +13,7 @@ class SessionTestCase: XCTestCase {
   
   static func statesFrom(model: Session.Model = .empty, call: (Session) -> Any) -> [Session.Model] {
     var output: [Session.Model] = []
-    let session = Session(model: model, application: UIApplication.shared)
+    let session = Session(intitial: model, application: UIApplication.shared)
     _ = session
       .rendered(Observable<Session.Model>.just(model))
       .subscribe {
@@ -27,7 +27,7 @@ class SessionTestCase: XCTestCase {
   
   static func statesFromStream(stream: Observable<Session.Model>) -> [Session.Model] {
     var output: [Session.Model] = []
-    let session = Session(model: .empty, application: UIApplication.shared)
+    let session = Session(intitial: .empty, application: UIApplication.shared)
     _ = session
       .rendered(stream)
       .subscribe {
@@ -1072,32 +1072,9 @@ class SessionTestCase: XCTestCase {
     )
   }
   
-  func testAsyncRendering() {
+  func testRenderingURLActionOutgoing() {
+    
     let asyncCallbacks = expectation(description: "...")
-    var success = 0
-    
-    renderingBackgroundTasksMarkInProgress { success += $0 ? 1 : 0 }
-    
-    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-      self.renderingSendAction { success += $0 ? 1 : 0 }
-    }
-    DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
-      self.renderingURLActionOutgoing { success += $0 ? 1 : 0 }
-    }
-    DispatchQueue.main.asyncAfter(deadline: .now() + 6) {
-      self.renderingBackgroundTasksMarkComplete { success += $0 ? 1 : 0 }
-    }
-
-    DispatchQueue.main.asyncAfter(deadline: .now() + 8) {
-      XCTAssert(success == 4)
-      asyncCallbacks.fulfill()
-    }
-
-    waitForExpectations(timeout: 30)
-  }
-  
-  func renderingURLActionOutgoing(_ complete: @escaping (Bool) -> Void) {
-    
     let empty = Session.Model.empty
     var y = empty; y.urlActionOutgoing = .attempting(URL(string: "https://www.duckduckgo.com")!)
     let delegate = SessionTestDelegate(start: y)
@@ -1105,24 +1082,25 @@ class SessionTestCase: XCTestCase {
       UIApplication.shared,
       willFinishLaunchingWithOptions: nil
     )
-
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-      let success = (
+    
+    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+      XCTAssert(
         delegate.events.map { $0.urlActionOutgoing }
-        ==
-        [
-          .attempting(URL(string: "https://www.duckduckgo.com")!),
-          .opening(URL(string: "https://www.duckduckgo.com")!), // .will(.launched)
-          .opening(URL(string: "https://www.duckduckgo.com")!),
-          .idle
+          ==
+          [
+            .attempting(URL(string: "https://www.duckduckgo.com")!),
+            .opening(URL(string: "https://www.duckduckgo.com")!), // .will(.launched)
+            .opening(URL(string: "https://www.duckduckgo.com")!),
+            .idle
         ]
       )
-      complete(success)
-      let retained = delegate
+      asyncCallbacks.fulfill()
+      let _ = delegate
     }
+    waitForExpectations(timeout: 30)
   }
   
-  func renderingSendAction(_ complete: @escaping (Bool) -> Void) {
+  func testRenderingSendAction() {
     
     let action = Session.Model.TargetAction(
       action: #selector(getter: UIApplication.isIdleTimerDisabled),
@@ -1130,6 +1108,7 @@ class SessionTestCase: XCTestCase {
       sender: nil,
       event: nil
     )
+    let asyncCallbacks = expectation(description: "...")
     let empty = Session.Model.empty
     var y = empty; y.targetAction = .sending(action)
     
@@ -1139,24 +1118,26 @@ class SessionTestCase: XCTestCase {
       willFinishLaunchingWithOptions: nil
     )
     
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-      let success = (
+    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+      XCTAssert(
         delegate.events.map { $0.targetAction }
-        ==
-        [
-          .sending(action),
-          .responding(action, true),
-          .responding(action, true), // .will(.launched)
-          .idle
+          ==
+          [
+            .sending(action),
+            .responding(action, true),
+            .responding(action, true), // .will(.launched)
+            .idle
         ]
       )
-      complete(success)
+      asyncCallbacks.fulfill()
       let _ = delegate
     }
+    waitForExpectations(timeout: 30)
   }
   
-  func renderingBackgroundTasksMarkInProgress(_ complete: @escaping (Bool) -> Void) {
+  func testRenderingBackgroundTasksMarkInProgress() {
     
+    let asyncCallbacks = expectation(description: "...")
     let empty = Session.Model.empty
     var y = empty; y.backgroundTasks = [
       Session.Model.BackgroundTask(name: "x", state: .pending)
@@ -1168,23 +1149,25 @@ class SessionTestCase: XCTestCase {
       willFinishLaunchingWithOptions: nil
     )
     
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-      let success = (
+    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+      XCTAssert(
         delegate.events.map { $0.backgroundTasks }.flatMap { $0 }
-        ==
-        [
-          Session.Model.BackgroundTask(name: "x", state: .pending),
-          Session.Model.BackgroundTask(name: "x", state: .progressing(1)), // .will(.launch)
-          Session.Model.BackgroundTask(name: "x", state: .progressing(1))
+          ==
+          [
+            Session.Model.BackgroundTask(name: "x", state: .pending),
+            Session.Model.BackgroundTask(name: "x", state: .progressing(2)), // .will(.launch)
+            Session.Model.BackgroundTask(name: "x", state: .progressing(2))
         ]
       )
-      complete(success)
+      asyncCallbacks.fulfill()
       let _ = delegate
     }
+    waitForExpectations(timeout: 30)
   }
-
-  func renderingBackgroundTasksMarkComplete(_ complete: @escaping (Bool) -> Void) {
+  
+  func testRenderingBackgroundTasksMarkComplete() {
     
+    let asyncCallbacks = expectation(description: "...")
     let empty = Session.Model.empty
     var y = empty; y.backgroundTasks = [
       Session.Model.BackgroundTask(name: "x", state: .pending)
@@ -1208,19 +1191,20 @@ class SessionTestCase: XCTestCase {
       willFinishLaunchingWithOptions: nil
     )
     
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-      let success = (
+    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+      XCTAssert(
         delegate.events.map { $0.backgroundTasks }.flatMap { $0 }
-        ==
-        [
-          Session.Model.BackgroundTask(name: "x", state: .pending),
-          Session.Model.BackgroundTask(name: "x", state: .complete(1)), // .will(.launch)
-          Session.Model.BackgroundTask(name: "x", state: .complete(1))
+          ==
+          [
+            Session.Model.BackgroundTask(name: "x", state: .pending),
+            Session.Model.BackgroundTask(name: "x", state: .complete(1)), // .will(.launch)
+            Session.Model.BackgroundTask(name: "x", state: .complete(1))
         ]
       )
-      complete(success)
+      asyncCallbacks.fulfill()
       let _ = delegate
     }
+    waitForExpectations(timeout: 30)
   }
   
   func testRenderingBackgroundURLSessionAction() {

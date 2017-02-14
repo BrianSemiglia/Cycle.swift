@@ -187,14 +187,13 @@ class Session: NSObject, UIApplicationDelegate {
     }
   }
   
-  init(model: Session.Model, application: UIApplication) {
+  init(intitial: Session.Model, application: UIApplication) {
     self.application = application
-    self.model = model
-    output = BehaviorSubject<Model>(value: model)
+    self.model = intitial
+    output = BehaviorSubject<Model>(value: intitial)
   }
   
-//  static let shared = Session(.empty)
-  var application: UIApplication!
+  fileprivate let application: UIApplication
   fileprivate var disposable: Disposable?
   fileprivate let output: BehaviorSubject<Session.Model>
   fileprivate var model: Session.Model {

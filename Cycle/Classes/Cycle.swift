@@ -8,6 +8,7 @@
 
 import UIKit
 import RxSwift
+import Curry
 
 class CycledApplicationDelegate<T: SinkSourceConverting>: UIResponder, UIApplicationDelegate {
   
@@ -16,7 +17,7 @@ class CycledApplicationDelegate<T: SinkSourceConverting>: UIResponder, UIApplica
   var window: UIWindow?
   
   init(filter: T) {
-    deferred = { Cycle(transformer: filter, application: $0) }
+    deferred = curry(Cycle.init)(filter)
   }
   
   func application(
@@ -59,7 +60,7 @@ class Cycle<E: SinkSourceConverting> {
   var loop: Disposable?
   let session: Session
   init(transformer: E, application: UIApplication) {
-    session = Session(model: .empty, application: application)
+    session = Session(intitial: .empty, application: application)
     eventsProxy = ReplaySubject.create(bufferSize: 1)
     events = transformer.effectsFrom(events: eventsProxy!, session: session)
     loop = events!
