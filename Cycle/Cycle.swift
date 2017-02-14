@@ -11,14 +11,12 @@ import RxSwift
 
 class CycledApplicationDelegate<T: SinkSourceConverting>: UIResponder, UIApplicationDelegate {
   
-  private var deferred: (() -> Cycle<T>)?
+  private var deferred: ((UIApplication) -> Cycle<T>)?
   private var realized: Cycle<T>?
-  private let session: Session
   var window: UIWindow?
   
-  init(filter: T, session: Session) {
-    self.session = session
-    deferred = { Cycle(transformer: filter) }
+  init(filter: T) {
+    deferred = { Cycle(transformer: filter, application: $0) }
   }
   
   func application(
@@ -28,25 +26,23 @@ class CycledApplicationDelegate<T: SinkSourceConverting>: UIResponder, UIApplica
     
     window = UIWindow(frame: UIScreen.main.bounds, root: .empty)
     window?.makeKeyAndVisible()
-
-    session.application = application
     
     // Cycle is deferred to make sure window is ready for drivers.
-    realized = deferred?()
+    realized = deferred?(application)
     deferred = nil
     
-    return session.application(
+    return realized!.session.application(
       application,
       willFinishLaunchingWithOptions: options
     )
   }
   
   override func forwardingTarget(for aSelector: Selector!) -> Any? {
-    return session
+    return realized?.session
   }
   
   override func responds(to aSelector: Selector!) -> Bool {
-    return session.responds(to: aSelector)
+    return realized?.session.responds(to: aSelector) == true
   }
 }
 
@@ -61,10 +57,11 @@ class Cycle<E: SinkSourceConverting> {
   var events: Observable<E.Source>?
   var eventsProxy: ReplaySubject<E.Source>?
   var loop: Disposable?
-  
-  init(transformer: E) {
+  let session: Session
+  init(transformer: E, application: UIApplication) {
+    session = Session(model: .empty, application: application)
     eventsProxy = ReplaySubject.create(bufferSize: 1)
-    events = transformer.effectsFrom(events: eventsProxy!)
+    events = transformer.effectsFrom(events: eventsProxy!, session: session)
     loop = events!
       .startWith(transformer.start())
       .subscribe { [weak self] in
@@ -75,7 +72,7 @@ class Cycle<E: SinkSourceConverting> {
 
 protocol SinkSourceConverting {
   associatedtype Source
-  func effectsFrom(events: Observable<Source>) -> Observable<Source>
+  func effectsFrom(events: Observable<Source>, session: Session) -> Observable<Source>
   func start() -> Source
 }
 
