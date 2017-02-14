@@ -181,7 +181,7 @@ class SessionTestCase: XCTestCase {
       }
       .map { $0.remoteNotificationRegistration }
       ==
-      [.idle, .error(ErrorStub(id: "x") as Error)]
+      [.none, .error(ErrorStub(id: "x") as Error)]
     )
     
     XCTAssert(
@@ -194,7 +194,7 @@ class SessionTestCase: XCTestCase {
       }
       .map { $0.remoteNotificationRegistration }
       ==
-      [.idle, .token(Data())]
+      [.none, .some(token: Data())]
     )
     
     XCTAssert(
@@ -524,15 +524,13 @@ class SessionTestCase: XCTestCase {
           fetchCompletionHandler: { _ in }
         )
       }
-      .map { $0.remoteNotification }
+      .map { $0.remoteNotifications }
+      .flatMap { $0 }
       ==
       [
-        .idle,
-        .progressing(
-          Session.Model.RemoteNofiticationAction(
-            notification: ["x":"y"],
-            completion: { _ in }
-          )
+        Session.Model.RemoteNofitication(
+          notification: ["x":"y"],
+          state: .progressing({ _ in })
         )
       ]
     )
@@ -598,7 +596,8 @@ class SessionTestCase: XCTestCase {
           supportedInterfaceOrientationsFor: WindowStub(id: "x")
         )
       }
-      .map { $0.interfaceOrientations }.flatMap { $0 }
+      .map { $0.interfaceOrientations }
+      .flatMap { $0 }
       ==
       [.considering(WindowStub(id: "x") as UIWindow)]
     )
@@ -1078,7 +1077,7 @@ class SessionTestCase: XCTestCase {
     let empty = Session.Model.empty
     var y = empty; y.urlActionOutgoing = .attempting(URL(string: "https://www.duckduckgo.com")!)
     let delegate = SessionTestDelegate(start: y)
-    delegate.application(
+    (delegate as UIApplicationDelegate).application!(
       UIApplication.shared,
       willFinishLaunchingWithOptions: nil
     )
@@ -1113,7 +1112,7 @@ class SessionTestCase: XCTestCase {
     var y = empty; y.targetAction = .sending(action)
     
     let delegate = SessionTestDelegate(start: y)
-    delegate.application(
+    (delegate as UIApplicationDelegate).application!(
       UIApplication.shared,
       willFinishLaunchingWithOptions: nil
     )
@@ -1144,19 +1143,29 @@ class SessionTestCase: XCTestCase {
     ]
     
     let delegate = SessionTestDelegate(start: y)
-    delegate.application(
+    (delegate as UIApplicationDelegate).application!(
       UIApplication.shared,
       willFinishLaunchingWithOptions: nil
     )
     
     DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
       XCTAssert(
-        delegate.events.map { $0.backgroundTasks }.flatMap { $0 }
-          ==
-          [
-            Session.Model.BackgroundTask(name: "x", state: .pending),
-            Session.Model.BackgroundTask(name: "x", state: .progressing(2)), // .will(.launch)
-            Session.Model.BackgroundTask(name: "x", state: .progressing(2))
+        delegate.events.map { $0.backgroundTasks }
+        .flatMap { $0 }
+        ==
+        [
+          Session.Model.BackgroundTask(
+            name: "x",
+            state: .pending
+          ),
+          Session.Model.BackgroundTask( // .will(.launch)
+            name: "x",
+            state: .progressing(2)
+          ),
+          Session.Model.BackgroundTask(
+            name: "x",
+            state: .progressing(2)
+          )
         ]
       )
       asyncCallbacks.fulfill()
@@ -1170,7 +1179,10 @@ class SessionTestCase: XCTestCase {
     let asyncCallbacks = expectation(description: "...")
     let empty = Session.Model.empty
     var y = empty; y.backgroundTasks = [
-      Session.Model.BackgroundTask(name: "x", state: .pending)
+      Session.Model.BackgroundTask(
+        name: "x",
+        state: .pending
+      )
     ]
     
     let delegate = SessionTestDelegate(start: y) {
@@ -1186,19 +1198,30 @@ class SessionTestCase: XCTestCase {
       )
       return edit
     }
-    delegate.application(
+    
+    (delegate as UIApplicationDelegate).application!(
       UIApplication.shared,
       willFinishLaunchingWithOptions: nil
     )
     
     DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
       XCTAssert(
-        delegate.events.map { $0.backgroundTasks }.flatMap { $0 }
-          ==
-          [
-            Session.Model.BackgroundTask(name: "x", state: .pending),
-            Session.Model.BackgroundTask(name: "x", state: .complete(1)), // .will(.launch)
-            Session.Model.BackgroundTask(name: "x", state: .complete(1))
+        delegate.events.map { $0.backgroundTasks }
+        .flatMap { $0 }
+        ==
+        [
+          Session.Model.BackgroundTask(
+            name: "x",
+            state: .pending
+          ),
+          Session.Model.BackgroundTask( // .will(.launch)
+            name: "x",
+            state: .complete(1)
+          ),
+          Session.Model.BackgroundTask(
+            name: "x",
+            state: .complete(1)
+          )
         ]
       )
       asyncCallbacks.fulfill()
