@@ -1398,10 +1398,10 @@ extension Session.Model.Notification: Equatable {
 
 extension Session.Model.FetchAction: Equatable {
   static func == (
-    lhs: Session.Model.FetchAction,
-    rhs: Session.Model.FetchAction
+    left: Session.Model.FetchAction,
+    right: Session.Model.FetchAction
   ) -> Bool { return
-    lhs.hash == rhs.hash
+    left.hash == right.hash
   }
 }
 
