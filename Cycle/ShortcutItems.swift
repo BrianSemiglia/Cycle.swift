@@ -12,8 +12,7 @@ import RxSwift
 class ShortcutItemsExampleDelegate: CycledApplicationDelegate<ShortcutItemsExample> {
   init() {
     super.init(
-      filter: ShortcutItemsExample(),
-      session: Session.shared
+      filter: ShortcutItemsExample()
     )
   }
 }
@@ -23,9 +22,9 @@ struct ShortcutItemsExample: SinkSourceConverting {
     var session: Session.Model
     var async: Timer.Model
   }
-  func effectsFrom(events: Observable<Model>) -> Observable<Model> {
+  func effectsFrom(events: Observable<Model>, session: Session) -> Observable<Model> {
     
-    let session = Session.shared
+    let session = session
     .rendered(events.map { $0.session })
     .withLatestFrom(events) { ($0.0, $0.1) }
     .reduced()

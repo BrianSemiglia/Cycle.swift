@@ -187,12 +187,13 @@ class Session: NSObject, UIApplicationDelegate {
     }
   }
   
-  init(_ input: Session.Model) {
-    model = input
-    output = BehaviorSubject<Model>(value: input)
+  init(model: Session.Model, application: UIApplication) {
+    self.application = application
+    self.model = model
+    output = BehaviorSubject<Model>(value: model)
   }
   
-  static let shared = Session(.empty)
+//  static let shared = Session(.empty)
   var application: UIApplication!
   fileprivate var disposable: Disposable?
   fileprivate let output: BehaviorSubject<Session.Model>
@@ -457,7 +458,7 @@ class Session: NSObject, UIApplicationDelegate {
   }
 
   func application(
-    _ app: UIApplication,
+    _ application: UIApplication,
     open url: URL,
     options: [UIApplicationOpenURLOptionsKey : Any] = [:]
   ) -> Bool {

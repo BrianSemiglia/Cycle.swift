@@ -17,8 +17,7 @@ class SessionTestDelegate: CycledApplicationDelegate<SessionTestFilter> {
       reducer: reducer
     )
     super.init(
-      filter: filter,
-      session: Session.shared
+      filter: filter
     )
   }
   var events: [Session.Model] { return
@@ -37,13 +36,13 @@ class SessionTestFilter: SinkSourceConverting {
     self.seed = seed
     self.reducer = reducer
   }
-  func effectsFrom(events: Observable<Model>) -> Observable<Model> {
+  func effectsFrom(events: Observable<Model>, session: Session) -> Observable<Model> {
     events.subscribe {
       if let new = $0.element {
         self.events += [new]
       }
     }
-    return Session.shared
+    return session
       .rendered(events.map { $0.session })
       .withLatestFrom(events) {
         var edit = $0.1
