@@ -126,6 +126,7 @@
 		D349A9B11E37CE24005F521E /* Cycle */ = {
 			isa = PBXGroup;
 			children = (
+				D3AE021A1E53ADF7003CEE01 /* Cycle.entitlements */,
 				D349A9D51E37CE9F005F521E /* Cycle.swift */,
 				D349A9BB1E37CE24005F521E /* LaunchScreen.storyboard */,
 				D349A9BE1E37CE24005F521E /* Info.plist */,
