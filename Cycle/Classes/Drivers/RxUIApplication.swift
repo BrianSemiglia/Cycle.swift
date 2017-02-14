@@ -308,13 +308,15 @@ class Session: NSObject, UIApplicationDelegate {
         model.minimumBackgroundFetchInterval.asUIApplicationBackgroundFetchInterval()
       )
       
-      switch model.remoteNotificationRegistration {
-      case .attempting:
-        application.registerForRemoteNotifications()
-      case .unregistering:
-        application.unregisterForRemoteNotifications()
-      default:
-        break
+      if model.remoteNotificationRegistration != oldValue.remoteNotificationRegistration {
+        switch model.remoteNotificationRegistration {
+        case .attempting:
+          application.registerForRemoteNotifications()
+        case .none:
+          application.unregisterForRemoteNotifications()
+        default:
+          break
+        }
       }
       
       if
@@ -550,7 +552,7 @@ class Session: NSObject, UIApplicationDelegate {
     didRegisterForRemoteNotificationsWithDeviceToken token: Data
   ) {
     var edit = model
-    edit.remoteNotificationRegistration = .token(token)
+    edit.remoteNotificationRegistration = .some(token: token)
     output.on(.next(edit))
   }
 
@@ -1082,11 +1084,10 @@ extension Change: Equatable {
 }
 
 enum RemoteNotificationRegistration {
-  case idle
+  case none
   case attempting
-  case token(Data)
+  case some(token: Data)
   case error(Error)
-  case unregistering
 }
 
 enum Filtered<T: Equatable, U: Equatable> {
@@ -1155,7 +1156,7 @@ extension Session.Model {
       state: .none(.awaitingLaunch),
       statusBarFrame: .none(.zero),
       isProtectedDataAvailable: .none(false),
-      remoteNotificationRegistration: .idle,
+      remoteNotificationRegistration: .none,
       statusBarOrientation: .none(.unknown),
       backgroundTasks: Set(),
       isExperiencingHealthAuthorizationRequest: false,
@@ -1455,8 +1456,9 @@ extension RemoteNotificationRegistration: Equatable {
     right: RemoteNotificationRegistration
   ) -> Bool {
     switch (left, right) {
-    case (.idle, .idle): return true
-    case (.token(let a), .token(let b)): return a == b
+    case (.none, .none): return true
+    case (.attempting, .attempting): return true
+    case (.some(let a), .some(let b)): return a == b
     case (.error, .error): return true // Needs to compare errors
     default: return false
     }
