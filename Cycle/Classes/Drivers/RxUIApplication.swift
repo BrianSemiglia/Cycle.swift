@@ -661,13 +661,13 @@ class Session: NSObject, UIApplicationDelegate {
 
   func application(
     _ application: UIApplication,
-    performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult
+    performFetchWithCompletionHandler completion: @escaping (UIBackgroundFetchResult
   ) -> Void) {
     var edit = model
     edit.fetch = .progressing(
       Session.Model.FetchAction(
         hash: Date().hashValue,
-        completion: completionHandler
+        completion: completion
       )
     )
     output.on(.next(edit))
@@ -1483,7 +1483,10 @@ extension Session.Model.ShortcutItem: Equatable {
 }
 
 extension EditOperation: Equatable {
-  public static func ==(left: EditOperation, right: EditOperation) -> Bool {
+  public static func ==(
+    left: EditOperation,
+    right: EditOperation
+  ) -> Bool {
     switch (left, right) {
     case (.insertion, .insertion): return true
     case (.deletion, .deletion): return true
@@ -1495,7 +1498,10 @@ extension EditOperation: Equatable {
 }
 
 extension Session.Model.URLActionOutgoing: Equatable {
-  static func ==(left: Session.Model.URLActionOutgoing, right: Session.Model.URLActionOutgoing) -> Bool {
+  static func ==(
+    left: Session.Model.URLActionOutgoing,
+    right: Session.Model.URLActionOutgoing
+  ) -> Bool {
     switch (left, right) {
     case (.idle, .idle): return
       true
@@ -1515,7 +1521,7 @@ extension Session.Model.TartgetActionProcess: Equatable {
   static func ==(
     left: Session.Model.TartgetActionProcess,
     right: Session.Model.TartgetActionProcess
-    ) -> Bool {
+  ) -> Bool {
     switch (left, right) {
     case (.idle, .idle): return true
     case (.sending(let a), .sending(let b)): return a == b
@@ -1542,7 +1548,7 @@ extension Session.Model.BackgroundTask.State: Equatable {
   static func ==(
     left: Session.Model.BackgroundTask.State,
     right: Session.Model.BackgroundTask.State
-    ) -> Bool {
+  ) -> Bool {
     switch (left, right) {
     case (.pending, .pending): return true
     case (.progressing(let a), .progressing(let b)): return a == b
