@@ -19,6 +19,7 @@
 		D349A9DE1E3B0A59005F521E /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = D349A9DD1E3B0A59005F521E /* Session.swift */; };
 		D36E49211E3BF0B500CD0590 /* SessionTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36E49201E3BF0B500CD0590 /* SessionTestCase.swift */; };
 		D36E49221E3BF32800CD0590 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = D349A9DD1E3B0A59005F521E /* Session.swift */; };
+		D3AE02191E53AA69003CEE01 /* PushNotificationRegistration.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3AE02181E53AA69003CEE01 /* PushNotificationRegistration.swift */; };
 		D3AEBA561E4D0A6000F98346 /* Timer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3AEBA551E4D0A6000F98346 /* Timer.swift */; };
 		D3E273771E4C363A00B90946 /* ShortcutItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3E273761E4C363A00B90946 /* ShortcutItems.swift */; };
 		F3D3205A7E2A37982198B92E /* Pods_Cycle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA991E8A4E0A374CFC26F41F /* Pods_Cycle.framework */; };
@@ -52,6 +53,8 @@
 		D349A9D91E37D079005F521E /* ValueToggler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ValueToggler.swift; sourceTree = "<group>"; };
 		D349A9DD1E3B0A59005F521E /* Session.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
 		D36E49201E3BF0B500CD0590 /* SessionTestCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionTestCase.swift; sourceTree = "<group>"; };
+		D3AE02181E53AA69003CEE01 /* PushNotificationRegistration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushNotificationRegistration.swift; sourceTree = "<group>"; };
+		D3AE021A1E53ADF7003CEE01 /* Cycle.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Cycle.entitlements; sourceTree = "<group>"; };
 		D3AEBA551E4D0A6000F98346 /* Timer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Timer.swift; sourceTree = "<group>"; };
 		D3E273761E4C363A00B90946 /* ShortcutItems.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShortcutItems.swift; sourceTree = "<group>"; };
 		E1698EFB7DD5E9EBB517E954 /* Pods_CycleTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CycleTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -144,6 +147,7 @@
 			isa = PBXGroup;
 			children = (
 				D349A9D71E37CFA5005F521E /* Assets.xcassets */,
+				D3AE02171E53AA54003CEE01 /* PushNotificationRegistration */,
 				D3CE9E9C1E5385B700A60EEC /* URLActionOutgoing */,
 				D3E273751E4C35F000B90946 /* ShortcutItems */,
 				D3E273741E4C35E700B90946 /* IntegerMutatingApp */,
@@ -160,6 +164,14 @@
 			);
 			name = Drivers;
 			path = Cycle;
+			sourceTree = "<group>";
+		};
+		D3AE02171E53AA54003CEE01 /* PushNotificationRegistration */ = {
+			isa = PBXGroup;
+			children = (
+				D3AE02181E53AA69003CEE01 /* PushNotificationRegistration.swift */,
+			);
+			name = PushNotificationRegistration;
 			sourceTree = "<group>";
 		};
 		D3CE9E9C1E5385B700A60EEC /* URLActionOutgoing */ = {
@@ -245,6 +257,11 @@
 						CreatedOnToolsVersion = 8.2.1;
 						DevelopmentTeam = 9R3LQ2Q36B;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
 					};
 					D349A9C21E37CE24005F521E = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -394,6 +411,7 @@
 				D349A9DE1E3B0A59005F521E /* Session.swift in Sources */,
 				D3E273771E4C363A00B90946 /* ShortcutItems.swift in Sources */,
 				D349A9D61E37CE9F005F521E /* Cycle.swift in Sources */,
+				D3AE02191E53AA69003CEE01 /* PushNotificationRegistration.swift in Sources */,
 				D3AEBA561E4D0A6000F98346 /* Timer.swift in Sources */,
 				D349A9D41E37CE7A005F521E /* IntegerMutatingApp.swift in Sources */,
 				D3131FE91E521D2D00E63101 /* URLActionOutgoing.swift in Sources */,
@@ -531,6 +549,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CDA09798D995F91F56702078 /* Pods-Cycle.debug.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Cycle/Cycle.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = 9R3LQ2Q36B;
 				INFOPLIST_FILE = Cycle/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
@@ -545,6 +565,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BA7384111A59B2C4111A97CA /* Pods-Cycle.release.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Cycle/Cycle.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = 9R3LQ2Q36B;
 				INFOPLIST_FILE = Cycle/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;

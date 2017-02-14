@@ -22,7 +22,7 @@ class Session: NSObject, UIApplicationDelegate {
     var userActivityContinuation: UserActivityState
     var watchKitExtensionRequest: AsyncAction<WatchKitExtensionRequest>
     var localNotification: UILocalNotification?
-    var remoteNotification: AsyncAction<RemoteNofiticationAction>
+    var remoteNotifications: [RemoteNofitication]
     var notificationSettings: UIUserNotificationSettings?
     var isObservingSignificantTimeChange: Bool
     var isExperiencingMemoryWarning: Bool
@@ -108,9 +108,13 @@ class Session: NSObject, UIApplicationDelegate {
         var completion: (Bool) -> Void
       }
     }
-    struct RemoteNofiticationAction {
+    struct RemoteNofitication {
       var notification: [AnyHashable : Any]
-      var completion: (UIBackgroundFetchResult) -> Void
+      var state: State
+      enum State {
+        case progressing((UIBackgroundFetchResult) -> Void)
+        case complete(UIBackgroundFetchResult, (UIBackgroundFetchResult) -> Void)
+      }
     }
     struct WatchKitExtensionRequest {
       var userInfo: [AnyHashable: Any]?
@@ -316,6 +320,27 @@ class Session: NSObject, UIApplicationDelegate {
           application.unregisterForRemoteNotifications()
         default:
           break
+        }
+      }
+      
+      Session.deletions(
+        old: oldValue.remoteNotifications,
+        new: model.remoteNotifications
+      )
+      .flatMap { x -> ((UIBackgroundFetchResult) -> Void)? in
+        if case .progressing(let a) = x.state { return a }
+        else { return nil }
+      }
+      .forEach {
+        $0(.noData)
+      }
+      
+      edit.remoteNotifications =  model.remoteNotifications.flatMap {
+        if case .complete(let result, let completion) = $0.state {
+          completion(result) // SIDE EFFECT!
+          return nil
+        } else {
+          return $0
         }
       }
       
@@ -649,15 +674,15 @@ class Session: NSObject, UIApplicationDelegate {
   func application(
     _ application: UIApplication,
     didReceiveRemoteNotification info: [AnyHashable : Any],
-    fetchCompletionHandler completion: @escaping (UIBackgroundFetchResult) -> Void
+    fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
   ) {
     var edit = model
-    edit.remoteNotification = .progressing(
-      Session.Model.RemoteNofiticationAction(
+    edit.remoteNotifications += [
+      Session.Model.RemoteNofitication(
         notification: info,
-        completion: completion
+        state: .progressing(completionHandler)
       )
-    )
+    ]
     output.on(.next(edit))
   }
 
@@ -990,7 +1015,7 @@ extension Session.Model: Equatable {
     left.userActivityContinuation == right.userActivityContinuation &&
     left.watchKitExtensionRequest == right.watchKitExtensionRequest &&
     left.localNotification == right.localNotification &&
-    left.remoteNotification == right.remoteNotification &&
+    left.remoteNotifications == right.remoteNotifications &&
     left.notificationSettings == right.notificationSettings &&
     left.isObservingSignificantTimeChange == right.isObservingSignificantTimeChange &&
     left.isExperiencingMemoryWarning == right.isExperiencingMemoryWarning &&
@@ -1149,7 +1174,7 @@ extension Session.Model {
       userActivityContinuation: .idle,
       watchKitExtensionRequest: .idle,
       localNotification: nil,
-      remoteNotification: .idle,
+      remoteNotifications: [],
       notificationSettings: nil,
       isObservingSignificantTimeChange: false,
       isExperiencingMemoryWarning: false,
@@ -1380,13 +1405,29 @@ extension Session.Model.FetchAction: Equatable {
   }
 }
 
-extension Session.Model.RemoteNofiticationAction: Equatable {
+extension Session.Model.RemoteNofitication: Equatable {
   static func == (
-    lhs: Session.Model.RemoteNofiticationAction,
-    rhs: Session.Model.RemoteNofiticationAction
+    left: Session.Model.RemoteNofitication,
+    right: Session.Model.RemoteNofitication
   ) -> Bool { return
-    NSDictionary(dictionary: lhs.notification) ==
-    NSDictionary(dictionary: rhs.notification)
+    left.state == right.state &&
+    NSDictionary(dictionary: left.notification) == NSDictionary(dictionary: right.notification)
+  }
+}
+
+extension Session.Model.RemoteNofitication.State: Equatable {
+  static func ==(
+    left: Session.Model.RemoteNofitication.State,
+    right: Session.Model.RemoteNofitication.State
+  ) -> Bool {
+    switch (left, right) {
+    case (.progressing, .progressing): return
+      true
+    case (.complete(let a, _), .complete(let b, _)): return
+      a == b
+    default: return
+      false
+    }
   }
 }
 
