@@ -144,6 +144,7 @@
 			isa = PBXGroup;
 			children = (
 				D349A9D71E37CFA5005F521E /* Assets.xcassets */,
+				D3CE9E9C1E5385B700A60EEC /* URLActionOutgoing */,
 				D3E273751E4C35F000B90946 /* ShortcutItems */,
 				D3E273741E4C35E700B90946 /* IntegerMutatingApp */,
 			);
@@ -161,6 +162,14 @@
 			path = Cycle;
 			sourceTree = "<group>";
 		};
+		D3CE9E9C1E5385B700A60EEC /* URLActionOutgoing */ = {
+			isa = PBXGroup;
+			children = (
+				D3131FE81E521D2D00E63101 /* URLActionOutgoing.swift */,
+			);
+			name = URLActionOutgoing;
+			sourceTree = "<group>";
+		};
 		D3E273741E4C35E700B90946 /* IntegerMutatingApp */ = {
 			isa = PBXGroup;
 			children = (
@@ -174,7 +183,6 @@
 			isa = PBXGroup;
 			children = (
 				D3E273761E4C363A00B90946 /* ShortcutItems.swift */,
-				D3131FE81E521D2D00E63101 /* URLActionOutgoing.swift */,
 			);
 			name = ShortcutItems;
 			sourceTree = "<group>";
