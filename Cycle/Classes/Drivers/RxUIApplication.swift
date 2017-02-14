@@ -1176,7 +1176,7 @@ extension Session.Model {
       shortcutItems: [],
       shouldSaveApplicationState: .idle,
       shouldRestoreApplicationState: .idle,
-      shouldLaunch: false,
+      shouldLaunch: true,
       urlActionIncoming: .idle,
       extensionPointIdentifier: .idle,
       interfaceOrientations: [],
