@@ -9,7 +9,6 @@
 import Foundation
 import RxSwift
 
-@UIApplicationMain
 class URLActionOutgoingDelegate: CycledApplicationDelegate<URLActionOutgoing> {
   init() {
     super.init(
@@ -47,12 +46,12 @@ extension ObservableType where E == (Session.Model, URLActionOutgoing.Model) {
       
       var e = event
       if case .did(.active) = e.state {
-//        e.urlAction = .attempting(URL(string: "https://www.duckduckgo.com")!)
+        e.urlActionOutgoing = .attempting(URL(string: "https://www.duckduckgo.com")!)
       }
       
       var output = global
       output.session = e
       return output
-    } // .delay(1, scheduler: MainScheduler.instance)
+    }
   }
 }
