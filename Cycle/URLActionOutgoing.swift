@@ -13,8 +13,7 @@ import RxSwift
 class URLActionOutgoingDelegate: CycledApplicationDelegate<URLActionOutgoing> {
   init() {
     super.init(
-      filter: URLActionOutgoing(),
-      session: Session.shared
+      filter: URLActionOutgoing()
     )
   }
 }
@@ -23,8 +22,8 @@ struct URLActionOutgoing: SinkSourceConverting {
   struct Model {
     var session: Session.Model
   }
-  func effectsFrom(events: Observable<Model>) -> Observable<Model> { return
-    Session.shared
+  func effectsFrom(events: Observable<Model>, session: Session) -> Observable<Model> { return
+    session
       .rendered(events.map { $0.session })
       .withLatestFrom(events) { ($0.0, $0.1) }
       .reduced()
