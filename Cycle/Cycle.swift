@@ -12,38 +12,25 @@ import Curry
 
 class CycledApplicationDelegate<T: SinkSourceConverting>: UIResponder, UIApplicationDelegate {
   
-  private var deferred: ((UIApplication) -> Cycle<T>)?
-  private var realized: Cycle<T>?
+  private var cycle: Cycle<T>
   var window: UIWindow?
   
   init(filter: T) {
-    deferred = curry(Cycle.init)(filter)
-  }
-  
-  func application(
-    _ application: UIApplication,
-    willFinishLaunchingWithOptions options: [UIApplicationLaunchOptionsKey : Any]? = nil
-  ) -> Bool {
-    
     window = UIWindow(frame: UIScreen.main.bounds, root: .empty)
     window?.makeKeyAndVisible()
-    
     // Cycle is deferred to make sure window is ready for drivers.
-    realized = deferred?(application)
-    deferred = nil
-    
-    return realized!.session.application(
-      application,
-      willFinishLaunchingWithOptions: options
+    cycle = Cycle(
+      transformer: filter,
+      application: UIApplication.shared
     )
   }
   
-  override func forwardingTarget(for aSelector: Selector!) -> Any? {
-    return realized?.session
+  override func forwardingTarget(for input: Selector!) -> Any? { return
+    cycle.session
   }
   
-  override func responds(to aSelector: Selector!) -> Bool {
-    return realized?.session.responds(to: aSelector) == true
+  override func responds(to input: Selector!) -> Bool { return
+    cycle.session.responds(to: input) == true
   }
 }
 
