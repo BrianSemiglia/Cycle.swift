@@ -13,7 +13,7 @@ import Changeset
 class Session: NSObject, UIApplicationDelegate {
   
   struct Model {
-    var backgroundURLSessions: [BackgroundURLSessionAction]
+    var backgroundURLSessions: Set<BackgroundURLSessionAction>
     var fetch: AsyncAction<FetchAction>
     var remoteAction: AsyncAction<ActionRemote>
     var localAction: AsyncAction<ActionLocal>
@@ -91,9 +91,14 @@ class Session: NSObject, UIApplicationDelegate {
       case opening(URL)
       case failing(URL)
     }
-    enum BackgroundURLSessionAction {
-      case progressing(String, (Void) -> Void)
-      case complete(String, (Void) -> Void)
+    struct BackgroundURLSessionAction {
+      let id: String
+      let completion: (Void) -> Void
+      var state: State
+      enum State {
+        case progressing
+        case complete
+      }
     }
     struct FetchAction {
       var hash: Int
@@ -397,25 +402,27 @@ class Session: NSObject, UIApplicationDelegate {
       .forEach { $0(true) }
 
       Session.deletions(
-        old: oldValue.backgroundURLSessions,
-        new: model.backgroundURLSessions
+        old: Array(oldValue.backgroundURLSessions),
+        new: Array(model.backgroundURLSessions)
       )
       .flatMap { x -> ((Void) -> Void)? in
-        if case .progressing(_, let handler) = x { return handler }
+        if case .progressing = x.state { return x.completion }
         else { return nil }
       }
       .forEach {
         $0()
       }
       
-      edit.backgroundURLSessions = model.backgroundURLSessions.flatMap {
-        if case .complete(_, let handler) = $0 {
-          handler() // SIDE EFFECT!
-          return nil
-        } else {
-          return $0
+      edit.backgroundURLSessions = Set(
+        model.backgroundURLSessions.flatMap {
+          if case .complete = $0.state {
+            $0.completion() // SIDE EFFECT!
+            return nil
+          } else {
+            return $0
+          }
         }
-      }
+      )
       
       output.on(.next(edit))
     }
@@ -744,9 +751,16 @@ class Session: NSObject, UIApplicationDelegate {
     completionHandler: @escaping () -> Void
   ) {
     var edit = model
-    edit.backgroundURLSessions += [
-      .progressing(identifier, completionHandler)
-    ]
+    edit.backgroundURLSessions = Set(
+      Array(edit.backgroundURLSessions)
+      + [
+        Session.Model.BackgroundURLSessionAction(
+          id: identifier,
+          completion: completionHandler,
+          state: .progressing
+        )
+      ]
+    )
     output.on(.next(edit))
   }
 
@@ -1247,14 +1261,27 @@ extension Session.Model.State: Equatable {
   }
 }
 
-extension Session.Model.BackgroundURLSessionAction: Equatable {
+extension Session.Model.BackgroundURLSessionAction: Hashable {
+  var hashValue: Int { return
+    id.hashValue
+  }
   static func ==(
     left: Session.Model.BackgroundURLSessionAction,
     right: Session.Model.BackgroundURLSessionAction
+  ) -> Bool { return
+    left.id == right.id &&
+    left.state == right.state
+  }
+}
+
+extension Session.Model.BackgroundURLSessionAction.State: Equatable {
+  static func ==(
+    left: Session.Model.BackgroundURLSessionAction.State,
+    right: Session.Model.BackgroundURLSessionAction.State
   ) -> Bool {
     switch (left, right) {
-    case (.progressing(let a, _), .progressing(let b, _)): return
-      a == b
+    case (.progressing, .progressing): return
+      true
     case (.complete, .complete): return
       true
     default: return
