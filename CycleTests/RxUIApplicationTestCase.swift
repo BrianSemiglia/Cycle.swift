@@ -690,7 +690,7 @@ class SessionTestCase: XCTestCase {
     )
   }
   
-  func testWillFinishLaunchingWithOptions() {
+  func testWillFinishLaunchingWithOptionsFalse() {
     let cycle = SessionCycle { events, session -> Observable<SessionTestCase.SessionCycle.DriverModels> in
       session
       .rendered(events.map { $0.session })
@@ -698,7 +698,7 @@ class SessionTestCase: XCTestCase {
         switch model.state {
         case .will(let a):
           switch a {
-          case .launched(let _):
+          case .launched(_):
             var new = model
             new.shouldLaunch = false
             return new
@@ -732,13 +732,10 @@ class SessionTestCase: XCTestCase {
       .rendered(events.map { $0.session })
       .map { model -> Session.Model in
         var new = model
-        new.shouldLaunch = true
-        if case .considering(let query) = model.urlActionIncoming {
-          switch query {
-          case .ios4(let URL, let app, let annotation):
-            new.urlActionIncoming = .allowing(URL)
-          default: break
-          }
+        if
+        case .considering(let query) = model.urlActionIncoming,
+        case .ios4(let URL, _, _) = query {
+          new.urlActionIncoming = .allowing(URL)
         }
         return new
       }
@@ -775,13 +772,10 @@ class SessionTestCase: XCTestCase {
       .rendered(events.map { $0.session })
       .map { model -> Session.Model in
         var new = model
-        new.shouldLaunch = true
-        if case .considering(let query) = model.urlActionIncoming {
-          switch query {
-          case .ios9(let URL, let options):
-            new.urlActionIncoming = .allowing(URL)
-          default: break
-          }
+        if
+        case .considering(let query) = model.urlActionIncoming,
+        case .ios9(let URL, _) = query {
+          new.urlActionIncoming = .allowing(URL)
         }
         return new
       }
@@ -817,7 +811,6 @@ class SessionTestCase: XCTestCase {
       .rendered(events.map { $0.session })
       .map { model -> Session.Model in
         var new = model
-        new.shouldLaunch = true
         new.interfaceOrientations = model.interfaceOrientations.map {
           switch $0 {
           case .considering(let window):
@@ -827,7 +820,8 @@ class SessionTestCase: XCTestCase {
                 orientation: .portraitUpsideDown
               )
             )
-          default: return $0
+          default:
+            return $0
           }
         }
         return new
@@ -863,7 +857,6 @@ class SessionTestCase: XCTestCase {
       .rendered(events.map { $0.session })
       .map { model -> Session.Model in
         var new = model
-        new.shouldLaunch = true
         if case .considering(let ID) = model.extensionPointIdentifier {
           new.extensionPointIdentifier = .allowing(ID)
         }
@@ -900,7 +893,6 @@ class SessionTestCase: XCTestCase {
       .rendered(events.map { $0.session })
       .map { model -> Session.Model in
         var new = model
-        new.shouldLaunch = true
         if case .considering(let query) = new.viewControllerRestoration {
           new.viewControllerRestoration = .allowing(
             Session.Model.RestorationResponse(
@@ -943,12 +935,8 @@ class SessionTestCase: XCTestCase {
       .rendered(events.map { $0.session })
       .map { model -> Session.Model in
         var new = model
-        new.shouldLaunch = true
-        switch model.shouldSaveApplicationState {
-        case .considering(let coder):
+        if case .considering(_) = model.shouldSaveApplicationState {
           new.shouldSaveApplicationState = .allowing(true)
-        default:
-          break
         }
         return new
       }
@@ -983,12 +971,8 @@ class SessionTestCase: XCTestCase {
       .rendered(events.map { $0.session })
       .map { model -> Session.Model in
         var new = model
-        new.shouldLaunch = true
-        switch model.shouldRestoreApplicationState {
-        case .considering(let coder):
+        if case .considering(_) = model.shouldRestoreApplicationState {
           new.shouldRestoreApplicationState = .allowing(true)
-        default:
-          break
         }
         return new
       }
@@ -1023,12 +1007,8 @@ class SessionTestCase: XCTestCase {
       .rendered(events.map { $0.session })
       .map { model -> Session.Model in
         var new = model
-        new.shouldLaunch = true
-        switch model.userActivityState {
-        case .willContinue(let type):
+        if case .willContinue(let type) = model.userActivityState {
           new.userActivityState = .shouldNotifyUserActivitiesWithType(type)
-        default:
-          break
         }
         return new
       }
@@ -1063,12 +1043,8 @@ class SessionTestCase: XCTestCase {
       .rendered(events.map { $0.session })
       .map { model -> Session.Model in
         var new = model
-        new.shouldLaunch = true
-        switch model.userActivityState {
-          case .isContinuing(let activity):
+        if case .isContinuing(let activity) = model.userActivityState {
           new.userActivityState = .hasAvailableData(activity)
-        default:
-          break
         }
         return new
       }
