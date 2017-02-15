@@ -1231,19 +1231,38 @@ class SessionTestCase: XCTestCase {
   }
   
   func testRenderingBackgroundURLSessionAction() {
-    /* .progressing is a read-only selection and is normally set internally.
-     Session should follow .complete callbacks with removal of item */
-    let x = Session.Model.empty
-    var y = x; y.backgroundURLSessions = [.progressing("id", {})]
-    var z = y; z.backgroundURLSessions = [.complete("id", {})]
+    
+    let delegate = SessionTestDelegate(start: .empty) {
+      var edit = $0
+      edit.backgroundURLSessions = edit.backgroundURLSessions.map {
+        if case .progressing(let id, let handler) = $0 {
+          return .complete(id, handler)
+        } else {
+          return $0
+        }
+      }
+      return edit
+    }
+    
+    (delegate as UIApplicationDelegate).application!(
+      UIApplication.shared,
+      willFinishLaunchingWithOptions: nil
+    )
+    
+    (delegate as UIApplicationDelegate).application!(
+      UIApplication.shared,
+      handleEventsForBackgroundURLSession: "id",
+      completionHandler: {}
+    )
     
     XCTAssert(
-      SessionTestCase.statesFromStream(stream: Observable.of(y, z))
-      .map { $0.backgroundURLSessions }
+      delegate.events.map { $0.backgroundURLSessions }
       .flatMap { $0 }
       ==
       [
-        .progressing("id", {}),
+        .complete("id", {})
+        // before flatmap should be:
+        // [[], [], [.complete("id", {})], []]
       ]
     )
   }
