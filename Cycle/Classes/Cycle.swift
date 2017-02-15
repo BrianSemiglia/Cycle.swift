@@ -41,15 +41,23 @@ extension UIWindow {
   }
 }
 
-class Cycle<E: SinkSourceConverting> {
-  var events: Observable<E.Source>?
-  var eventsProxy: ReplaySubject<E.Source>?
-  var loop: Disposable?
-  let session: Session
+final class Cycle<E: SinkSourceConverting> {
+  fileprivate var events: Observable<E.Source>?
+  fileprivate var eventsProxy: ReplaySubject<E.Source>?
+  fileprivate var loop: Disposable?
+  fileprivate let session: Session
   init(transformer: E, application: UIApplication) {
-    session = Session(intitial: .empty, application: application)
-    eventsProxy = ReplaySubject.create(bufferSize: 1)
-    events = transformer.effectsFrom(events: eventsProxy!, session: session)
+    session = Session(
+      intitial: .empty,
+      application: application
+    )
+    eventsProxy = ReplaySubject.create(
+      bufferSize: 1
+    )
+    events = transformer.effectsFrom(
+      events: eventsProxy!,
+      session: session
+    )
     loop = events!
       .startWith(transformer.start())
       .subscribe { [weak self] in
