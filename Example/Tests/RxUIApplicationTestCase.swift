@@ -11,11 +11,14 @@ import RxSwift
 
 class SessionTestCase: XCTestCase {
   
-  static func statesFrom(model: Session.Model = .empty, call: (Session) -> Any) -> [Session.Model] {
+  static func statesFromCall(
+    initial: Session.Model = .empty,
+    call: (Session) -> Any
+  ) -> [Session.Model] {
     var output: [Session.Model] = []
-    let session = Session(intitial: model, application: UIApplication.shared)
+    let session = Session(intitial: initial, application: UIApplication.shared)
     _ = session
-      .rendered(Observable<Session.Model>.just(model))
+      .rendered(Observable<Session.Model>.just(initial))
       .subscribe {
         if let new = $0.element {
           output += [new]
@@ -25,9 +28,12 @@ class SessionTestCase: XCTestCase {
     return output
   }
   
-  static func statesFromStream(stream: Observable<Session.Model>) -> [Session.Model] {
+  static func statesFrom(
+    stream: Observable<Session.Model>,
+    model: Session.Model = .empty
+  ) -> [Session.Model] {
     var output: [Session.Model] = []
-    let session = Session(intitial: .empty, application: UIApplication.shared)
+    let session = Session(intitial: model, application: UIApplication.shared)
     _ = session
       .rendered(stream)
       .subscribe {
@@ -42,7 +48,7 @@ class SessionTestCase: XCTestCase {
     
     XCTAssert(
       SessionTestCase
-      .statesFrom { $0.applicationWillTerminate(UIApplication.shared) }
+      .statesFromCall { $0.applicationWillTerminate(UIApplication.shared) }
       .map { $0.state }
       ==
       [.none(.awaitingLaunch), .will(.terminated)]
@@ -52,7 +58,7 @@ class SessionTestCase: XCTestCase {
   func testDidBecomeActive() {
     XCTAssert(
       SessionTestCase
-      .statesFrom { $0.applicationDidBecomeActive(UIApplication.shared) }
+      .statesFromCall { $0.applicationDidBecomeActive(UIApplication.shared) }
       .map { $0.state }
       ==
       [.none(.awaitingLaunch), .did(.active), .none(.active)]
@@ -62,7 +68,7 @@ class SessionTestCase: XCTestCase {
   func testWillResignActive() {
     XCTAssert(
       SessionTestCase
-      .statesFrom { $0.applicationWillResignActive(UIApplication.shared) }
+      .statesFromCall { $0.applicationWillResignActive(UIApplication.shared) }
       .map { $0.state }
       ==
       [.none(.awaitingLaunch), .will(.resigned)]
@@ -72,7 +78,7 @@ class SessionTestCase: XCTestCase {
   func testDidEnterBackground() {
     XCTAssert(
       SessionTestCase
-      .statesFrom { $0.applicationDidEnterBackground(UIApplication.shared) }
+      .statesFromCall { $0.applicationDidEnterBackground(UIApplication.shared) }
       .map { $0.state }
       ==
       [.none(.awaitingLaunch), .did(.resigned), .none(.resigned)]
@@ -82,7 +88,7 @@ class SessionTestCase: XCTestCase {
   func testWillFinishLaunching() {
     XCTAssert(
       SessionTestCase
-      .statesFrom {
+      .statesFromCall {
         $0.application(
           UIApplication.shared,
           willFinishLaunchingWithOptions: nil
@@ -97,7 +103,7 @@ class SessionTestCase: XCTestCase {
   func testDidFinishLaunching() {
     XCTAssert(
       SessionTestCase
-      .statesFrom {
+      .statesFromCall {
         $0.application(
           UIApplication.shared,
           didFinishLaunchingWithOptions: nil
@@ -112,7 +118,7 @@ class SessionTestCase: XCTestCase {
   func testWillEnterBackground() {
     XCTAssert(
       SessionTestCase
-      .statesFrom { $0.applicationWillEnterForeground(UIApplication.shared) }
+      .statesFromCall { $0.applicationWillEnterForeground(UIApplication.shared) }
       .map { $0.state }
       ==
       [.none(.awaitingLaunch), .will(.active)]
@@ -122,7 +128,7 @@ class SessionTestCase: XCTestCase {
   func testSignificantTimeChange() {
     XCTAssert(
       SessionTestCase
-      .statesFrom { $0.applicationSignificantTimeChange(UIApplication.shared) }
+      .statesFromCall { $0.applicationSignificantTimeChange(UIApplication.shared) }
       .map { $0.isObservingSignificantTimeChange }
       ==
       [false, true, false]
@@ -132,7 +138,7 @@ class SessionTestCase: XCTestCase {
   func testMemoryWarning() {
     XCTAssert(
       SessionTestCase
-      .statesFrom { $0.applicationDidReceiveMemoryWarning(UIApplication.shared) }
+      .statesFromCall { $0.applicationDidReceiveMemoryWarning(UIApplication.shared) }
       .map { $0.isExperiencingMemoryWarning }
       ==
       [false, true, false]
@@ -142,7 +148,7 @@ class SessionTestCase: XCTestCase {
   func testShouldRequestHealthAuthorization() {
     XCTAssert(
       SessionTestCase
-      .statesFrom { $0.applicationShouldRequestHealthAuthorization(UIApplication.shared) }
+      .statesFromCall { $0.applicationShouldRequestHealthAuthorization(UIApplication.shared) }
       .map { $0.isExperiencingHealthAuthorizationRequest }
       ==
       [false, true, false]
@@ -152,7 +158,7 @@ class SessionTestCase: XCTestCase {
   func testProtectedDataDidBecomeAvailable() {
     XCTAssert(
       SessionTestCase
-      .statesFrom { $0.applicationProtectedDataDidBecomeAvailable(UIApplication.shared) }
+      .statesFromCall { $0.applicationProtectedDataDidBecomeAvailable(UIApplication.shared) }
       .map { $0.isProtectedDataAvailable }
       ==
       [.none(false), .did(true), .none(true)]
@@ -162,7 +168,7 @@ class SessionTestCase: XCTestCase {
   func testProtectedDataWillBecomeUnavailable() {
     XCTAssert(
       SessionTestCase
-      .statesFrom { $0.applicationProtectedDataWillBecomeUnavailable(UIApplication.shared) }
+      .statesFromCall { $0.applicationProtectedDataWillBecomeUnavailable(UIApplication.shared) }
       .map { $0.isProtectedDataAvailable }
       ==
       [.none(false), .will(false), .none(false)]
@@ -172,7 +178,7 @@ class SessionTestCase: XCTestCase {
   func testConversionCallbacks() {
     XCTAssert(
       SessionTestCase
-      .statesFrom {
+      .statesFromCall {
         $0.application(
           UIApplication.shared,
           didRegister: UIUserNotificationSettingsStub(id: "x")
@@ -190,7 +196,7 @@ class SessionTestCase: XCTestCase {
   func testDidFailToRegisterForRemoteNotifications() {
     XCTAssert(
       SessionTestCase
-      .statesFrom {
+      .statesFromCall {
         $0.application(
           UIApplication.shared,
           didFailToRegisterForRemoteNotificationsWithError: ErrorStub(id: "x")
@@ -205,7 +211,7 @@ class SessionTestCase: XCTestCase {
   func testDidRegisterForRemoteNotifications() {
     XCTAssert(
       SessionTestCase
-      .statesFrom {
+      .statesFromCall {
         $0.application(
           UIApplication.shared,
           didRegisterForRemoteNotificationsWithDeviceToken: Data()
@@ -220,7 +226,7 @@ class SessionTestCase: XCTestCase {
   func testDidDecodeRestorableState() {
     XCTAssert(
       SessionTestCase
-      .statesFrom {
+      .statesFromCall {
         $0.application(
           UIApplication.shared,
           didDecodeRestorableStateWith: CoderStub(id: "x")
@@ -235,7 +241,7 @@ class SessionTestCase: XCTestCase {
   func testWillEncodeRestorableState() {
     XCTAssert(
       SessionTestCase
-      .statesFrom {
+      .statesFromCall {
         $0.application(
           UIApplication.shared,
           willEncodeRestorableStateWith: CoderStub(id: "x")
@@ -250,7 +256,7 @@ class SessionTestCase: XCTestCase {
   func testShouldSaveApplicationStateConsidering() {
     XCTAssert(
       SessionTestCase
-      .statesFrom {
+      .statesFromCall {
         $0.application(
           UIApplication.shared,
           shouldSaveApplicationState: CoderStub(id: "x")
@@ -265,7 +271,7 @@ class SessionTestCase: XCTestCase {
   func testShouldRestoreApplicationStateConsidering() {
     XCTAssert(
       SessionTestCase
-      .statesFrom {
+      .statesFromCall {
         $0.application(
           UIApplication.shared,
           shouldRestoreApplicationState: CoderStub(id: "x")
@@ -280,7 +286,7 @@ class SessionTestCase: XCTestCase {
   func testWillContinueUserActivityWithType() {
     XCTAssert(
       SessionTestCase
-      .statesFrom {
+      .statesFromCall {
         $0.application(
           UIApplication.shared,
           willContinueUserActivityWithType: "x"
@@ -295,7 +301,7 @@ class SessionTestCase: XCTestCase {
   func testDidFailToContinueUserActivity() {
     XCTAssert(
       SessionTestCase
-      .statesFrom {
+      .statesFromCall {
         $0.application(
           UIApplication.shared,
           didFailToContinueUserActivityWithType: "x",
@@ -312,7 +318,7 @@ class SessionTestCase: XCTestCase {
     let activity = NSUserActivity(activityType: "x")
     XCTAssert(
       SessionTestCase
-      .statesFrom {
+      .statesFromCall {
         $0.application(
           UIApplication.shared,
           didUpdate: activity
@@ -328,7 +334,7 @@ class SessionTestCase: XCTestCase {
     let activity = NSUserActivity(activityType: "x")
     XCTAssert(
       SessionTestCase
-      .statesFrom {
+      .statesFromCall {
         $0.application(
           UIApplication.shared,
           continue: activity,
@@ -344,7 +350,7 @@ class SessionTestCase: XCTestCase {
   func testWillChangeStatusBarOrientation() {
     XCTAssert(
       SessionTestCase
-      .statesFrom {
+      .statesFromCall {
         $0.application(
           UIApplication.shared,
           willChangeStatusBarOrientation: .landscapeLeft,
@@ -360,7 +366,7 @@ class SessionTestCase: XCTestCase {
   func testDidChangeStatusBarOrientation() {
     XCTAssert(
       SessionTestCase
-      .statesFrom {
+      .statesFromCall {
         $0.application(
           UIApplication.shared,
           didChangeStatusBarOrientation: .landscapeLeft
@@ -375,7 +381,7 @@ class SessionTestCase: XCTestCase {
   func testWillChangeStatusBarFrame() {
     XCTAssert(
       SessionTestCase
-      .statesFrom {
+      .statesFromCall {
         $0.application(
           UIApplication.shared,
           willChangeStatusBarFrame: CGRect(x: 1, y: 2, width: 3, height: 4)
@@ -408,7 +414,7 @@ class SessionTestCase: XCTestCase {
   func testHandleActionWithIdentifierLocal() {
     XCTAssert(
       SessionTestCase
-      .statesFrom {
+      .statesFromCall {
         $0.application(
           UIApplication.shared,
           handleActionWithIdentifier: "x",
@@ -428,7 +434,7 @@ class SessionTestCase: XCTestCase {
   func testHandleActionWithIdentifierResponseInfoRemote() {
     XCTAssert(
       SessionTestCase
-      .statesFrom {
+      .statesFromCall {
         $0.application(
           UIApplication.shared,
           handleActionWithIdentifier: "x",
@@ -456,7 +462,7 @@ class SessionTestCase: XCTestCase {
   func testHandleActionWithIdentifierRemote() {
     XCTAssert(
       SessionTestCase
-      .statesFrom {
+      .statesFromCall {
         $0.application(
           UIApplication.shared,
           handleActionWithIdentifier: "x",
@@ -482,7 +488,7 @@ class SessionTestCase: XCTestCase {
   func testHandleActionWithIdentifierResponseInfo() {
     XCTAssert(
       SessionTestCase
-      .statesFrom {
+      .statesFromCall {
         $0.application(
           UIApplication.shared,
           handleActionWithIdentifier: "x",
@@ -509,8 +515,8 @@ class SessionTestCase: XCTestCase {
   
   func testPerformActionForShortcutItem() {
     XCTAssert(
-      SessionTestCase.statesFrom(
-        model: Session.Model.empty.with(
+      SessionTestCase.statesFromCall(
+        initial: Session.Model.empty.with(
           shortcutItem: Session.Model.ShortcutItem(
             value: .stub,
             action: .idle
@@ -548,7 +554,7 @@ class SessionTestCase: XCTestCase {
   func testHandleEventsForBackgroundURLSession() {
     XCTAssert(
       SessionTestCase
-      .statesFrom {
+      .statesFromCall {
         $0.application(
           UIApplication.shared,
           handleEventsForBackgroundURLSession: "x",
@@ -571,7 +577,7 @@ class SessionTestCase: XCTestCase {
   func testDidReceiveRemoteNotification() {
     XCTAssert(
       SessionTestCase
-      .statesFrom {
+      .statesFromCall {
         $0.application(
           UIApplication.shared,
           didReceiveRemoteNotification: ["x":"y"],
@@ -593,7 +599,7 @@ class SessionTestCase: XCTestCase {
   func testHandleWatchKitExtensionRequest() {
     XCTAssert(
       SessionTestCase
-      .statesFrom {
+      .statesFromCall {
         $0.application(
           UIApplication.shared,
           handleWatchKitExtensionRequest: ["x":"y"],
@@ -617,7 +623,7 @@ class SessionTestCase: XCTestCase {
   func testShouldAllowExtensionPointIdentifier() {
     XCTAssert(
       SessionTestCase
-      .statesFrom {
+      .statesFromCall {
         $0.application(
           UIApplication.shared,
           shouldAllowExtensionPointIdentifier: .keyboard
@@ -632,7 +638,7 @@ class SessionTestCase: XCTestCase {
   func testSupportedInterfaceOrientationsFor() {
     XCTAssert(
       SessionTestCase
-      .statesFrom {
+      .statesFromCall {
         $0.application(
           UIApplication.shared,
           supportedInterfaceOrientationsFor: WindowStub(id: "x")
@@ -648,7 +654,7 @@ class SessionTestCase: XCTestCase {
   func testViewControllerWithRestorationIdentifierPathConsidering() {
     XCTAssert(
       SessionTestCase
-      .statesFrom {
+      .statesFromCall {
         let x = $0.application(
           UIApplication.shared,
           viewControllerWithRestorationIdentifierPath: ["x"],
@@ -891,7 +897,7 @@ class SessionTestCase: XCTestCase {
     }
     let delegate = CycledApplicationDelegate(
       filter: cycle
-      ) as UIApplicationDelegate
+    ) as UIApplicationDelegate
     
     delegate.application!(
       UIApplication.shared,
@@ -964,7 +970,7 @@ class SessionTestCase: XCTestCase {
     }
     let delegate = CycledApplicationDelegate(
       filter: cycle
-      ) as UIApplicationDelegate
+    ) as UIApplicationDelegate
     
     delegate.application!(
       UIApplication.shared,
@@ -1000,7 +1006,7 @@ class SessionTestCase: XCTestCase {
     }
     let delegate = CycledApplicationDelegate(
       filter: cycle
-      ) as UIApplicationDelegate
+    ) as UIApplicationDelegate
     
     delegate.application!(
       UIApplication.shared,
@@ -1061,7 +1067,7 @@ class SessionTestCase: XCTestCase {
     var z = y; z.isIgnoringUserEvents = false
     
     XCTAssert(
-      SessionTestCase.statesFromStream(stream: Observable.of(x, y, x))
+      SessionTestCase.statesFrom(stream: Observable.of(x, y, x))
       .map { $0.isIgnoringUserEvents }
       ==
       [
@@ -1079,7 +1085,7 @@ class SessionTestCase: XCTestCase {
     var z = y; z.isIdleTimerDisabled = false
     
     XCTAssert(
-      SessionTestCase.statesFromStream(stream: Observable.of(x, y, x))
+      SessionTestCase.statesFrom(stream: Observable.of(x, y, x))
       .map { $0.isIdleTimerDisabled }
       ==
       [
@@ -1301,7 +1307,6 @@ class SessionTestCase: XCTestCase {
   }
   
   func testRenderingBackgroundURLSessionAction() {
-    
     let delegate = SessionTestDelegate(start: .empty) {
       var edit = $0
       edit.backgroundURLSessions = Set(
