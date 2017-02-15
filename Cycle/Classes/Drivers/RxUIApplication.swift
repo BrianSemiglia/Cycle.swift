@@ -13,7 +13,7 @@ import Changeset
 class Session: NSObject, UIApplicationDelegate {
   
   struct Model {
-    var backgroundURLSessionAction: BackgroundURLSessionAction
+    var backgroundURLSessions: [BackgroundURLSessionAction]
     var fetch: AsyncAction<FetchAction>
     var remoteAction: AsyncAction<ActionRemote>
     var localAction: AsyncAction<ActionLocal>
@@ -92,9 +92,8 @@ class Session: NSObject, UIApplicationDelegate {
       case failing(URL)
     }
     enum BackgroundURLSessionAction {
-      case idle
       case progressing(String, (Void) -> Void)
-      case complete
+      case complete(String, (Void) -> Void)
     }
     struct FetchAction {
       var hash: Int
@@ -397,13 +396,25 @@ class Session: NSObject, UIApplicationDelegate {
       .flatMap { completionHandler(type: .substitution, edit: $0) }
       .forEach { $0(true) }
 
-      if
-      case .complete = model.backgroundURLSessionAction,
-      model.backgroundURLSessionAction != oldValue.backgroundURLSessionAction {
-        if case .progressing(let handler) = oldValue.backgroundURLSessionAction {
-          handler.1()
+      Session.deletions(
+        old: oldValue.backgroundURLSessions,
+        new: model.backgroundURLSessions
+      )
+      .flatMap { x -> ((Void) -> Void)? in
+        if case .progressing(_, let handler) = x { return handler }
+        else { return nil }
+      }
+      .forEach {
+        $0()
+      }
+      
+      edit.backgroundURLSessions = model.backgroundURLSessions.flatMap {
+        if case .complete(_, let handler) = $0 {
+          handler() // SIDE EFFECT!
+          return nil
+        } else {
+          return $0
         }
-        edit.backgroundURLSessionAction = .idle
       }
       
       output.on(.next(edit))
@@ -733,7 +744,9 @@ class Session: NSObject, UIApplicationDelegate {
     completionHandler: @escaping () -> Void
   ) {
     var edit = model
-    edit.backgroundURLSessionAction = .progressing(identifier, completionHandler)
+    edit.backgroundURLSessions += [
+      .progressing(identifier, completionHandler)
+    ]
     output.on(.next(edit))
   }
 
@@ -1009,7 +1022,7 @@ extension Session {
 
 extension Session.Model: Equatable {
   static func == (left: Session.Model, right: Session.Model) -> Bool { return
-    left.backgroundURLSessionAction == right.backgroundURLSessionAction &&
+    left.backgroundURLSessions == right.backgroundURLSessions &&
     left.fetch == right.fetch &&
     left.remoteAction == right.remoteAction &&
     left.localAction == right.localAction &&
@@ -1168,7 +1181,7 @@ enum AsyncAction<Handler: Equatable> {
 extension Session.Model {
   static var empty: Session.Model { return
     Session.Model(
-      backgroundURLSessionAction: .idle,
+      backgroundURLSessions: [],
       fetch: .idle,
       remoteAction: .idle,
       localAction: .idle,
@@ -1240,10 +1253,8 @@ extension Session.Model.BackgroundURLSessionAction: Equatable {
     right: Session.Model.BackgroundURLSessionAction
   ) -> Bool {
     switch (left, right) {
-    case (.idle, .idle): return
-      true
-    case (.progressing(let a), .progressing(let b)): return
-      a.0 == b.0
+    case (.progressing(let a, _), .progressing(let b, _)): return
+      a == b
     case (.complete, .complete): return
       true
     default: return
