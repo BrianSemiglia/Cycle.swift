@@ -14,7 +14,7 @@ class Session: NSObject, UIApplicationDelegate {
   
   struct Model {
     var backgroundURLSessions: Set<BackgroundURLSessionAction>
-    var fetch: AsyncAction<FetchAction>
+    var fetch: BackgroundFetch
     var remoteAction: AsyncAction<ActionRemote>
     var localAction: AsyncAction<ActionLocal>
     var userActivityState: UserActivityState
@@ -41,7 +41,6 @@ class Session: NSObject, UIApplicationDelegate {
     var isNetworkActivityIndicatorVisible: Bool
     var iconBadgeNumber: Int
     var supportsShakeToEdit: Bool
-    var minimumBackgroundFetchInterval: FetchInterval
     var presentedLocalNotification: UILocalNotification?
     var scheduledLocalNotifications: [UILocalNotification]
     var registeredUserNotificationSettings: UIUserNotificationSettings?
@@ -100,9 +99,19 @@ class Session: NSObject, UIApplicationDelegate {
         case complete
       }
     }
-    struct FetchAction {
-      var hash: Int
-      var completion: (UIBackgroundFetchResult) -> Void
+    struct BackgroundFetch {
+      var minimumInterval: Interval
+      var state: State
+      enum State {
+        case idle
+        case progressing((UIBackgroundFetchResult) -> Void)
+        case complete(UIBackgroundFetchResult, (UIBackgroundFetchResult) -> Void)
+      }
+      enum Interval {
+        case minimum
+        case some(TimeInterval)
+        case never
+      }
     }
     struct ShortcutItem {
       var value: UIApplicationShortcutItem
@@ -165,12 +174,6 @@ class Session: NSObject, UIApplicationDelegate {
     struct RestorationResponse {
       var identifier: String
       var view: UIViewController
-    }
-    
-    enum FetchInterval {
-      case minimum
-      case some(TimeInterval)
-      case never
     }
     struct BackgroundTask {
       var name: String
@@ -313,8 +316,15 @@ class Session: NSObject, UIApplicationDelegate {
       }
       
       application.setMinimumBackgroundFetchInterval(
-        model.minimumBackgroundFetchInterval.asUIApplicationBackgroundFetchInterval()
+        model.fetch.minimumInterval.asUIApplicationBackgroundFetchInterval()
       )
+      
+      if
+      case .complete(let result, let handler) = model.fetch.state,
+      model.fetch != oldValue.fetch {
+        handler(result)
+        edit.fetch.state = .idle
+      }
       
       if model.remoteNotificationRegistration != oldValue.remoteNotificationRegistration {
         switch model.remoteNotificationRegistration {
@@ -709,15 +719,10 @@ class Session: NSObject, UIApplicationDelegate {
 
   func application(
     _ application: UIApplication,
-    performFetchWithCompletionHandler completion: @escaping (UIBackgroundFetchResult
+    performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult
   ) -> Void) {
     var edit = model
-    edit.fetch = .progressing(
-      Session.Model.FetchAction(
-        hash: Date().hashValue,
-        completion: completion
-      )
-    )
+    edit.fetch.state = .progressing(completionHandler)
     output.on(.next(edit))
   }
 
@@ -1064,7 +1069,6 @@ extension Session.Model: Equatable {
     left.isNetworkActivityIndicatorVisible == right.isNetworkActivityIndicatorVisible &&
     left.iconBadgeNumber == right.iconBadgeNumber &&
     left.supportsShakeToEdit == right.supportsShakeToEdit &&
-    left.minimumBackgroundFetchInterval == right.minimumBackgroundFetchInterval &&
     left.presentedLocalNotification == right.presentedLocalNotification &&
     left.scheduledLocalNotifications == right.scheduledLocalNotifications &&
     left.registeredUserNotificationSettings == right.registeredUserNotificationSettings &&
@@ -1196,7 +1200,10 @@ extension Session.Model {
   static var empty: Session.Model { return
     Session.Model(
       backgroundURLSessions: [],
-      fetch: .idle,
+      fetch: Session.Model.BackgroundFetch(
+        minimumInterval: .never,
+        state: .idle
+      ),
       remoteAction: .idle,
       localAction: .idle,
       userActivityState: .idle,
@@ -1223,7 +1230,6 @@ extension Session.Model {
       isNetworkActivityIndicatorVisible: false,
       iconBadgeNumber: 0,
       supportsShakeToEdit: true,
-      minimumBackgroundFetchInterval: .never,
       presentedLocalNotification: nil,
       scheduledLocalNotifications: [],
       registeredUserNotificationSettings: nil,
@@ -1349,10 +1355,10 @@ extension Session.Model.TargetAction: Equatable {
   }
 }
 
-extension Session.Model.FetchInterval: Equatable {
+extension Session.Model.BackgroundFetch.Interval: Equatable {
   static func ==(
-    left: Session.Model.FetchInterval,
-    right: Session.Model.FetchInterval
+    left: Session.Model.BackgroundFetch.Interval,
+    right: Session.Model.BackgroundFetch.Interval
   ) -> Bool {
     switch (left, right) {
     case (.minimum, .minimum): return
@@ -1437,12 +1443,31 @@ extension Session.Model.Notification: Equatable {
   }
 }
 
-extension Session.Model.FetchAction: Equatable {
+extension Session.Model.BackgroundFetch: Equatable {
   static func == (
-    left: Session.Model.FetchAction,
-    right: Session.Model.FetchAction
+    left: Session.Model.BackgroundFetch,
+    right: Session.Model.BackgroundFetch
   ) -> Bool { return
-    left.hash == right.hash
+    left.minimumInterval == right.minimumInterval &&
+    left.state == right.state
+  }
+}
+
+extension Session.Model.BackgroundFetch.State: Equatable {
+  static func ==(
+    left: Session.Model.BackgroundFetch.State,
+    right: Session.Model.BackgroundFetch.State
+  ) -> Bool {
+    switch (left, right) {
+    case (.idle, .idle): return
+      true
+    case (.progressing, .progressing): return
+      true
+    case (.complete, .complete): return
+      true
+    default: return
+      false
+    }
   }
 }
 
@@ -1642,7 +1667,7 @@ extension Session.Model.BackgroundTask.State: Equatable {
   }
 }
 
-extension Session.Model.FetchInterval {
+extension Session.Model.BackgroundFetch.Interval {
   func asUIApplicationBackgroundFetchInterval() -> TimeInterval {
     switch self {
     case .minimum:
