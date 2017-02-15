@@ -1234,6 +1234,57 @@ class SessionTestCase: XCTestCase {
     waitForExpectations(timeout: 30)
   }
   
+  func testRenderingBackgroundFetch() {
+    
+    let asyncCallbacks = expectation(description: "...")
+    var fetches: [Session.Model.BackgroundFetch] = []
+    let delegate = SessionTestDelegate(start: .empty) {
+      fetches += [$0.fetch]
+      var edit = $0
+      if case .progressing(let handler) = $0.fetch.state {
+        edit.fetch.state = .complete(.noData, handler)
+      }
+      return edit
+    }
+    
+    (delegate as UIApplicationDelegate).application!(
+      UIApplication.shared,
+      willFinishLaunchingWithOptions: nil
+    )
+    (delegate as UIApplicationDelegate).application!(
+      UIApplication.shared,
+      performFetchWithCompletionHandler: { _ in }
+    )
+        
+    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+      XCTAssert(
+        fetches
+        ==
+        [
+          Session.Model.BackgroundFetch(
+            minimumInterval: .never,
+            state: .idle
+          ),
+          Session.Model.BackgroundFetch( // .will(.launch)
+            minimumInterval: .never,
+            state: .idle
+          ),
+          Session.Model.BackgroundFetch(
+            minimumInterval: .never,
+            state: .progressing({ _ in})
+          ),
+          Session.Model.BackgroundFetch(
+            minimumInterval: .never,
+            state: .idle
+          )
+        ]
+      )
+      asyncCallbacks.fulfill()
+      let _ = delegate
+    }
+    waitForExpectations(timeout: 30)
+  }
+  
   func testRenderingBackgroundURLSessionAction() {
     
     let delegate = SessionTestDelegate(start: .empty) {
