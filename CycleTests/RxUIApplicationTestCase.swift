@@ -590,26 +590,6 @@ class SessionTestCase: XCTestCase {
     )
   }
   
-  func testPerformFetchWithCompletionHandler() {
-//    XCTAssert(
-//      SessionTestCase.statesForEvents {
-//        $0.application(
-//          UIApplication.shared,
-//          performFetchWithCompletionHandler: { _ in }
-//        )
-//      }.map { $0.fetch },
-//      [
-//        .idle,
-//        .progressing(
-//          Session.Model.FetchAction(
-//            hash: Date().hashValue, // Needs fix. Returning false negative
-//            completion: { _ in }
-//          )
-//        )
-//      ]
-//    )
-  }
-  
   func testHandleWatchKitExtensionRequest() {
     XCTAssert(
       SessionTestCase
