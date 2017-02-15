@@ -147,7 +147,7 @@ class Session: NSObject, UIApplicationDelegate {
       case terminated
     }
     
-    // IDEA: prevent transitioning between enum states with pattern matched conversion methods and private intializer
+    // IDEA: prevent transitioning between certain enum states with pattern matched conversion methods and private intializer
     
     struct WindowResponse {
       var window: UIWindow
@@ -382,7 +382,10 @@ class Session: NSObject, UIApplicationDelegate {
       
       application.shortcutItems = model.shortcutItems.map { $0.value }
       
-      let change = Changeset(source: oldValue.shortcutItems, target: model.shortcutItems)
+      let change = Changeset(
+        source: oldValue.shortcutItems,
+        target: model.shortcutItems
+      )
         
       change
       .edits
