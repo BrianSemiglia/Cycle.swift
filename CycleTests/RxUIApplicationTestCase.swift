@@ -507,10 +507,10 @@ class SessionTestCase: XCTestCase {
           completionHandler: {}
         )
       }
-      .map { $0.backgroundURLSessionAction }
+      .map { $0.backgroundURLSessions }
+      .flatMap { $0 }
       ==
       [
-        .idle,
         .progressing("x", {})
       ]
     )
@@ -1231,20 +1231,19 @@ class SessionTestCase: XCTestCase {
   }
   
   func testRenderingBackgroundURLSessionAction() {
-    /* .complete is a read-only selection and is normally set internally.
-     Session should follow .complete callbacks with state of .idle */
+    /* .progressing is a read-only selection and is normally set internally.
+     Session should follow .complete callbacks with removal of item */
     let x = Session.Model.empty
-    var y = x; y.backgroundURLSessionAction = .progressing("id", {})
-    var z = y; z.backgroundURLSessionAction = .complete
+    var y = x; y.backgroundURLSessions = [.progressing("id", {})]
+    var z = y; z.backgroundURLSessions = [.complete("id", {})]
     
     XCTAssert(
-      SessionTestCase.statesFromStream(stream: Observable.of(x, y, z))
-      .map { $0.backgroundURLSessionAction }
+      SessionTestCase.statesFromStream(stream: Observable.of(y, z))
+      .map { $0.backgroundURLSessions }
+      .flatMap { $0 }
       ==
       [
-        .idle,
         .progressing("id", {}),
-        .idle
       ]
     )
   }
