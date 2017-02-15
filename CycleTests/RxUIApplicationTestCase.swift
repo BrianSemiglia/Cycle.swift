@@ -511,7 +511,11 @@ class SessionTestCase: XCTestCase {
       .flatMap { $0 }
       ==
       [
-        .progressing("x", {})
+        Session.Model.BackgroundURLSessionAction(
+          id: "x",
+          completion: {},
+          state: .progressing
+        )
       ]
     )
     
@@ -1234,13 +1238,17 @@ class SessionTestCase: XCTestCase {
     
     let delegate = SessionTestDelegate(start: .empty) {
       var edit = $0
-      edit.backgroundURLSessions = edit.backgroundURLSessions.map {
-        if case .progressing(let id, let handler) = $0 {
-          return .complete(id, handler)
-        } else {
-          return $0
+      edit.backgroundURLSessions = Set(
+        edit.backgroundURLSessions.map {
+          if case .progressing = $0.state {
+            var edit = $0
+            edit.state = .complete
+            return edit
+          } else {
+            return $0
+          }
         }
-      }
+      )
       return edit
     }
     
@@ -1260,9 +1268,13 @@ class SessionTestCase: XCTestCase {
       .flatMap { $0 }
       ==
       [
-        .complete("id", {})
+        Session.Model.BackgroundURLSessionAction(
+          id: "id",
+          completion: {},
+          state: .complete
+        )
         // before flatmap should be:
-        // [[], [], [.complete("id", {})], []]
+        // [[], [], [complete], []]
       ]
     )
   }
