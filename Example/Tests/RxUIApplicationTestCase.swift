@@ -1107,7 +1107,7 @@ class SessionTestCase: XCTestCase {
       willFinishLaunchingWithOptions: nil
     )
     
-    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+    DispatchQueue.main.async {
       XCTAssert(
         delegate.events.map { $0.urlActionOutgoing }
           ==
@@ -1142,7 +1142,7 @@ class SessionTestCase: XCTestCase {
       willFinishLaunchingWithOptions: nil
     )
     
-    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+    DispatchQueue.main.async {
       XCTAssert(
         delegate.events.map { $0.targetAction }
           ==
@@ -1173,7 +1173,7 @@ class SessionTestCase: XCTestCase {
       willFinishLaunchingWithOptions: nil
     )
     
-    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+    DispatchQueue.main.async {
       XCTAssert(
         delegate.events.map { $0.backgroundTasks }
         .flatMap { $0 }
@@ -1229,7 +1229,7 @@ class SessionTestCase: XCTestCase {
       willFinishLaunchingWithOptions: nil
     )
     
-    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+    DispatchQueue.main.async {
       XCTAssert(
         delegate.events.map { $0.backgroundTasks }
         .flatMap { $0 }
@@ -1279,7 +1279,7 @@ class SessionTestCase: XCTestCase {
     // 2. filter immediately produces .progressing to .complete (normally async)
     // 3. session produces .complete to .idle
 
-    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+    DispatchQueue.main.async {
       XCTAssert(
         delegate.events.map { $0.fetch }
         ==
