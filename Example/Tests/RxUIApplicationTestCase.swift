@@ -1102,7 +1102,7 @@ class SessionTestCase: XCTestCase {
     let empty = Session.Model.empty
     var y = empty; y.urlActionOutgoing = .attempting(URL(string: "https://www.duckduckgo.com")!)
     let delegate = SessionTestDelegate(start: y)
-    (delegate as UIApplicationDelegate).application!(
+    _ = (delegate as UIApplicationDelegate).application!(
       UIApplication.shared,
       willFinishLaunchingWithOptions: nil
     )
@@ -1137,7 +1137,7 @@ class SessionTestCase: XCTestCase {
     var y = empty; y.targetAction = .sending(action)
     
     let delegate = SessionTestDelegate(start: y)
-    (delegate as UIApplicationDelegate).application!(
+    _ = (delegate as UIApplicationDelegate).application!(
       UIApplication.shared,
       willFinishLaunchingWithOptions: nil
     )
@@ -1168,7 +1168,7 @@ class SessionTestCase: XCTestCase {
     ]
     
     let delegate = SessionTestDelegate(start: y)
-    (delegate as UIApplicationDelegate).application!(
+    _ = (delegate as UIApplicationDelegate).application!(
       UIApplication.shared,
       willFinishLaunchingWithOptions: nil
     )
@@ -1213,9 +1213,9 @@ class SessionTestCase: XCTestCase {
     let delegate = SessionTestDelegate(start: y) {
       var edit = $0
       edit.backgroundTasks = Set(
-        edit.backgroundTasks.map { x in
-          var new = x
-          if case .progressing(let a) = x.state {
+        edit.backgroundTasks.map {
+          var new = $0
+          if case .progressing(let a) = $0.state {
             new.state = .complete(a)
           }
           return new
@@ -1224,7 +1224,7 @@ class SessionTestCase: XCTestCase {
       return edit
     }
     
-    (delegate as UIApplicationDelegate).application!(
+    _ = (delegate as UIApplicationDelegate).application!(
       UIApplication.shared,
       willFinishLaunchingWithOptions: nil
     )
@@ -1266,7 +1266,7 @@ class SessionTestCase: XCTestCase {
       return edit
     }
     
-    (delegate as UIApplicationDelegate).application!(
+    _ = (delegate as UIApplicationDelegate).application!(
       UIApplication.shared,
       willFinishLaunchingWithOptions: nil
     )
@@ -1329,7 +1329,7 @@ class SessionTestCase: XCTestCase {
       return edit
     }
     
-    (delegate as UIApplicationDelegate).application!(
+    _ = (delegate as UIApplicationDelegate).application!(
       UIApplication.shared,
       willFinishLaunchingWithOptions: nil
     )
