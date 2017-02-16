@@ -1258,9 +1258,7 @@ class SessionTestCase: XCTestCase {
   func testRenderingBackgroundFetch() {
     
     let asyncCallbacks = expectation(description: "...")
-    var fetches: [Session.Model.BackgroundFetch] = []
     let delegate = SessionTestDelegate(start: .empty) {
-      fetches += [$0.fetch]
       var edit = $0
       if case .progressing(let handler) = $0.fetch.state {
         edit.fetch.state = .complete(.noData, handler)
@@ -1276,13 +1274,21 @@ class SessionTestCase: XCTestCase {
       UIApplication.shared,
       performFetchWithCompletionHandler: { _ in }
     )
-        
+    
+    // 1. performFetch produces .progressing
+    // 2. filter immediately produces .progressing to .complete (normally async)
+    // 3. session produces .complete to .idle
+
     DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
       XCTAssert(
-        fetches
+        delegate.events.map { $0.fetch }
         ==
         [
-          Session.Model.BackgroundFetch(
+          Session.Model.BackgroundFetch( // cycle -subscribe
+            minimumInterval: .never,
+            state: .idle
+          ),
+          Session.Model.BackgroundFetch( // session -subscribe
             minimumInterval: .never,
             state: .idle
           ),
@@ -1290,11 +1296,11 @@ class SessionTestCase: XCTestCase {
             minimumInterval: .never,
             state: .idle
           ),
-          Session.Model.BackgroundFetch(
+          Session.Model.BackgroundFetch( // -performFetch
             minimumInterval: .never,
-            state: .progressing({ _ in})
+            state: .complete(.noData, { _ in })
           ),
-          Session.Model.BackgroundFetch(
+          Session.Model.BackgroundFetch( // -rendered
             minimumInterval: .never,
             state: .idle
           )
