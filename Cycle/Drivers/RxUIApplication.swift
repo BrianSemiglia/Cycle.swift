@@ -526,8 +526,9 @@ class Session: NSObject, UIApplicationDelegate {
     var edit = model
     edit.isExperiencingMemoryWarning = true
     output.on(.next(edit))
-    edit.isExperiencingMemoryWarning = false
-    output.on(.next(edit))
+    var edit2 = model
+    edit2.isExperiencingMemoryWarning = false
+    output.on(.next(edit2))
   }
 
   func applicationWillTerminate(_ application: UIApplication) {
@@ -540,8 +541,9 @@ class Session: NSObject, UIApplicationDelegate {
     var edit = model
     edit.isObservingSignificantTimeChange = true
     output.on(.next(edit))
-    edit.isObservingSignificantTimeChange = false
-    output.on(.next(edit))
+    var edit2 = model
+    edit2.isObservingSignificantTimeChange = false
+    output.on(.next(edit2))
   }
 
   func application(
@@ -775,8 +777,9 @@ class Session: NSObject, UIApplicationDelegate {
     var edit = model
     edit.isExperiencingHealthAuthorizationRequest = true
     output.on(.next(edit))
-    edit.isExperiencingHealthAuthorizationRequest = false
-    output.on(.next(edit))
+    var edit2 = model
+    edit2.isExperiencingHealthAuthorizationRequest = false
+    output.on(.next(edit2))
   }
 
   func applicationDidEnterBackground(_ application: UIApplication) {
@@ -889,8 +892,9 @@ class Session: NSObject, UIApplicationDelegate {
     var edit = model
     edit.stateRestoration = .willEncode(coder)
     output.on(.next(edit))
-    edit.stateRestoration = .idle
-    output.on(.next(edit))
+    var edit2 = model
+    edit2.stateRestoration = .idle
+    output.on(.next(edit2))
   }
 
   func application(
