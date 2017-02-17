@@ -1110,12 +1110,12 @@ class SessionTestCase: XCTestCase {
     DispatchQueue.main.async {
       XCTAssert(
         delegate.events.map { $0.urlActionOutgoing }
-          ==
-          [
-            .attempting(URL(string: "https://www.duckduckgo.com")!),
-            .opening(URL(string: "https://www.duckduckgo.com")!), // .pre(.launched)
-            .opening(URL(string: "https://www.duckduckgo.com")!),
-            .idle
+        ==
+        [
+          .attempting(URL(string: "https://www.duckduckgo.com")!), // cycle -subscribe
+          .opening(URL(string: "https://www.duckduckgo.com")!), // .pre(.launched)
+          .opening(URL(string: "https://www.duckduckgo.com")!),
+          .idle
         ]
       )
       asyncCallbacks.fulfill()
