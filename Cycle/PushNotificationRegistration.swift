@@ -9,7 +9,6 @@
 import Foundation
 import RxSwift
 
-@UIApplicationMain
 class PushNotificationRegistrationDelegate: CycledApplicationDelegate<PushNotificationRegistration> {
   init() {
     super.init(

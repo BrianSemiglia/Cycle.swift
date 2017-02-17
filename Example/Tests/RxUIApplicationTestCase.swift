@@ -513,11 +513,11 @@ class SessionTestCase: XCTestCase {
     )
   }
   
-  func testPerformActionForShortcutItem() {
+  func testPerformActionForShortcutAction() {
     XCTAssert(
       SessionTestCase.statesFromCall(
         initial: Session.Model.empty.with(
-          shortcutItem: Session.Model.ShortcutItem(
+          shortcutItem: Session.Model.ShortcutAction(
             value: .stub,
             action: .idle
           )
@@ -534,14 +534,14 @@ class SessionTestCase: XCTestCase {
       .flatMap { $0 }
       ==
       [
-        Session.Model.ShortcutItem(
+        Session.Model.ShortcutAction(
           value: .stub,
           action: .idle
         ),
-        Session.Model.ShortcutItem(
+        Session.Model.ShortcutAction(
           value: .stub,
           action: .progressing(
-            Session.Model.ShortcutItem.Action(
+            Session.Model.ShortcutAction.Action(
               id: .stub,
               completion: { _ in }
             )
@@ -1512,7 +1512,7 @@ class SessionTestCase: XCTestCase {
 }
 
 extension Session.Model {
-  func with(shortcutItem: Session.Model.ShortcutItem) -> Session.Model {
+  func with(shortcutItem: Session.Model.ShortcutAction) -> Session.Model {
     var edit = self
     edit.shortcutItems += [shortcutItem]
     return edit
@@ -1524,9 +1524,9 @@ func ==<T: Equatable>(left: [T?], right: [T?]) -> Bool { return
   zip(left, right).first { $0 != $1 } == nil
 }
 
-extension UIApplicationShortcutItem {
-  static var stub: UIApplicationShortcutItem { return
-    UIApplicationShortcutItem(
+extension UIApplicationShortcutAction {
+  static var stub: UIApplicationShortcutAction { return
+    UIApplicationShortcutAction(
       type: "x",
       localizedTitle: "y"
     )
