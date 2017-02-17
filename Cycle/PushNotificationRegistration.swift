@@ -41,30 +41,24 @@ extension PushNotificationRegistration.Model {
   }
 }
 
-extension ObservableType where E == (Session.Model, PushNotificationRegistration.Model) {
+extension ObservableType where E == (session: Session.Model, push: PushNotificationRegistration.Model) {
   func reduced() -> Observable<PushNotificationRegistration.Model> { return
-    map { event, global in
-      
-      var e = event
-      switch e.state {
-      case .did(.active):
-        switch e.remoteNotificationRegistration {
-        case .none:
-          e.remoteNotificationRegistration = .attempting
-        default:
-          break
+    map { event, context in
+      var edit = event
+      switch (event.state, context.session.state) {
+      case (.currently(.active), .currently(.launched)): // did change
+        if case .none = event.remoteNotificationRegistration {
+          edit.remoteNotificationRegistration = .attempting
         }
-      case .none(.active):
-        switch e.remoteNotificationRegistration {
+      case (.currently(.active), .currently(.active)):
+        switch event.remoteNotificationRegistration {
         case .some(let token):
           print(token)
-//          e.remoteNotificationRegistration = .none
-        case .error(let a):
-          print(a)
-        default:
-          break
+        case .error(let error):
+          print(error)
+        default: break
         }
-        e.remoteNotifications = e.remoteNotifications.flatMap {
+        edit.remoteNotifications = event.remoteNotifications.flatMap {
           switch $0.state {
           case .progressing(let completion):
             var edit = $0
@@ -77,9 +71,27 @@ extension ObservableType where E == (Session.Model, PushNotificationRegistration
       default:
         break
       }
-      var output = global
-      output.session = e
+      var output = context
+      output.session = edit
       return output
+    }
+  }
+}
+
+extension ObservableType {
+  func withPrevious() -> Observable<(old: E?, new: E)> { return
+    flatMap { latest in
+      self
+        .scan((nil, nil)) { sum, x -> (E?, E?) in
+          (sum.1, x)
+        }
+        .map {
+          if let new = $0.1, let old = $0.0 {
+            return (old, new)
+          } else {
+            return (nil, latest)
+          }
+      }
     }
   }
 }

@@ -51,7 +51,7 @@ class SessionTestCase: XCTestCase {
       .statesFromCall { $0.applicationWillTerminate(UIApplication.shared) }
       .map { $0.state }
       ==
-      [.none(.awaitingLaunch), .will(.terminated)]
+      [.currently(.awaitingLaunch), .pre(.terminated)]
     )
   }
 
@@ -61,7 +61,7 @@ class SessionTestCase: XCTestCase {
       .statesFromCall { $0.applicationDidBecomeActive(UIApplication.shared) }
       .map { $0.state }
       ==
-      [.none(.awaitingLaunch), .did(.active), .none(.active)]
+      [.currently(.awaitingLaunch), .currently(.active)]
     )
   }
   
@@ -71,7 +71,7 @@ class SessionTestCase: XCTestCase {
       .statesFromCall { $0.applicationWillResignActive(UIApplication.shared) }
       .map { $0.state }
       ==
-      [.none(.awaitingLaunch), .will(.resigned)]
+      [.currently(.awaitingLaunch), .pre(.resigned)]
     )
   }
   
@@ -81,7 +81,7 @@ class SessionTestCase: XCTestCase {
       .statesFromCall { $0.applicationDidEnterBackground(UIApplication.shared) }
       .map { $0.state }
       ==
-      [.none(.awaitingLaunch), .did(.resigned), .none(.resigned)]
+      [.currently(.awaitingLaunch), .currently(.resigned)]
     )
   }
   
@@ -96,7 +96,7 @@ class SessionTestCase: XCTestCase {
       }
       .map { $0.state }
       ==
-      [.none(.awaitingLaunch), .will(.launched(nil))]
+      [.currently(.awaitingLaunch), .pre(.launched(nil))]
     )
   }
   
@@ -111,7 +111,7 @@ class SessionTestCase: XCTestCase {
       }
       .map { $0.state }
       ==
-      [.none(.awaitingLaunch), .did(.launched(nil)), .none(.launched(nil))]
+      [.currently(.awaitingLaunch), .currently(.launched(nil))]
     )
   }
   
@@ -121,7 +121,7 @@ class SessionTestCase: XCTestCase {
       .statesFromCall { $0.applicationWillEnterForeground(UIApplication.shared) }
       .map { $0.state }
       ==
-      [.none(.awaitingLaunch), .will(.active)]
+      [.currently(.awaitingLaunch), .pre(.active)]
     )
   }
   
@@ -161,7 +161,7 @@ class SessionTestCase: XCTestCase {
       .statesFromCall { $0.applicationProtectedDataDidBecomeAvailable(UIApplication.shared) }
       .map { $0.isProtectedDataAvailable }
       ==
-      [.none(false), .did(true), .none(true)]
+      [.currently(false), .currently(true)]
     )
   }
   
@@ -171,7 +171,7 @@ class SessionTestCase: XCTestCase {
       .statesFromCall { $0.applicationProtectedDataWillBecomeUnavailable(UIApplication.shared) }
       .map { $0.isProtectedDataAvailable }
       ==
-      [.none(false), .will(false), .none(false)]
+      [.currently(false), .pre(false)]
     )
   }
   
@@ -359,7 +359,7 @@ class SessionTestCase: XCTestCase {
       }
       .map { $0.statusBarOrientation }
       ==
-      [.none(.unknown), .will(.landscapeLeft)]
+      [.currently(.unknown), .pre(.landscapeLeft)]
     )
   }
   
@@ -374,7 +374,7 @@ class SessionTestCase: XCTestCase {
       }
       .map { $0.statusBarOrientation }
       ==
-      [.none(.unknown), .did(.landscapeLeft), .none(.landscapeLeft)]
+      [.currently(.unknown), .currently(.landscapeLeft)]
     )
   }
   
@@ -389,12 +389,12 @@ class SessionTestCase: XCTestCase {
       }
       .map { $0.statusBarFrame }
       ==
-      [.none(.zero), .will(CGRect(x: 1, y: 2, width: 3, height: 4))]
+      [.currently(.zero), .pre(CGRect(x: 1, y: 2, width: 3, height: 4))]
     )
   }
   
   func testDidChangeStatusBarFrame() {
-    // Consider adding beginState to -willChange enum option .will(from: to:)
+    // Consider adding beginState to -willChange enum option .pre(from: to:)
     // Or firing changes for every frame of animation
     
 //    XCTAssert(
@@ -407,7 +407,7 @@ class SessionTestCase: XCTestCase {
 //      }
 //      .map { $0.statusBarFrame }
 //      ==
-//      [.none(.zero), .did(CGRect(x: 0, y: 0, width: 320, height: 20))]
+//      [.none(.zero), .currently(CGRect(x: 0, y: 0, width: 320, height: 20))]
 //    )
   }
   
@@ -682,7 +682,7 @@ class SessionTestCase: XCTestCase {
       .rendered(events.map { $0.session })
       .map { model -> Session.Model in
         switch model.state {
-        case .will(let a):
+        case .pre(let a):
           switch a {
           case .launched(_):
             var new = model
@@ -1113,7 +1113,7 @@ class SessionTestCase: XCTestCase {
           ==
           [
             .attempting(URL(string: "https://www.duckduckgo.com")!),
-            .opening(URL(string: "https://www.duckduckgo.com")!), // .will(.launched)
+            .opening(URL(string: "https://www.duckduckgo.com")!), // .pre(.launched)
             .opening(URL(string: "https://www.duckduckgo.com")!),
             .idle
         ]
@@ -1149,7 +1149,7 @@ class SessionTestCase: XCTestCase {
           [
             .sending(action),
             .responding(action, true),
-            .responding(action, true), // .will(.launched)
+            .responding(action, true), // .pre(.launched)
             .idle
         ]
       )
@@ -1183,7 +1183,7 @@ class SessionTestCase: XCTestCase {
             name: "x",
             state: .pending
           ),
-          Session.Model.BackgroundTask( // .will(.launch)
+          Session.Model.BackgroundTask( // .pre(.launch)
             name: "x",
             state: .progressing(2)
           ),
@@ -1239,7 +1239,7 @@ class SessionTestCase: XCTestCase {
             name: "x",
             state: .pending
           ),
-          Session.Model.BackgroundTask( // .will(.launch)
+          Session.Model.BackgroundTask( // .pre(.launch)
             name: "x",
             state: .complete(1)
           ),
@@ -1292,7 +1292,7 @@ class SessionTestCase: XCTestCase {
             minimumInterval: .never,
             state: .idle
           ),
-          Session.Model.BackgroundFetch( // .will(.launch)
+          Session.Model.BackgroundFetch( // .pre(.launch)
             minimumInterval: .never,
             state: .idle
           ),

@@ -75,7 +75,7 @@ extension ObservableType where E == (Session.Model, IntegerMutatingApp.Model) {
       model.shouldLaunch = true
       c.session = model
       var s = c.screen
-      s.total = event.state == .did(.active) ? "55" : s.total
+      s.total = event.state == .pre(.active) ? "55" : s.total
       c.screen = s
       return c
     }
