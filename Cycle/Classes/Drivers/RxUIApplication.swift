@@ -222,11 +222,9 @@ class Session: NSObject, UIApplicationDelegate {
       switch model.urlActionOutgoing {
       case .attempting(let url):
         edit.urlActionOutgoing = .opening(url)
-        model = edit
-        application.openURL(url)
+        DispatchQueue.main.async { self.application.openURL(url) }
       case .opening:
         edit.urlActionOutgoing = .idle
-        model = edit
       default:
         break
       }
@@ -852,7 +850,9 @@ class Session: NSObject, UIApplicationDelegate {
         )
       )
       output.on(.next(edit))
-      if case .allowing(let allowed) = model.viewControllerRestoration, allowed.identifier == component {
+      if
+      case .allowing(let allowed) = model.viewControllerRestoration,
+      allowed.identifier == component {
         return allowed.view
       } else {
         return nil
