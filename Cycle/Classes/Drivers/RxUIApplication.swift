@@ -46,7 +46,7 @@ class Session: NSObject, UIApplicationDelegate {
     var registeredUserNotificationSettings: UIUserNotificationSettings?
     var isReceivingRemoteControlEvents: Bool
     var newsStandIconImage: UIImage?
-    var shortcutItems: [ShortcutItem]
+    var shortcutActions: [ShortcutAction]
     var shouldSaveApplicationState: Filtered<NSCoder, Bool>
     var shouldRestoreApplicationState: Filtered<NSCoder, Bool>
     var shouldLaunch: Bool
@@ -113,12 +113,13 @@ class Session: NSObject, UIApplicationDelegate {
         case never
       }
     }
-    struct ShortcutItem {
-      var value: UIApplicationShortcutItem
-      var action: AsyncAction<Action>
-      struct Action {
-        var id: UIApplicationShortcutItem
-        var completion: (Bool) -> Void // Readonly
+    struct ShortcutAction {
+      var item: UIApplicationShortcutItem
+      var state: State
+      enum State {
+        case idle
+        case progressing((Bool) -> Void) // Readonly
+        case complete(Bool, (Bool) -> Void)
       }
     }
     struct RemoteNofitication {
@@ -390,33 +391,39 @@ class Session: NSObject, UIApplicationDelegate {
       application.setNewsstandIconImage(model.newsStandIconImage)
     }
     
-    application.shortcutItems = model.shortcutItems.map { $0.value }
+    application.shortcutItems = model.shortcutActions.map { $0.item }
     
-    let change = Changeset(
-      source: old.shortcutItems,
-      target: model.shortcutItems
+    let shortcutActionChanges = Changeset(
+      source: old.shortcutActions,
+      target: model.shortcutActions
     )
-      
-    change
+    
+    shortcutActionChanges
     .edits
-    .flatMap { completionHandler(type: .deletion, edit: $0) }
-    .forEach { $0(false) }
+    .forEach {
+      if case .deletion = $0.operation,
+         case .progressing(let handler) = $0.value.state {
+        return handler(false)
+      }
+    }
 
-    change
+    shortcutActionChanges
     .edits
-    .flatMap { completionHandler(type: .substitution, edit: $0) }
-    .forEach { $0(true) }
+    .forEach {
+      if case .insertion = $0.operation,
+         case .complete(let x) = $0.value.state {
+        return x.1(x.0)
+      }
+    }
 
     Session.deletions(
       old: Array(old.backgroundURLSessions),
       new: Array(model.backgroundURLSessions)
     )
-    .flatMap { x -> ((Void) -> Void)? in
-      if case .progressing = x.state { return x.completion }
-      else { return nil }
-    }
     .forEach {
-      $0()
+      if case .progressing = $0.state {
+        $0.completion()
+      }
     }
     
     model.backgroundURLSessions = Set(
@@ -693,16 +700,11 @@ class Session: NSObject, UIApplicationDelegate {
     performActionFor shortcutItem: UIApplicationShortcutItem,
     completionHandler: @escaping (Bool) -> Void
   ) {
-    model.shortcutItems = model.shortcutItems.map {
-      if $0.value.type == shortcutItem.type {
-        return Session.Model.ShortcutItem(
-          value: shortcutItem,
-          action: .progressing(
-            Session.Model.ShortcutItem.Action(
-              id: shortcutItem,
-              completion: completionHandler
-            )
-          )
+    model.shortcutActions = model.shortcutActions.map {
+      if $0.item.type == shortcutItem.type {
+        return Session.Model.ShortcutAction(
+          item: shortcutItem,
+          state: .progressing(completionHandler)
         )
       } else {
         return $0
@@ -1007,7 +1009,7 @@ extension Session.Model: Equatable {
     left.registeredUserNotificationSettings == right.registeredUserNotificationSettings &&
     left.isReceivingRemoteControlEvents == right.isReceivingRemoteControlEvents &&
     left.newsStandIconImage == right.newsStandIconImage &&
-    left.shortcutItems == right.shortcutItems &&
+    left.shortcutActions == right.shortcutActions &&
     left.shouldSaveApplicationState == right.shouldSaveApplicationState &&
     left.shouldRestoreApplicationState == right.shouldRestoreApplicationState &&
     left.shouldLaunch == right.shouldLaunch &&
@@ -1024,9 +1026,9 @@ extension Edit {
   }
 }
 
-extension Session.Model.ShortcutItem: CustomDebugStringConvertible {
+extension Session.Model.ShortcutAction: CustomDebugStringConvertible {
   var debugDescription: String { return
-    value.type + " " + String(describing: action)
+    item.type + " " + String(describing: state)
   }
 }
 
@@ -1040,17 +1042,6 @@ extension AsyncAction: CustomDebugStringConvertible {
     case .progressing: return
       ".progressing"
     }
-  }
-}
-
-func completionHandler(
-    type: EditOperation,
-    edit: Edit<Session.Model.ShortcutItem>
-  ) -> ((Bool) -> Void)? {
-  if let d = edit.possible(type), case .progressing(let a) = d.value.action { return
-    a.completion
-  } else { return
-    nil
   }
 }
 
@@ -1165,7 +1156,7 @@ extension Session.Model {
       registeredUserNotificationSettings: nil,
       isReceivingRemoteControlEvents: false,
       newsStandIconImage: nil,
-      shortcutItems: [],
+      shortcutActions: [],
       shouldSaveApplicationState: .idle,
       shouldRestoreApplicationState: .idle,
       shouldLaunch: true,
@@ -1502,22 +1493,31 @@ extension RemoteNotificationRegistration: Equatable {
   }
 }
 
-extension Session.Model.ShortcutItem.Action: Equatable {
+extension Session.Model.ShortcutAction.State: Equatable {
   static func ==(
-    left: Session.Model.ShortcutItem.Action,
-    right: Session.Model.ShortcutItem.Action
-  ) -> Bool { return
-    left.id == right.id
+    left: Session.Model.ShortcutAction.State,
+    right: Session.Model.ShortcutAction.State
+  ) -> Bool {
+    switch (left, right) {
+    case (.idle, .idle): return
+      true
+    case (.progressing, .progressing): return
+      true
+    case (.complete, .complete): return
+      true
+    default: return
+      false
+    }
   }
 }
 
-extension Session.Model.ShortcutItem: Equatable {
+extension Session.Model.ShortcutAction: Equatable {
   static func ==(
-    left: Session.Model.ShortcutItem,
-    right: Session.Model.ShortcutItem
+    left: Session.Model.ShortcutAction,
+    right: Session.Model.ShortcutAction
   ) -> Bool { return
-    left.value == right.value &&
-    left.action == right.action
+    left.item == right.item &&
+    left.state == right.state
   }
 }
 
