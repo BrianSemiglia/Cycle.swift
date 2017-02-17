@@ -131,7 +131,7 @@ class SessionTestCase: XCTestCase {
       .statesFromCall { $0.applicationSignificantTimeChange(UIApplication.shared) }
       .map { $0.isObservingSignificantTimeChange }
       ==
-      [false, true, false]
+      [false, true]
     )
   }
   
@@ -141,7 +141,7 @@ class SessionTestCase: XCTestCase {
       .statesFromCall { $0.applicationDidReceiveMemoryWarning(UIApplication.shared) }
       .map { $0.isExperiencingMemoryWarning }
       ==
-      [false, true, false]
+      [false, true]
     )
   }
   
@@ -151,7 +151,7 @@ class SessionTestCase: XCTestCase {
       .statesFromCall { $0.applicationShouldRequestHealthAuthorization(UIApplication.shared) }
       .map { $0.isExperiencingHealthAuthorizationRequest }
       ==
-      [false, true, false]
+      [false, true]
     )
   }
   
@@ -234,7 +234,7 @@ class SessionTestCase: XCTestCase {
       }
       .map { $0.stateRestoration }
       ==
-      [.idle, .didDecode(CoderStub(id: "x")), .idle]
+      [.idle, .didDecode(CoderStub(id: "x"))]
     )
   }
   
@@ -249,7 +249,7 @@ class SessionTestCase: XCTestCase {
       }
       .map { $0.stateRestoration }
       ==
-      [.idle, .willEncode(CoderStub(id: "x")), .idle]
+      [.idle, .willEncode(CoderStub(id: "x"))]
     )
   }
   
@@ -310,7 +310,7 @@ class SessionTestCase: XCTestCase {
       }
       .map { $0.userActivityState }
       ==
-      [.idle, .didFail("x", ErrorStub(id: "y")), .idle]
+      [.idle, .failing("x", ErrorStub(id: "y"))]
     )
   }
   
@@ -326,7 +326,7 @@ class SessionTestCase: XCTestCase {
       }
       .map { $0.userActivityState }
       ==
-      [.idle, .didContinue(activity), .idle]
+      [.idle, .completing(activity)]
     )
   }
   
@@ -518,8 +518,8 @@ class SessionTestCase: XCTestCase {
       SessionTestCase.statesFromCall(
         initial: Session.Model.empty.with(
           shortcutItem: Session.Model.ShortcutAction(
-            value: .stub,
-            action: .idle
+            item: .stub,
+            state: .idle
           )
         ),
         call: {
@@ -530,22 +530,17 @@ class SessionTestCase: XCTestCase {
           )
         }
       )
-      .map { $0.shortcutItems }
+      .map { $0.shortcutActions }
       .flatMap { $0 }
       ==
       [
         Session.Model.ShortcutAction(
-          value: .stub,
-          action: .idle
+          item: .stub,
+          state: .idle
         ),
         Session.Model.ShortcutAction(
-          value: .stub,
-          action: .progressing(
-            Session.Model.ShortcutAction.Action(
-              id: .stub,
-              completion: { _ in }
-            )
-          )
+          item: .stub,
+          state: .progressing({ _ in })
         )
       ]
     )
@@ -1060,6 +1055,43 @@ class SessionTestCase: XCTestCase {
     )
   }
   
+  func testConsecutiveCallbacks() {
+    let empty = Session.Model.empty
+    var y = empty; y.backgroundTasks = [
+      Session.Model.BackgroundTask(name: "x", state: .pending)
+    ]
+    
+    let delegate = SessionTestDelegate(start: y) {
+      if $0.isExperiencingHealthAuthorizationRequest {
+        var edit = $0
+        edit.supportsShakeToEdit = false
+        return edit
+      } else {
+        return $0
+      }
+    }
+    _ = (delegate as UIApplicationDelegate).application!(
+      UIApplication.shared,
+      willFinishLaunchingWithOptions: nil
+    )
+    _ = (delegate as UIApplicationDelegate).applicationShouldRequestHealthAuthorization!(
+      UIApplication.shared
+    )
+    XCTAssert(
+      delegate.events
+      .map { $0.supportsShakeToEdit }
+      == [
+        true,
+        true,
+        true,
+        true,
+        false,
+        false
+      ]
+    )
+    
+  }
+  
   func testRenderingIsIgnoringUserEvents() {
 
     let x = Session.Model.empty
@@ -1175,9 +1207,10 @@ class SessionTestCase: XCTestCase {
     
     DispatchQueue.main.async {
       XCTAssert(
-        delegate.events.map { $0.backgroundTasks }
-        .flatMap { $0 }
+        delegate.events.map { $0.backgroundTasks }.flatMap { $0 }
         ==
+        // This test will occasionally fail due to harcoded UIBackgroundTaskIdentifier.
+        // Needs better solution
         [
           Session.Model.BackgroundTask(
             name: "x",
@@ -1185,11 +1218,11 @@ class SessionTestCase: XCTestCase {
           ),
           Session.Model.BackgroundTask( // .pre(.launch)
             name: "x",
-            state: .progressing(2)
+            state: .progressing(1)
           ),
           Session.Model.BackgroundTask(
             name: "x",
-            state: .progressing(2)
+            state: .progressing(1)
           )
         ]
       )
@@ -1514,7 +1547,7 @@ class SessionTestCase: XCTestCase {
 extension Session.Model {
   func with(shortcutItem: Session.Model.ShortcutAction) -> Session.Model {
     var edit = self
-    edit.shortcutItems += [shortcutItem]
+    edit.shortcutActions += [shortcutItem]
     return edit
   }
 }
@@ -1524,9 +1557,9 @@ func ==<T: Equatable>(left: [T?], right: [T?]) -> Bool { return
   zip(left, right).first { $0 != $1 } == nil
 }
 
-extension UIApplicationShortcutAction {
-  static var stub: UIApplicationShortcutAction { return
-    UIApplicationShortcutAction(
+extension UIApplicationShortcutItem {
+  static var stub: UIApplicationShortcutItem { return
+    UIApplicationShortcutItem(
       type: "x",
       localizedTitle: "y"
     )

@@ -151,8 +151,8 @@ class Session: NSObject, UIApplicationDelegate {
       case isContinuing(NSUserActivity)
       case hasAvailableData(NSUserActivity)
       case shouldNotifyUserActivitiesWithType(String)
-      case didContinue(NSUserActivity)
-      case didFail(String, Error)
+      case completing(NSUserActivity)
+      case failing(String, Error)
     }
     enum StateRestoration { // Readonly
       case idle
@@ -258,6 +258,14 @@ class Session: NSObject, UIApplicationDelegate {
       }
     }
     
+    // Meant to be momentary. Reset if enabled.
+    model.isExperiencingMemoryWarning = false
+    model.isObservingSignificantTimeChange = false
+    model.stateRestoration = .idle
+    if case .completing = model.userActivityState, case .failing = model.userActivityState {
+      model.userActivityState = .idle
+    }
+
     application.isNetworkActivityIndicatorVisible = model.isNetworkActivityIndicatorVisible
     application.applicationIconBadgeNumber = model.iconBadgeNumber
     application.applicationSupportsShakeToEdit = model.supportsShakeToEdit
@@ -530,8 +538,6 @@ class Session: NSObject, UIApplicationDelegate {
   func applicationDidReceiveMemoryWarning(_ application: UIApplication) {
     model.isExperiencingMemoryWarning = true
     output.on(.next(model))
-    model.isExperiencingMemoryWarning = false
-    output.on(.next(model))
   }
 
   func applicationWillTerminate(_ application: UIApplication) {
@@ -541,8 +547,6 @@ class Session: NSObject, UIApplicationDelegate {
 
   func applicationSignificantTimeChange(_ application: UIApplication) {
     model.isObservingSignificantTimeChange = true
-    output.on(.next(model))
-    model.isObservingSignificantTimeChange = false
     output.on(.next(model))
   }
 
@@ -754,8 +758,6 @@ class Session: NSObject, UIApplicationDelegate {
   func applicationShouldRequestHealthAuthorization(_ application: UIApplication) {
     model.isExperiencingHealthAuthorizationRequest = true
     output.on(.next(model))
-    model.isExperiencingHealthAuthorizationRequest = false
-    output.on(.next(model))
   }
 
   func applicationDidEnterBackground(_ application: UIApplication) {
@@ -858,8 +860,6 @@ class Session: NSObject, UIApplicationDelegate {
   ) {
     model.stateRestoration = .willEncode(coder)
     output.on(.next(model))
-    model.stateRestoration = .idle
-    output.on(.next(model))
   }
 
   func application(
@@ -867,8 +867,6 @@ class Session: NSObject, UIApplicationDelegate {
     didDecodeRestorableStateWith coder: NSCoder
   ) {
     model.stateRestoration = .didDecode(coder)
-    output.on(.next(model))
-    model.stateRestoration = .idle
     output.on(.next(model))
   }
 
@@ -904,9 +902,7 @@ class Session: NSObject, UIApplicationDelegate {
     didFailToContinueUserActivityWithType userActivityType: String,
     error: Error
   ) {
-    model.userActivityState = .didFail(userActivityType, error)
-    output.on(.next(model))
-    model.userActivityState = .idle
+    model.userActivityState = .failing(userActivityType, error)
     output.on(.next(model))
   }
 
@@ -914,9 +910,7 @@ class Session: NSObject, UIApplicationDelegate {
     _ application: UIApplication,
     didUpdate userActivity: NSUserActivity
   ) {
-    model.userActivityState = .didContinue(userActivity)
-    output.on(.next(model))
-    model.userActivityState = .idle
+    model.userActivityState = .completing(userActivity)
     output.on(.next(model))
   }
 
@@ -1433,9 +1427,9 @@ extension Session.Model.UserActivityState: Equatable {
       a == b
     case (.shouldNotifyUserActivitiesWithType(let a), .shouldNotifyUserActivitiesWithType(let b)): return
       a == b
-    case (.didContinue(let a), .didContinue(let b)): return
+    case (.completing(let a), .completing(let b)): return
       a == b
-    case (.didFail(let a), .didFail(let b)): return
+    case (.failing(let a), .failing(let b)): return
       a.0 == b.0 // Need to compare errors too
     default: return
       false
