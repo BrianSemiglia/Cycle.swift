@@ -197,17 +197,17 @@ class Session: NSObject, UIApplicationDelegate {
     }
   }
   
+  fileprivate let application: UIApplication
+  fileprivate var disposable: Disposable?
+  fileprivate let output: BehaviorSubject<Model>
+  fileprivate var model: Model
+
   init(intitial: Model, application: UIApplication) {
     self.application = application
     model = intitial
     output = BehaviorSubject<Model>(value: intitial)
   }
   
-  fileprivate let application: UIApplication
-  fileprivate var disposable: Disposable?
-  fileprivate let output: BehaviorSubject<Model>
-  fileprivate var model: Model
-
   func render(new: Model, old: Model) {
     model = new
     if model.isIgnoringUserEvents != old.isIgnoringUserEvents {
@@ -301,7 +301,9 @@ class Session: NSObject, UIApplicationDelegate {
     let deletions = Session.deletions(
       old: Array(old.backgroundTasks),
       new: Array(model.backgroundTasks)
-    ).progressing().flatMap { $0.ID }
+    )
+    .progressing()
+    .flatMap { $0.ID }
     
     (complete + deletions).forEach {
       application.endBackgroundTask($0)
@@ -359,14 +361,16 @@ class Session: NSObject, UIApplicationDelegate {
     Session.additions(
       new: model.scheduledLocalNotifications,
       old: old.scheduledLocalNotifications
-    ).forEach {
+    )
+    .forEach {
       application.scheduleLocalNotification($0)
     }
     
     Session.deletions(
       old: old.scheduledLocalNotifications,
       new: model.scheduledLocalNotifications
-    ).forEach {
+    )
+    .forEach {
       application.cancelLocalNotification($0)
     }
     
