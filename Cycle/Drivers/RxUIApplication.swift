@@ -91,11 +91,11 @@ class Session: NSObject, UIApplicationDelegate {
       case failing(URL)
     }
     struct BackgroundURLSessionAction {
-      let id: String
-      let completion: (Void) -> Void
+      let id: String // Readonly
+      let completion: (Void) -> Void // Readonly
       var state: State
       enum State {
-        case progressing
+        case progressing // Readonly
         case complete
       }
     }
@@ -103,8 +103,8 @@ class Session: NSObject, UIApplicationDelegate {
       var minimumInterval: Interval
       var state: State
       enum State {
-        case idle
-        case progressing((UIBackgroundFetchResult) -> Void)
+        case idle // Readonly
+        case progressing((UIBackgroundFetchResult) -> Void) // Readonly
         case complete(UIBackgroundFetchResult, (UIBackgroundFetchResult) -> Void)
       }
       enum Interval {
@@ -118,27 +118,27 @@ class Session: NSObject, UIApplicationDelegate {
       var action: AsyncAction<Action>
       struct Action {
         var id: UIApplicationShortcutItem
-        var completion: (Bool) -> Void
+        var completion: (Bool) -> Void // Readonly
       }
     }
     struct RemoteNofitication {
-      var notification: [AnyHashable : Any]
+      var notification: [AnyHashable : Any] // Readonly
       var state: State
       enum State {
-        case progressing((UIBackgroundFetchResult) -> Void)
+        case progressing((UIBackgroundFetchResult) -> Void) // Readonly
         case complete(UIBackgroundFetchResult, (UIBackgroundFetchResult) -> Void)
       }
     }
     struct WatchKitExtensionRequest {
-      var userInfo: [AnyHashable: Any]?
-      var reply: ([AnyHashable : Any]?) -> Void
+      var userInfo: [AnyHashable: Any]? // Readonly
+      var reply: ([AnyHashable : Any]?) -> Void // Readonly
     }
     enum BackgroundURLSessionDataAvailability {
-      case none
-      case some (String, (Void) -> Void)
+      case none // Readonly
+      case some (String, (Void) -> Void) // Readonly
       case ending ((Void) -> Void)
     }
-    enum UserActivityState {
+    enum UserActivityState { // Readonly
       case idle
       case willContinue(String)
       case isContinuing(NSUserActivity)
@@ -147,12 +147,12 @@ class Session: NSObject, UIApplicationDelegate {
       case didContinue(NSUserActivity)
       case didFail(String, Error)
     }
-    enum StateRestoration {
+    enum StateRestoration { // Readonly
       case idle
       case willEncode(NSCoder)
       case didDecode(NSCoder)
     }
-    enum State {
+    enum State { // Readonly
       case awaitingLaunch
       case launched([UIApplicationLaunchOptionsKey: Any]?)
       case active
@@ -175,19 +175,19 @@ class Session: NSObject, UIApplicationDelegate {
       var view: UIViewController
     }
     struct BackgroundTask {
-      var name: String
+      var name: String // Readonly
       var state: State
       enum State {
         case pending
-        case progressing(UIBackgroundTaskIdentifier)
+        case progressing(UIBackgroundTaskIdentifier) // Readonly
         case complete(UIBackgroundTaskIdentifier)
-        case expired
+        case expired // Readonly
       }
     }
     enum TartgetActionProcess {
       case idle
       case sending(TargetAction)
-      case responding(TargetAction, Bool)
+      case responding(TargetAction, Bool) // Readonly
     }
     struct TargetAction {
       var action: Selector
