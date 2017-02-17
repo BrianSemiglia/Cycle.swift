@@ -170,7 +170,6 @@ class Session: NSObject, UIApplicationDelegate {
       var identifier: String
       var coder: NSCoder
     }
-    
     struct RestorationResponse {
       var identifier: String
       var view: UIViewController
@@ -440,15 +439,17 @@ class Session: NSObject, UIApplicationDelegate {
   
   func rendered(_ input: Observable<Model>) -> Observable<Model> { return
     input.distinctUntilChanged().flatMap { model in
-      Observable.create { [weak self] observer in if let strong = self {
-        strong.model = model
-        if strong.disposable == nil {
-          strong.disposable = strong.output.distinctUntilChanged().subscribe {
-            if let new = $0.element {
-              observer.on(.next(new))
+      Observable.create { [weak self] observer in
+        if let strong = self {
+          strong.model = model
+          if strong.disposable == nil {
+            strong.disposable = strong.output.distinctUntilChanged().subscribe {
+              if let new = $0.element {
+                observer.on(.next(new))
+              }
             }
           }
-        }}
+        }
         return Disposables.create()
       }
     }
@@ -459,7 +460,7 @@ class Session: NSObject, UIApplicationDelegate {
     willFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil
   ) -> Bool {
     var edit = model
-    edit.state = .will(.launched(launchOptions))
+    edit.state = .pre(.launched(launchOptions))
     output.on(.next(edit))
     return model.shouldLaunch == true
   }
@@ -469,26 +470,20 @@ class Session: NSObject, UIApplicationDelegate {
     didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil
   ) -> Bool {
     var edit = model
-    edit.state = .did(.launched(launchOptions))
+    edit.state = .currently(.launched(launchOptions))
     output.on(.next(edit))
-    var edit2 = model
-    edit2.state = .none(.launched(launchOptions))
-    output.on(.next(edit2))
     return model.shouldLaunch == true
   }
 
   func applicationDidBecomeActive(_ application: UIApplication) {
     var edit = model
-    edit.state = .did(.active)
+    edit.state = .currently(.active)
     output.on(.next(edit))
-    var edit2 = model
-    edit2.state = .none(.active)
-    output.on(.next(edit2))
   }
 
   func applicationWillResignActive(_ application: UIApplication) {
     var edit = model
-    edit.state = .will(.resigned)
+    edit.state = .pre(.resigned)
     output.on(.next(edit))
   }
 
@@ -539,7 +534,7 @@ class Session: NSObject, UIApplicationDelegate {
 
   func applicationWillTerminate(_ application: UIApplication) {
     var edit = model
-    edit.state = Change.will(.terminated)
+    edit.state = .pre(.terminated)
     output.on(.next(edit))
   }
 
@@ -557,7 +552,7 @@ class Session: NSObject, UIApplicationDelegate {
     duration: TimeInterval
   ) {
     var edit = model
-    edit.statusBarOrientation = .will(newStatusBarOrientation)
+    edit.statusBarOrientation = .pre(newStatusBarOrientation)
     output.on(.next(edit))
   }
 
@@ -566,11 +561,8 @@ class Session: NSObject, UIApplicationDelegate {
     didChangeStatusBarOrientation oldStatusBarOrientation: UIInterfaceOrientation
   ) {
     var edit = model
-    edit.statusBarOrientation = .did(oldStatusBarOrientation)
+    edit.statusBarOrientation = .currently(oldStatusBarOrientation)
     output.on(.next(edit))
-    var edit2 = model
-    edit2.statusBarOrientation = .none(oldStatusBarOrientation)
-    output.on(.next(edit2))
   }
 
   func application(
@@ -578,7 +570,7 @@ class Session: NSObject, UIApplicationDelegate {
     willChangeStatusBarFrame new: CGRect
   ) {
     var edit = model
-    edit.statusBarFrame = Change.will(new)
+    edit.statusBarFrame = .pre(new)
     output.on(.next(edit))
   }
 
@@ -587,11 +579,8 @@ class Session: NSObject, UIApplicationDelegate {
     didChangeStatusBarFrame old: CGRect
   ) {
     var edit = model
-    edit.statusBarFrame = .did(application.statusBarFrame)
+    edit.statusBarFrame = .currently(application.statusBarFrame)
     output.on(.next(edit))
-    var edit2 = model
-    edit2.statusBarFrame = .none(application.statusBarFrame)
-    output.on(.next(edit2))
   }
 
   func application(
@@ -794,35 +783,26 @@ class Session: NSObject, UIApplicationDelegate {
 
   func applicationDidEnterBackground(_ application: UIApplication) {
     var edit = model
-    edit.state = .did(.resigned)
+    edit.state = .currently(.resigned)
     output.on(.next(edit))
-    var edit2 = model
-    edit2.state = .none(.resigned)
-    output.on(.next(edit2))
   }
 
   func applicationWillEnterForeground(_ application: UIApplication) {
     var edit = model
-    edit.state = .will(.active)
+    edit.state = .pre(.active)
     output.on(.next(edit))
   }
 
   func applicationProtectedDataWillBecomeUnavailable(_ application: UIApplication) {
     var edit = model
-    edit.isProtectedDataAvailable = .will(false)
+    edit.isProtectedDataAvailable = .pre(false)
     output.on(.next(edit))
-    var edit2 = model
-    edit.isProtectedDataAvailable = .none(false)
-    output.on(.next(edit2))
   }
 
   func applicationProtectedDataDidBecomeAvailable(_ application: UIApplication) {
     var edit = model
-    edit.isProtectedDataAvailable = .did(true)
+    edit.isProtectedDataAvailable = .currently(true)
     output.on(.next(edit))
-    var edit2 = model
-    edit2.isProtectedDataAvailable = .none(true)
-    output.on(.next(edit2))
   }
 
   func application(
@@ -1122,19 +1102,16 @@ func completionHandler(
 }
 
 enum Change<T: Equatable> {
-  case none(T)
-  case will(T)
-  case did(T)
+  case pre(T)
+  case currently(T)
 }
 
 extension Change: Equatable {
   static func ==(left: Change, right: Change) -> Bool {
     switch (left, right) {
-    case (.none(let a), .none(let b)): return
+    case (.pre(let a), .pre(let b)): return
       a == b
-    case (.will(let a), .will(let b)): return
-      a == b
-    case (.did(let a), .did(let b)): return
+    case (.currently(let a), .currently(let b)): return
       a == b
     default: return
       false
@@ -1215,11 +1192,11 @@ extension Session.Model {
       notificationSettings: nil,
       isObservingSignificantTimeChange: false,
       isExperiencingMemoryWarning: false,
-      state: .none(.awaitingLaunch),
-      statusBarFrame: .none(.zero),
-      isProtectedDataAvailable: .none(false),
+      state: .currently(.awaitingLaunch),
+      statusBarFrame: .currently(.zero),
+      isProtectedDataAvailable: .currently(false),
       remoteNotificationRegistration: .none,
-      statusBarOrientation: .none(.unknown),
+      statusBarOrientation: .currently(.unknown),
       backgroundTasks: Set(),
       isExperiencingHealthAuthorizationRequest: false,
       isIgnoringUserEvents: false,

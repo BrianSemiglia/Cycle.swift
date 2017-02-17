@@ -42,14 +42,16 @@ extension URLActionOutgoing.Model {
 
 extension ObservableType where E == (Session.Model, URLActionOutgoing.Model) {
   func reduced() -> Observable<URLActionOutgoing.Model> { return
-    map { event, global in
+    map { event, context in
       
       var e = event
-      if case .did(.active) = e.state {
+      if
+      case .currently(.launched) = context.session.state,
+      case .currently(.active) = event.state {
         e.urlActionOutgoing = .attempting(URL(string: "https://www.duckduckgo.com")!)
       }
       
-      var output = global
+      var output = context
       output.session = e
       return output
     }
