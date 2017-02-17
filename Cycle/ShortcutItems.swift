@@ -1,5 +1,5 @@
 //
-//  ShortcutItems.swift
+//  ShortcutActions.swift
 //  Cycle
 //
 //  Created by Brian Semiglia on 2/9/17.
@@ -9,15 +9,16 @@
 import Foundation
 import RxSwift
 
-class ShortcutItemsExampleDelegate: CycledApplicationDelegate<ShortcutItemsExample> {
+@UIApplicationMain
+class ShortcutActionsExampleDelegate: CycledApplicationDelegate<ShortcutActionsExample> {
   init() {
     super.init(
-      filter: ShortcutItemsExample()
+      filter: ShortcutActionsExample()
     )
   }
 }
 
-struct ShortcutItemsExample: SinkSourceConverting {
+struct ShortcutActionsExample: SinkSourceConverting {
   struct Model {
     var session: Session.Model
     var async: Timer.Model
@@ -41,37 +42,37 @@ struct ShortcutItemsExample: SinkSourceConverting {
   }
 }
 
-extension ShortcutItemsExample.Model {
-  static var empty: ShortcutItemsExample.Model { return
-    ShortcutItemsExample.Model(
+extension ShortcutActionsExample.Model {
+  static var empty: ShortcutActionsExample.Model { return
+    ShortcutActionsExample.Model(
       session: .empty,
       async: .empty
     )
   }
 }
 
-extension ObservableType where E == (Session.Model, ShortcutItemsExample.Model) {
-  func reduced() -> Observable<ShortcutItemsExample.Model> { return
-    map { event, global in
+extension ObservableType where E == (Session.Model, ShortcutActionsExample.Model) {
+  func reduced() -> Observable<ShortcutActionsExample.Model> { return
+    map { event, context in
       
       var e = event
       if case .pre(.resigned) = e.state {
-        e.shortcutItems = Array(0...arc4random_uniform(3)).map {
-          Session.Model.ShortcutItem(
-            value: UIApplicationShortcutItem(
+        e.shortcutActions = Array(0...arc4random_uniform(3)).map {
+          Session.Model.ShortcutAction(
+            item: UIApplicationShortcutItem(
               type: "test " + String($0),
               localizedTitle: "test " + String($0)
             ),
-            action: .idle
+            state: .idle
           )
         }
       }
       
-      var a = global.async
-      a.operations = e.shortcutItems.flatMap {
-        if case .progressing(let a) = $0.action {
+      var a = context.async
+      a.operations = e.shortcutActions.flatMap {
+        if case .progressing = $0.state {
           return Timer.Model.Operation(
-            id: a.id.type,
+            id: $0.item.type,
             running: true,
             length: 1
           )
@@ -80,7 +81,7 @@ extension ObservableType where E == (Session.Model, ShortcutItemsExample.Model) 
         }
       }
       
-      var output = global
+      var output = context
       output.async = a
       output.session = e
       return output
@@ -88,16 +89,16 @@ extension ObservableType where E == (Session.Model, ShortcutItemsExample.Model) 
   }
 }
 
-extension ObservableType where E == (Timer.Model, ShortcutItemsExample.Model) {
-  func reduced() -> Observable<ShortcutItemsExample.Model> { return
+extension ObservableType where E == (Timer.Model, ShortcutActionsExample.Model) {
+  func reduced() -> Observable<ShortcutActionsExample.Model> { return
     map { event, global in
 
       var s = global.session
-      s.shortcutItems = s.shortcutItems.map { item in
-        if let _ = event.operations.filter({ $0.id == item.value.type && $0.running == false }).first {
-          if case .progressing(let a) = item.action {
+      s.shortcutActions = s.shortcutActions.map { item in
+        if let _ = event.operations.filter({ $0.id == item.item.type && $0.running == false }).first {
+          if case .progressing(let a) = item.state {
             var edit = item
-            edit.action = .complete(a)
+            edit.state = .complete(true, a)
             return edit
           } else {
             return item
