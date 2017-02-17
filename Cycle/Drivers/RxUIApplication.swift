@@ -55,6 +55,12 @@ class Session: NSObject, UIApplicationDelegate {
     var interfaceOrientations: [Filtered<UIWindow, WindowResponse>]
     var viewControllerRestoration: Filtered<RestorationQuery, RestorationResponse>
     
+    enum RemoteNotificationRegistration {
+      case none
+      case attempting
+      case some(token: Data)
+      case error(Error)
+    }
     enum URLLaunch {
       case ios4(url: URL, app: String?, annotation: Any)
       case ios9(url: URL, options: [UIApplicationOpenURLOptionsKey : Any])
@@ -1063,13 +1069,6 @@ extension Change: Equatable {
   }
 }
 
-enum RemoteNotificationRegistration {
-  case none
-  case attempting
-  case some(token: Data)
-  case error(Error)
-}
-
 enum Filtered<T: Equatable, U: Equatable> {
   case idle
   case considering(T)
@@ -1478,10 +1477,10 @@ extension Session.Model.WindowResponse: Equatable {
   }
 }
 
-extension RemoteNotificationRegistration: Equatable {
+extension Session.Model.RemoteNotificationRegistration: Equatable {
   static func ==(
-    left: RemoteNotificationRegistration,
-    right: RemoteNotificationRegistration
+    left: Session.Model.RemoteNotificationRegistration,
+    right: Session.Model.RemoteNotificationRegistration
   ) -> Bool {
     switch (left, right) {
     case (.none, .none): return true
