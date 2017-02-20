@@ -18,9 +18,9 @@ class Example: CycledApplicationDelegate<IntegerMutatingApp> {
 }
 
 struct IntegerMutatingApp: SinkSourceConverting {
-  struct Model {
-    var screen: ValueToggler.Model
-    var session: Session.Model
+  struct Model: Initializable {
+    var screen = ValueToggler.Model.empty
+    var session = Session.Model.empty
   }
   func effectsFrom(events: Observable<Model>, session: Session) -> Observable<Model> {
     let value = ValueToggler.shared
@@ -34,9 +34,6 @@ struct IntegerMutatingApp: SinkSourceConverting {
       .reduced()
     
     return Observable.of(value, session).merge()
-  }
-  func start() -> Model { return
-      .empty
   }
 }
 
