@@ -11,6 +11,8 @@ import RxSwift
 
 class SessionTestCase: XCTestCase {
   
+  
+  // Starts with EMPTY always
   static func statesFromCall(
     initial: Session.Model = .empty,
     call: (Session) -> Any
@@ -18,7 +20,7 @@ class SessionTestCase: XCTestCase {
     var output: [Session.Model] = []
     let session = Session(intitial: initial, application: UIApplication.shared)
     _ = session
-      .rendered(Observable<Session.Model>.just(initial))
+      .rendered(.just(initial))
       .subscribe {
         if let new = $0.element {
           output += [new]
@@ -28,6 +30,7 @@ class SessionTestCase: XCTestCase {
     return output
   }
   
+  // Only starts with EMPTY if not specified, thus difference with -statesFromCall
   static func statesFrom(
     stream: Observable<Session.Model>,
     model: Session.Model = .empty
@@ -1055,41 +1058,16 @@ class SessionTestCase: XCTestCase {
     )
   }
   
-  func testConsecutiveCallbacks() {
-    let empty = Session.Model.empty
-    var y = empty; y.backgroundTasks = [
-      Session.Model.BackgroundTask(name: "x", state: .pending)
-    ]
-    
-    let delegate = SessionTestDelegate(start: y) {
-      if $0.isExperiencingHealthAuthorizationRequest {
-        var edit = $0
-        edit.supportsShakeToEdit = false
-        return edit
-      } else {
-        return $0
-      }
-    }
-    _ = (delegate as UIApplicationDelegate).application!(
-      UIApplication.shared,
-      willFinishLaunchingWithOptions: nil
+  func testMomentaryState() {
+    var x = Session.Model.empty
+    x.isExperiencingHealthAuthorizationRequest = true
+
+    XCTAssertEqual(
+      SessionTestCase.statesFrom(stream: .just(x))
+        .map { $0.isExperiencingHealthAuthorizationRequest }
+      ,
+      [false]
     )
-    _ = (delegate as UIApplicationDelegate).applicationShouldRequestHealthAuthorization!(
-      UIApplication.shared
-    )
-    XCTAssert(
-      delegate.events
-      .map { $0.supportsShakeToEdit }
-      == [
-        true,
-        true,
-        true,
-        true,
-        false,
-        false
-      ]
-    )
-    
   }
   
   func testRenderingIsIgnoringUserEvents() {
@@ -1127,265 +1105,183 @@ class SessionTestCase: XCTestCase {
       ]
     )
   }
-  
-  func testRenderingURLActionOutgoing() {
-    
-    let asyncCallbacks = expectation(description: "...")
-    let empty = Session.Model.empty
-    var y = empty; y.urlActionOutgoing = .attempting(URL(string: "https://www.duckduckgo.com")!)
-    let delegate = SessionTestDelegate(start: y)
-    _ = (delegate as UIApplicationDelegate).application!(
-      UIApplication.shared,
-      willFinishLaunchingWithOptions: nil
+
+  func testRenderingURLActionOutgoingOpening() {
+    var x = Session.Model.empty
+    x.urlActionOutgoing = .attempting(URL(string: "https://www.duckduckgo.com")!)
+    XCTAssertEqual(
+      SessionTestCase.statesFrom(stream: .just(x))
+        .map { $0.urlActionOutgoing }
+      ,
+      [.opening(URL(string: "https://www.duckduckgo.com")!)]
     )
-    
-    DispatchQueue.main.async {
-      XCTAssert(
-        delegate.events.map { $0.urlActionOutgoing }
-        ==
-        [
-          .attempting(URL(string: "https://www.duckduckgo.com")!), // cycle -subscribe
-          .opening(URL(string: "https://www.duckduckgo.com")!), // .pre(.launched)
-          .opening(URL(string: "https://www.duckduckgo.com")!),
-          .idle
-        ]
-      )
-      asyncCallbacks.fulfill()
-      let _ = delegate
-    }
-    waitForExpectations(timeout: 30)
   }
   
-  func testRenderingSendAction() {
-    
+  func testRenderingURLActionOutgoingIdle() {
+    var x = Session.Model.empty
+    x.urlActionOutgoing = .opening(URL(string: "https://www.duckduckgo.com")!)
+    XCTAssertEqual(
+      SessionTestCase.statesFrom(stream: .just(x))
+        .map { $0.urlActionOutgoing }
+      ,
+      [.idle]
+    )
+  }
+  
+  func testRenderingSendActionSending() {
     let action = Session.Model.TargetAction(
       action: #selector(getter: UIApplication.isIdleTimerDisabled),
       target: UIApplication.shared,
       sender: nil,
       event: nil
     )
-    let asyncCallbacks = expectation(description: "...")
-    let empty = Session.Model.empty
-    var y = empty; y.targetAction = .sending(action)
-    
-    let delegate = SessionTestDelegate(start: y)
-    _ = (delegate as UIApplicationDelegate).application!(
-      UIApplication.shared,
-      willFinishLaunchingWithOptions: nil
+    var x = Session.Model.empty
+    x.targetAction = .sending(action)
+    XCTAssertEqual(
+      SessionTestCase.statesFrom(stream: .just(x))
+        .map { $0.targetAction }
+      ,
+      [.responding(action, true)]
     )
-    
-    DispatchQueue.main.async {
-      XCTAssert(
-        delegate.events.map { $0.targetAction }
-          ==
-          [
-            .sending(action),
-            .responding(action, true),
-            .responding(action, true), // .pre(.launched)
-            .idle
-        ]
-      )
-      asyncCallbacks.fulfill()
-      let _ = delegate
-    }
-    waitForExpectations(timeout: 30)
   }
   
-  func testRenderingBackgroundTasksMarkInProgress() {
-    
-    let asyncCallbacks = expectation(description: "...")
-    let empty = Session.Model.empty
-    var y = empty; y.backgroundTasks = [
-      Session.Model.BackgroundTask(name: "x", state: .pending)
-    ]
-    
-    let delegate = SessionTestDelegate(start: y)
-    _ = (delegate as UIApplicationDelegate).application!(
-      UIApplication.shared,
-      willFinishLaunchingWithOptions: nil
+  func testRenderingSendActionIdle() {
+    let action = Session.Model.TargetAction(
+      action: #selector(getter: UIApplication.isIdleTimerDisabled),
+      target: UIApplication.shared,
+      sender: nil,
+      event: nil
     )
-    
-    DispatchQueue.main.async {
-      XCTAssert(
-        delegate.events.map { $0.backgroundTasks }.flatMap { $0 }
-        ==
-        // This test will occasionally fail due to harcoded UIBackgroundTaskIdentifier.
-        // Needs better solution
-        [
-          Session.Model.BackgroundTask(
-            name: "x",
-            state: .pending
-          ),
-          Session.Model.BackgroundTask( // .pre(.launch)
-            name: "x",
-            state: .progressing(1)
-          ),
-          Session.Model.BackgroundTask(
-            name: "x",
-            state: .progressing(1)
-          )
-        ]
-      )
-      asyncCallbacks.fulfill()
-      let _ = delegate
-    }
-    waitForExpectations(timeout: 30)
+    var x = Session.Model.empty
+    x.targetAction = .responding(action, true)
+    XCTAssertEqual(
+      SessionTestCase.statesFrom(stream: .just(x))
+        .map { $0.targetAction }
+      ,
+      [.idle]
+    )
   }
   
-  func testRenderingBackgroundTasksMarkComplete() {
-    
-    let asyncCallbacks = expectation(description: "...")
-    let empty = Session.Model.empty
-    var y = empty; y.backgroundTasks = [
+  func testRenderingBackgroundTasksProgressing() {
+    var y = Session.Model.empty
+    y.backgroundTasks = [
       Session.Model.BackgroundTask(
         name: "x",
         state: .pending
       )
     ]
-    
-    let delegate = SessionTestDelegate(start: y) {
-      var edit = $0
-      edit.backgroundTasks = Set(
-        edit.backgroundTasks.map {
-          var new = $0
-          if case .progressing(let a) = $0.state {
-            new.state = .complete(a)
-          }
-          return new
-        }
-      )
-      return edit
-    }
-    
-    _ = (delegate as UIApplicationDelegate).application!(
-      UIApplication.shared,
-      willFinishLaunchingWithOptions: nil
-    )
-    
-    DispatchQueue.main.async {
-      XCTAssert(
-        delegate.events.map { $0.backgroundTasks }
-        .flatMap { $0 }
-        ==
-        [
-          Session.Model.BackgroundTask(
-            name: "x",
-            state: .pending
-          ),
-          Session.Model.BackgroundTask( // .pre(.launch)
-            name: "x",
-            state: .complete(1)
-          ),
-          Session.Model.BackgroundTask(
-            name: "x",
-            state: .complete(1)
-          )
-        ]
-      )
-      asyncCallbacks.fulfill()
-      let _ = delegate
-    }
-    waitForExpectations(timeout: 30)
-  }
-  
-  func testRenderingBackgroundFetch() {
-    
-    let asyncCallbacks = expectation(description: "...")
-    let delegate = SessionTestDelegate(start: .empty) {
-      var edit = $0
-      if case .progressing(let handler) = $0.fetch.state {
-        edit.fetch.state = .complete(.noData, handler)
-      }
-      return edit
-    }
-    
-    _ = (delegate as UIApplicationDelegate).application!(
-      UIApplication.shared,
-      willFinishLaunchingWithOptions: nil
-    )
-    (delegate as UIApplicationDelegate).application!(
-      UIApplication.shared,
-      performFetchWithCompletionHandler: { _ in }
-    )
-    
-    // 1. performFetch produces .progressing
-    // 2. filter immediately produces .progressing to .complete (normally async)
-    // 3. session produces .complete to .idle
-
-    DispatchQueue.main.async {
-      XCTAssert(
-        delegate.events.map { $0.fetch }
-        ==
-        [
-          Session.Model.BackgroundFetch( // cycle -subscribe
-            minimumInterval: .never,
-            state: .idle
-          ),
-          Session.Model.BackgroundFetch( // session -subscribe
-            minimumInterval: .never,
-            state: .idle
-          ),
-          Session.Model.BackgroundFetch( // .pre(.launch)
-            minimumInterval: .never,
-            state: .idle
-          ),
-          Session.Model.BackgroundFetch( // -performFetch
-            minimumInterval: .never,
-            state: .complete(.noData, { _ in })
-          ),
-          Session.Model.BackgroundFetch( // -rendered
-            minimumInterval: .never,
-            state: .idle
-          )
-        ]
-      )
-      asyncCallbacks.fulfill()
-      let _ = delegate
-    }
-    waitForExpectations(timeout: 30)
-  }
-  
-  func testRenderingBackgroundURLSessionAction() {
-    let delegate = SessionTestDelegate(start: .empty) {
-      var edit = $0
-      edit.backgroundURLSessions = Set(
-        edit.backgroundURLSessions.map {
-          if case .progressing = $0.state {
-            var edit = $0
-            edit.state = .complete
-            return edit
-          } else {
-            return $0
-          }
-        }
-      )
-      return edit
-    }
-    
-    _ = (delegate as UIApplicationDelegate).application!(
-      UIApplication.shared,
-      willFinishLaunchingWithOptions: nil
-    )
-    
-    (delegate as UIApplicationDelegate).application!(
-      UIApplication.shared,
-      handleEventsForBackgroundURLSession: "id",
-      completionHandler: {}
-    )
-    
     XCTAssert(
-      delegate.events.map { $0.backgroundURLSessions }
+      SessionTestCase.statesFrom(stream: .just(y))
+      .map { $0.backgroundTasks }
       .flatMap { $0 }
+      // This test will occasionally fail due to harcoded UIBackgroundTaskIdentifier.
+      // Needs better solution
       ==
+      [
+        Session.Model.BackgroundTask(
+          name: "x",
+          state: .progressing(1)
+        )
+      ]
+    )
+  }
+  
+  func testRenderingBackgroundTasksComplete() {
+    var y = Session.Model.empty
+    y.backgroundTasks = [
+      Session.Model.BackgroundTask(
+        name: "x",
+        state: .complete(1)
+      )
+    ]
+    XCTAssertEqual(
+      SessionTestCase.statesFrom(stream: .just(y))
+      .map { $0.backgroundTasks }
+      .flatMap { $0 }
+      ,
+      []
+    )
+  }
+  
+  func testRenderingBackgroundFetchProgressCallback() {
+    XCTAssertEqual(
+      SessionTestCase.statesFromCall(call: {
+        $0.application(
+          UIApplication.shared,
+          performFetchWithCompletionHandler: { _ in }
+        )
+      })
+      .map { $0.fetch }
+      ,
+      [
+        Session.Model.BackgroundFetch(
+          minimumInterval: .never,
+          state: .idle
+        ),
+        Session.Model.BackgroundFetch(
+          minimumInterval: .never,
+          state: .progressing({ _ in})
+        )
+      ]
+    )
+  }
+  
+  func testRenderingBackgroundFetchComplete() {
+    var x = Session.Model.empty
+    x.fetch = Session.Model.BackgroundFetch(
+      minimumInterval: .never,
+      state: .complete(.noData, { _ in})
+    )
+    XCTAssertEqual(
+      SessionTestCase.statesFrom(stream: .just(x))
+      .map { $0.fetch }
+      ,
+      [
+        Session.Model.BackgroundFetch(
+          minimumInterval: .never,
+          state: .idle
+        )
+      ]
+    )
+  }
+  
+  func testRenderingBackgroundURLSessionActionProgressing() {
+    XCTAssertEqual(
+      SessionTestCase.statesFromCall {
+        $0.application(
+          UIApplication.shared,
+          handleEventsForBackgroundURLSession: "id",
+          completionHandler: {}
+        )
+      }
+      .map { $0.backgroundURLSessions }
+      .flatMap { $0 }
+      ,
       [
         Session.Model.BackgroundURLSessionAction(
           id: "id",
           completion: {},
-          state: .complete
+          state: .progressing
         )
-        // before flatmap should be:
-        // [[], [], [complete], []]
       ]
+    )
+  }
+  
+  func testRenderingBackgroundURLSessionActionComplete() {
+    var x = Session.Model.empty
+    x.backgroundURLSessions = Set([
+      Session.Model.BackgroundURLSessionAction(
+        id: "id",
+        completion: {},
+        state: .complete
+      )
+    ])
+    XCTAssertEqual(
+      SessionTestCase.statesFrom(stream: .just(x))
+        .map { $0.backgroundURLSessions }
+        .flatMap { $0 }
+      ,
+      []
     )
   }
   
@@ -1508,8 +1404,8 @@ class SessionTestCase: XCTestCase {
   }
   
   class SessionCycle: SinkSourceConverting {
-    struct DriverModels {
-      var session: Session.Model
+    struct DriverModels: Initializable {
+      var session = Session.Model.empty
     }
     let filter: (Observable<DriverModels>, Session) -> Observable<DriverModels>
     init(filter: @escaping (Observable<DriverModels>, Session) -> Observable<DriverModels>) {
@@ -1517,11 +1413,6 @@ class SessionTestCase: XCTestCase {
     }
     func effectsFrom(events: Observable<DriverModels>, session: Session) -> Observable<DriverModels> { return
       filter(events, session)
-    }
-    func start() -> DriverModels { return
-      DriverModels(
-        session: Session.Model.empty
-      )
     }
   }
   
