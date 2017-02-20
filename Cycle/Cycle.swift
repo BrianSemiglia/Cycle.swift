@@ -59,17 +59,20 @@ final class Cycle<E: SinkSourceConverting> {
       session: session
     )
     loop = events!
-      .startWith(transformer.start())
+      .startWith(E.Source())
       .subscribe { [weak self] in
         self?.eventsProxy?.on($0)
     }
   }
 }
 
+protocol Initializable {
+  init()
+}
+
 protocol SinkSourceConverting {
-  associatedtype Source
+  associatedtype Source: Initializable
   func effectsFrom(events: Observable<Source>, session: Session) -> Observable<Source>
-  func start() -> Source
 }
 
 extension UIViewController {

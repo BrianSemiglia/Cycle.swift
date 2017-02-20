@@ -19,9 +19,9 @@ class ShortcutActionsExampleDelegate: CycledApplicationDelegate<ShortcutActionsE
 }
 
 struct ShortcutActionsExample: SinkSourceConverting {
-  struct Model {
-    var session: Session.Model
-    var async: Timer.Model
+  struct Model: Initializable {
+    var session = Session.Model.empty
+    var async = Timer.Model.empty
   }
   func effectsFrom(events: Observable<Model>, session: Session) -> Observable<Model> {
     
@@ -36,9 +36,6 @@ struct ShortcutActionsExample: SinkSourceConverting {
     .reduced()
     
     return Observable.of(session, timer).merge()
-  }
-  func start() -> Model { return
-    .empty
   }
 }
 

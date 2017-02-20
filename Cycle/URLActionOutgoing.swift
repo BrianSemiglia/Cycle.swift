@@ -18,17 +18,14 @@ class URLActionOutgoingDelegate: CycledApplicationDelegate<URLActionOutgoing> {
 }
 
 struct URLActionOutgoing: SinkSourceConverting {
-  struct Model {
-    var session: Session.Model
+  struct Model: Initializable {
+    var session = Session.Model.empty
   }
   func effectsFrom(events: Observable<Model>, session: Session) -> Observable<Model> { return
     session
       .rendered(events.map { $0.session })
       .withLatestFrom(events) { ($0.0, $0.1) }
       .reduced()
-  }
-  func start() -> Model { return
-    .empty
   }
 }
 
