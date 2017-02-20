@@ -248,21 +248,18 @@ class Session: NSObject, UIApplicationDelegate {
         for: new.event
       )
       model.targetAction = .responding(new, didSend)
-      DispatchQueue.main.async { [weak self] in
-        if let strong = self {
-          if case .responding(let action, _) = strong.model.targetAction, action == new {
-            strong.model.targetAction = .idle
-            strong.output.on(.next(strong.model))
-          }
-        }
-      }
+    } else if case .responding = model.targetAction {
+      model.targetAction = .idle
     }
     
     // Meant to be momentary. Reset if enabled.
     model.isExperiencingMemoryWarning = false
     model.isObservingSignificantTimeChange = false
     model.stateRestoration = .idle
-    if case .completing = model.userActivityState, case .failing = model.userActivityState {
+    model.isExperiencingHealthAuthorizationRequest = false
+    if
+    case .completing = model.userActivityState,
+    case .failing = model.userActivityState {
       model.userActivityState = .idle
     }
 
