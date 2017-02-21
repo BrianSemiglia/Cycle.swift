@@ -19,14 +19,14 @@ class PushNotificationRegistrationDelegate: CycledApplicationDelegate<PushNotifi
 
 struct PushNotificationRegistration: SinkSourceConverting {
   struct Model: Initializable {
-    var session = Session.Model.empty
+    var application = RxUIApplication.Model.empty
   }
   struct Drivers: CycleDrivable {
-    var session: Session!
+    var application: RxUIApplication!
   }
   func effectsFrom(events: Observable<Model>, drivers: Drivers) -> Observable<Model> { return
-    drivers.session
-      .rendered(events.map { $0.session })
+    drivers.application
+      .rendered(events.map { $0.application })
       .withLatestFrom(events) { ($0.0, $0.1) }
       .reduced()
   }
@@ -35,16 +35,16 @@ struct PushNotificationRegistration: SinkSourceConverting {
 extension PushNotificationRegistration.Model {
   static var empty: PushNotificationRegistration.Model { return
     PushNotificationRegistration.Model(
-      session: .empty
+      application: .empty
     )
   }
 }
 
-extension ObservableType where E == (session: Session.Model, push: PushNotificationRegistration.Model) {
+extension ObservableType where E == (application: RxUIApplication.Model, push: PushNotificationRegistration.Model) {
   func reduced() -> Observable<PushNotificationRegistration.Model> { return
     map { event, context in
       var edit = event
-      switch (event.state, context.session.state) {
+      switch (event.state, context.application.state) {
       case (.currently(.active), .currently(.launched)): // did change
         if case .none = event.remoteNotificationRegistration {
           edit.remoteNotificationRegistration = .attempting
@@ -71,7 +71,7 @@ extension ObservableType where E == (session: Session.Model, push: PushNotificat
         break
       }
       var output = context
-      output.session = edit
+      output.application = edit
       return output
     }
   }

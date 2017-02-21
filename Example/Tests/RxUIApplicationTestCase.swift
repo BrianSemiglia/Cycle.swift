@@ -1,5 +1,5 @@
 //
-//  Session.swift
+//  RxUIApplication.swift
 //  Cycle
 //
 //  Created by Brian Semiglia on 1/27/17.
@@ -9,35 +9,35 @@
 import XCTest
 import RxSwift
 
-class SessionTestCase: XCTestCase {
+class RxUIApplicationTestCase: XCTestCase {
   
   
   // Starts with EMPTY always
   static func statesFromCall(
-    initial: Session.Model = .empty,
-    call: (Session) -> Any
-  ) -> [Session.Model] {
-    var output: [Session.Model] = []
-    let session = Session(intitial: initial, application: UIApplication.shared)
-    _ = session
+    initial: RxUIApplication.Model = .empty,
+    call: (RxUIApplication) -> Any
+  ) -> [RxUIApplication.Model] {
+    var output: [RxUIApplication.Model] = []
+    let application = RxUIApplication(intitial: initial, application: UIApplication.shared)
+    _ = application
       .rendered(.just(initial))
       .subscribe {
         if let new = $0.element {
           output += [new]
         }
       }
-    _ = call(session)
+    _ = call(application)
     return output
   }
   
   // Only starts with EMPTY if not specified, thus difference with -statesFromCall
   static func statesFrom(
-    stream: Observable<Session.Model>,
-    model: Session.Model = .empty
-  ) -> [Session.Model] {
-    var output: [Session.Model] = []
-    let session = Session(intitial: model, application: UIApplication.shared)
-    _ = session
+    stream: Observable<RxUIApplication.Model>,
+    model: RxUIApplication.Model = .empty
+  ) -> [RxUIApplication.Model] {
+    var output: [RxUIApplication.Model] = []
+    let application = RxUIApplication(intitial: model, application: UIApplication.shared)
+    _ = application
       .rendered(stream)
       .subscribe {
         if let new = $0.element {
@@ -50,7 +50,7 @@ class SessionTestCase: XCTestCase {
   func testWillTerminate() {
     
     XCTAssert(
-      SessionTestCase
+      RxUIApplicationTestCase
       .statesFromCall { $0.applicationWillTerminate(UIApplication.shared) }
       .map { $0.state }
       ==
@@ -60,7 +60,7 @@ class SessionTestCase: XCTestCase {
 
   func testDidBecomeActive() {
     XCTAssert(
-      SessionTestCase
+      RxUIApplicationTestCase
       .statesFromCall { $0.applicationDidBecomeActive(UIApplication.shared) }
       .map { $0.state }
       ==
@@ -70,7 +70,7 @@ class SessionTestCase: XCTestCase {
   
   func testWillResignActive() {
     XCTAssert(
-      SessionTestCase
+      RxUIApplicationTestCase
       .statesFromCall { $0.applicationWillResignActive(UIApplication.shared) }
       .map { $0.state }
       ==
@@ -80,7 +80,7 @@ class SessionTestCase: XCTestCase {
   
   func testDidEnterBackground() {
     XCTAssert(
-      SessionTestCase
+      RxUIApplicationTestCase
       .statesFromCall { $0.applicationDidEnterBackground(UIApplication.shared) }
       .map { $0.state }
       ==
@@ -90,7 +90,7 @@ class SessionTestCase: XCTestCase {
   
   func testWillFinishLaunching() {
     XCTAssert(
-      SessionTestCase
+      RxUIApplicationTestCase
       .statesFromCall {
         $0.application(
           UIApplication.shared,
@@ -105,7 +105,7 @@ class SessionTestCase: XCTestCase {
   
   func testDidFinishLaunching() {
     XCTAssert(
-      SessionTestCase
+      RxUIApplicationTestCase
       .statesFromCall {
         $0.application(
           UIApplication.shared,
@@ -120,7 +120,7 @@ class SessionTestCase: XCTestCase {
   
   func testWillEnterBackground() {
     XCTAssert(
-      SessionTestCase
+      RxUIApplicationTestCase
       .statesFromCall { $0.applicationWillEnterForeground(UIApplication.shared) }
       .map { $0.state }
       ==
@@ -130,7 +130,7 @@ class SessionTestCase: XCTestCase {
   
   func testSignificantTimeChange() {
     XCTAssert(
-      SessionTestCase
+      RxUIApplicationTestCase
       .statesFromCall { $0.applicationSignificantTimeChange(UIApplication.shared) }
       .map { $0.isObservingSignificantTimeChange }
       ==
@@ -140,7 +140,7 @@ class SessionTestCase: XCTestCase {
   
   func testMemoryWarning() {
     XCTAssert(
-      SessionTestCase
+      RxUIApplicationTestCase
       .statesFromCall { $0.applicationDidReceiveMemoryWarning(UIApplication.shared) }
       .map { $0.isExperiencingMemoryWarning }
       ==
@@ -150,7 +150,7 @@ class SessionTestCase: XCTestCase {
   
   func testShouldRequestHealthAuthorization() {
     XCTAssert(
-      SessionTestCase
+      RxUIApplicationTestCase
       .statesFromCall { $0.applicationShouldRequestHealthAuthorization(UIApplication.shared) }
       .map { $0.isExperiencingHealthAuthorizationRequest }
       ==
@@ -160,7 +160,7 @@ class SessionTestCase: XCTestCase {
   
   func testProtectedDataDidBecomeAvailable() {
     XCTAssert(
-      SessionTestCase
+      RxUIApplicationTestCase
       .statesFromCall { $0.applicationProtectedDataDidBecomeAvailable(UIApplication.shared) }
       .map { $0.isProtectedDataAvailable }
       ==
@@ -170,7 +170,7 @@ class SessionTestCase: XCTestCase {
   
   func testProtectedDataWillBecomeUnavailable() {
     XCTAssert(
-      SessionTestCase
+      RxUIApplicationTestCase
       .statesFromCall { $0.applicationProtectedDataWillBecomeUnavailable(UIApplication.shared) }
       .map { $0.isProtectedDataAvailable }
       ==
@@ -180,7 +180,7 @@ class SessionTestCase: XCTestCase {
   
   func testConversionCallbacks() {
     XCTAssert(
-      SessionTestCase
+      RxUIApplicationTestCase
       .statesFromCall {
         $0.application(
           UIApplication.shared,
@@ -198,7 +198,7 @@ class SessionTestCase: XCTestCase {
   
   func testDidFailToRegisterForRemoteNotifications() {
     XCTAssert(
-      SessionTestCase
+      RxUIApplicationTestCase
       .statesFromCall {
         $0.application(
           UIApplication.shared,
@@ -213,7 +213,7 @@ class SessionTestCase: XCTestCase {
   
   func testDidRegisterForRemoteNotifications() {
     XCTAssert(
-      SessionTestCase
+      RxUIApplicationTestCase
       .statesFromCall {
         $0.application(
           UIApplication.shared,
@@ -228,7 +228,7 @@ class SessionTestCase: XCTestCase {
   
   func testDidDecodeRestorableState() {
     XCTAssert(
-      SessionTestCase
+      RxUIApplicationTestCase
       .statesFromCall {
         $0.application(
           UIApplication.shared,
@@ -243,7 +243,7 @@ class SessionTestCase: XCTestCase {
   
   func testWillEncodeRestorableState() {
     XCTAssert(
-      SessionTestCase
+      RxUIApplicationTestCase
       .statesFromCall {
         $0.application(
           UIApplication.shared,
@@ -258,7 +258,7 @@ class SessionTestCase: XCTestCase {
   
   func testShouldSaveApplicationStateConsidering() {
     XCTAssert(
-      SessionTestCase
+      RxUIApplicationTestCase
       .statesFromCall {
         $0.application(
           UIApplication.shared,
@@ -273,7 +273,7 @@ class SessionTestCase: XCTestCase {
   
   func testShouldRestoreApplicationStateConsidering() {
     XCTAssert(
-      SessionTestCase
+      RxUIApplicationTestCase
       .statesFromCall {
         $0.application(
           UIApplication.shared,
@@ -288,7 +288,7 @@ class SessionTestCase: XCTestCase {
   
   func testWillContinueUserActivityWithType() {
     XCTAssert(
-      SessionTestCase
+      RxUIApplicationTestCase
       .statesFromCall {
         $0.application(
           UIApplication.shared,
@@ -303,7 +303,7 @@ class SessionTestCase: XCTestCase {
   
   func testDidFailToContinueUserActivity() {
     XCTAssert(
-      SessionTestCase
+      RxUIApplicationTestCase
       .statesFromCall {
         $0.application(
           UIApplication.shared,
@@ -320,7 +320,7 @@ class SessionTestCase: XCTestCase {
   func testDidUpdateUserActivity() {
     let activity = NSUserActivity(activityType: "x")
     XCTAssert(
-      SessionTestCase
+      RxUIApplicationTestCase
       .statesFromCall {
         $0.application(
           UIApplication.shared,
@@ -336,7 +336,7 @@ class SessionTestCase: XCTestCase {
   func testContinueUserActivity() {
     let activity = NSUserActivity(activityType: "x")
     XCTAssert(
-      SessionTestCase
+      RxUIApplicationTestCase
       .statesFromCall {
         $0.application(
           UIApplication.shared,
@@ -352,7 +352,7 @@ class SessionTestCase: XCTestCase {
   
   func testWillChangeStatusBarOrientation() {
     XCTAssert(
-      SessionTestCase
+      RxUIApplicationTestCase
       .statesFromCall {
         $0.application(
           UIApplication.shared,
@@ -368,7 +368,7 @@ class SessionTestCase: XCTestCase {
   
   func testDidChangeStatusBarOrientation() {
     XCTAssert(
-      SessionTestCase
+      RxUIApplicationTestCase
       .statesFromCall {
         $0.application(
           UIApplication.shared,
@@ -383,7 +383,7 @@ class SessionTestCase: XCTestCase {
   
   func testWillChangeStatusBarFrame() {
     XCTAssert(
-      SessionTestCase
+      RxUIApplicationTestCase
       .statesFromCall {
         $0.application(
           UIApplication.shared,
@@ -401,7 +401,7 @@ class SessionTestCase: XCTestCase {
     // Or firing changes for every frame of animation
     
 //    XCTAssert(
-//      SessionTestCase
+//      RxUIApplicationTestCase
 //      .statesFrom {
 //        $0.application(
 //          UIApplication.shared,
@@ -416,7 +416,7 @@ class SessionTestCase: XCTestCase {
   
   func testHandleActionWithIdentifierLocal() {
     XCTAssert(
-      SessionTestCase
+      RxUIApplicationTestCase
       .statesFromCall {
         $0.application(
           UIApplication.shared,
@@ -436,7 +436,7 @@ class SessionTestCase: XCTestCase {
   
   func testHandleActionWithIdentifierResponseInfoRemote() {
     XCTAssert(
-      SessionTestCase
+      RxUIApplicationTestCase
       .statesFromCall {
         $0.application(
           UIApplication.shared,
@@ -464,7 +464,7 @@ class SessionTestCase: XCTestCase {
   
   func testHandleActionWithIdentifierRemote() {
     XCTAssert(
-      SessionTestCase
+      RxUIApplicationTestCase
       .statesFromCall {
         $0.application(
           UIApplication.shared,
@@ -490,7 +490,7 @@ class SessionTestCase: XCTestCase {
   
   func testHandleActionWithIdentifierResponseInfo() {
     XCTAssert(
-      SessionTestCase
+      RxUIApplicationTestCase
       .statesFromCall {
         $0.application(
           UIApplication.shared,
@@ -518,9 +518,9 @@ class SessionTestCase: XCTestCase {
   
   func testPerformActionForShortcutAction() {
     XCTAssert(
-      SessionTestCase.statesFromCall(
-        initial: Session.Model.empty.with(
-          shortcutItem: Session.Model.ShortcutAction(
+      RxUIApplicationTestCase.statesFromCall(
+        initial: RxUIApplication.Model.empty.with(
+          shortcutItem: RxUIApplication.Model.ShortcutAction(
             item: .stub,
             state: .idle
           )
@@ -537,11 +537,11 @@ class SessionTestCase: XCTestCase {
       .flatMap { $0 }
       ==
       [
-        Session.Model.ShortcutAction(
+        RxUIApplication.Model.ShortcutAction(
           item: .stub,
           state: .idle
         ),
-        Session.Model.ShortcutAction(
+        RxUIApplication.Model.ShortcutAction(
           item: .stub,
           state: .progressing({ _ in })
         )
@@ -551,7 +551,7 @@ class SessionTestCase: XCTestCase {
   
   func testHandleEventsForBackgroundURLSession() {
     XCTAssert(
-      SessionTestCase
+      RxUIApplicationTestCase
       .statesFromCall {
         $0.application(
           UIApplication.shared,
@@ -563,7 +563,7 @@ class SessionTestCase: XCTestCase {
       .flatMap { $0 }
       ==
       [
-        Session.Model.BackgroundURLSessionAction(
+        RxUIApplication.Model.BackgroundURLSessionAction(
           id: "x",
           completion: {},
           state: .progressing
@@ -574,7 +574,7 @@ class SessionTestCase: XCTestCase {
   
   func testDidReceiveRemoteNotification() {
     XCTAssert(
-      SessionTestCase
+      RxUIApplicationTestCase
       .statesFromCall {
         $0.application(
           UIApplication.shared,
@@ -586,7 +586,7 @@ class SessionTestCase: XCTestCase {
       .flatMap { $0 }
       ==
       [
-        Session.Model.RemoteNofitication(
+        RxUIApplication.Model.RemoteNofitication(
           notification: ["x":"y"],
           state: .progressing({ _ in })
         )
@@ -596,7 +596,7 @@ class SessionTestCase: XCTestCase {
   
   func testHandleWatchKitExtensionRequest() {
     XCTAssert(
-      SessionTestCase
+      RxUIApplicationTestCase
       .statesFromCall {
         $0.application(
           UIApplication.shared,
@@ -609,7 +609,7 @@ class SessionTestCase: XCTestCase {
       [
         .idle,
         .progressing(
-          Session.Model.WatchKitExtensionRequest(
+          RxUIApplication.Model.WatchKitExtensionRequest(
             userInfo: ["x":"y"],
             reply: { _ in }
           )
@@ -620,7 +620,7 @@ class SessionTestCase: XCTestCase {
   
   func testShouldAllowExtensionPointIdentifier() {
     XCTAssert(
-      SessionTestCase
+      RxUIApplicationTestCase
       .statesFromCall {
         $0.application(
           UIApplication.shared,
@@ -635,7 +635,7 @@ class SessionTestCase: XCTestCase {
   
   func testSupportedInterfaceOrientationsFor() {
     XCTAssert(
-      SessionTestCase
+      RxUIApplicationTestCase
       .statesFromCall {
         $0.application(
           UIApplication.shared,
@@ -651,7 +651,7 @@ class SessionTestCase: XCTestCase {
   
   func testViewControllerWithRestorationIdentifierPathConsidering() {
     XCTAssert(
-      SessionTestCase
+      RxUIApplicationTestCase
       .statesFromCall {
         let x = $0.application(
           UIApplication.shared,
@@ -665,7 +665,7 @@ class SessionTestCase: XCTestCase {
       [
         .idle,
         .considering(
-          Session.Model.RestorationQuery(
+          RxUIApplication.Model.RestorationQuery(
             identifier: "x",
             coder: CoderStub(id: "y") as NSCoder
           )
@@ -675,10 +675,10 @@ class SessionTestCase: XCTestCase {
   }
   
   func testWillFinishLaunchingWithOptionsFalse() {
-    let cycle = SessionCycle { events, session -> Observable<SessionTestCase.SessionCycle.DriverModels> in
-      session
-      .rendered(events.map { $0.session })
-      .map { model -> Session.Model in
+    let cycle = RxUIApplicationCycle { events, application -> Observable<RxUIApplicationTestCase.RxUIApplicationCycle.DriverModels> in
+      application
+      .rendered(events.map { $0.application })
+      .map { model -> RxUIApplication.Model in
         switch model.state {
         case .pre(let a):
           switch a {
@@ -695,7 +695,7 @@ class SessionTestCase: XCTestCase {
       }
       .withLatestFrom(events) { model, app in
         var edit = app
-        edit.session = model
+        edit.application = model
         return edit
       }
     }
@@ -711,10 +711,10 @@ class SessionTestCase: XCTestCase {
   }
   
   func testShouldOpenURLs4() {
-    let cycle = SessionCycle { events, session -> Observable<SessionTestCase.SessionCycle.DriverModels> in
-      session
-      .rendered(events.map { $0.session })
-      .map { model -> Session.Model in
+    let cycle = RxUIApplicationCycle { events, application -> Observable<RxUIApplicationTestCase.RxUIApplicationCycle.DriverModels> in
+      application
+      .rendered(events.map { $0.application })
+      .map { model -> RxUIApplication.Model in
         var new = model
         if
         case .considering(let query) = model.urlActionIncoming,
@@ -725,7 +725,7 @@ class SessionTestCase: XCTestCase {
       }
       .withLatestFrom(events) { model, app in
         var edit = app
-        edit.session = model
+        edit.application = model
         return edit
       }
     }
@@ -751,10 +751,10 @@ class SessionTestCase: XCTestCase {
   }
   
   func testShouldOpenURLs9() {
-    let cycle = SessionCycle { events, session -> Observable<SessionTestCase.SessionCycle.DriverModels> in
-      session
-      .rendered(events.map { $0.session })
-      .map { model -> Session.Model in
+    let cycle = RxUIApplicationCycle { events, application -> Observable<RxUIApplicationTestCase.RxUIApplicationCycle.DriverModels> in
+      application
+      .rendered(events.map { $0.application })
+      .map { model -> RxUIApplication.Model in
         var new = model
         if
         case .considering(let query) = model.urlActionIncoming,
@@ -765,7 +765,7 @@ class SessionTestCase: XCTestCase {
       }
       .withLatestFrom(events) { model, app in
         var edit = app
-        edit.session = model
+        edit.application = model
         return edit
       }
     }
@@ -790,16 +790,16 @@ class SessionTestCase: XCTestCase {
   }
 
   func testSupportedInterfaceOrientations() {
-    let cycle = SessionCycle { events, session -> Observable<SessionTestCase.SessionCycle.DriverModels> in
-      session
-      .rendered(events.map { $0.session })
-      .map { model -> Session.Model in
+    let cycle = RxUIApplicationCycle { events, application -> Observable<RxUIApplicationTestCase.RxUIApplicationCycle.DriverModels> in
+      application
+      .rendered(events.map { $0.application })
+      .map { model -> RxUIApplication.Model in
         var new = model
         new.interfaceOrientations = model.interfaceOrientations.map {
           switch $0 {
           case .considering(let window):
             return .allowing(
-              Session.Model.WindowResponse(
+              RxUIApplication.Model.WindowResponse(
                 window: window,
                 orientation: .portraitUpsideDown
               )
@@ -812,7 +812,7 @@ class SessionTestCase: XCTestCase {
       }
       .withLatestFrom(events) { model, app in
         var edit = app
-        edit.session = model
+        edit.application = model
         return edit
       }
     }
@@ -836,10 +836,10 @@ class SessionTestCase: XCTestCase {
   }
   
   func testextensionPointIdentifier() {
-    let cycle = SessionCycle { events, session -> Observable<SessionTestCase.SessionCycle.DriverModels> in
-      session
-      .rendered(events.map { $0.session })
-      .map { model -> Session.Model in
+    let cycle = RxUIApplicationCycle { events, application -> Observable<RxUIApplicationTestCase.RxUIApplicationCycle.DriverModels> in
+      application
+      .rendered(events.map { $0.application })
+      .map { model -> RxUIApplication.Model in
         var new = model
         if case .considering(let ID) = model.extensionPointIdentifier {
           new.extensionPointIdentifier = .allowing(ID)
@@ -848,7 +848,7 @@ class SessionTestCase: XCTestCase {
       }
       .withLatestFrom(events) { model, app in
         var edit = app
-        edit.session = model
+        edit.application = model
         return edit
       }
     }
@@ -872,14 +872,14 @@ class SessionTestCase: XCTestCase {
   }
   
   func testViewControllerWithRestorationIdentifierPathAllowing() {
-    let cycle = SessionCycle { events, session -> Observable<SessionTestCase.SessionCycle.DriverModels> in
-      session
-      .rendered(events.map { $0.session })
-      .map { model -> Session.Model in
+    let cycle = RxUIApplicationCycle { events, application -> Observable<RxUIApplicationTestCase.RxUIApplicationCycle.DriverModels> in
+      application
+      .rendered(events.map { $0.application })
+      .map { model -> RxUIApplication.Model in
         var new = model
         if case .considering(let query) = new.viewControllerRestoration {
           new.viewControllerRestoration = .allowing(
-            Session.Model.RestorationResponse(
+            RxUIApplication.Model.RestorationResponse(
               identifier: query.identifier,
               view: ViewControllerStub(id: "x")
             )
@@ -889,7 +889,7 @@ class SessionTestCase: XCTestCase {
       }
       .withLatestFrom(events) { model, app in
         var edit = app
-        edit.session = model
+        edit.application = model
         return edit
       }
     }
@@ -914,10 +914,10 @@ class SessionTestCase: XCTestCase {
   }
   
   func testShouldSaveApplicationStateAllowing() {
-    let cycle = SessionCycle { events, session -> Observable<SessionTestCase.SessionCycle.DriverModels> in
-      session
-      .rendered(events.map { $0.session })
-      .map { model -> Session.Model in
+    let cycle = RxUIApplicationCycle { events, application -> Observable<RxUIApplicationTestCase.RxUIApplicationCycle.DriverModels> in
+      application
+      .rendered(events.map { $0.application })
+      .map { model -> RxUIApplication.Model in
         var new = model
         if case .considering(_) = model.shouldSaveApplicationState {
           new.shouldSaveApplicationState = .allowing(true)
@@ -926,7 +926,7 @@ class SessionTestCase: XCTestCase {
       }
       .withLatestFrom(events) { model, app in
         var edit = app
-        edit.session = model
+        edit.application = model
         return edit
       }
     }
@@ -950,10 +950,10 @@ class SessionTestCase: XCTestCase {
   }
   
   func testShouldRestoreApplicationStateAllowing() {
-    let cycle = SessionCycle { events, session -> Observable<SessionTestCase.SessionCycle.DriverModels> in
-      session
-      .rendered(events.map { $0.session })
-      .map { model -> Session.Model in
+    let cycle = RxUIApplicationCycle { events, application -> Observable<RxUIApplicationTestCase.RxUIApplicationCycle.DriverModels> in
+      application
+      .rendered(events.map { $0.application })
+      .map { model -> RxUIApplication.Model in
         var new = model
         if case .considering(_) = model.shouldRestoreApplicationState {
           new.shouldRestoreApplicationState = .allowing(true)
@@ -962,7 +962,7 @@ class SessionTestCase: XCTestCase {
       }
       .withLatestFrom(events) { model, app in
         var edit = app
-        edit.session = model
+        edit.application = model
         return edit
       }
     }
@@ -986,10 +986,10 @@ class SessionTestCase: XCTestCase {
   }
   
   func testShouldNotifyUserActivitiesWithTypes() {
-    let cycle = SessionCycle { events, session -> Observable<SessionTestCase.SessionCycle.DriverModels> in
-      session
-      .rendered(events.map { $0.session })
-      .map { model -> Session.Model in
+    let cycle = RxUIApplicationCycle { events, application -> Observable<RxUIApplicationTestCase.RxUIApplicationCycle.DriverModels> in
+      application
+      .rendered(events.map { $0.application })
+      .map { model -> RxUIApplication.Model in
         var new = model
         if case .willContinue(let type) = model.userActivityState {
           new.userActivityState = .shouldNotifyUserActivitiesWithType(type)
@@ -998,7 +998,7 @@ class SessionTestCase: XCTestCase {
       }
       .withLatestFrom(events) { model, app in
         var edit = app
-        edit.session = model
+        edit.application = model
         return edit
       }
     }
@@ -1022,10 +1022,10 @@ class SessionTestCase: XCTestCase {
   }
   
   func testActivitiesWithAvaliableData() {
-    let cycle = SessionCycle { events, session -> Observable<SessionTestCase.SessionCycle.DriverModels> in
-      session
-      .rendered(events.map { $0.session })
-      .map { model -> Session.Model in
+    let cycle = RxUIApplicationCycle { events, application -> Observable<RxUIApplicationTestCase.RxUIApplicationCycle.DriverModels> in
+      application
+      .rendered(events.map { $0.application })
+      .map { model -> RxUIApplication.Model in
         var new = model
         if case .isContinuing(let activity) = model.userActivityState {
           new.userActivityState = .hasAvailableData(activity)
@@ -1034,7 +1034,7 @@ class SessionTestCase: XCTestCase {
       }
       .withLatestFrom(events) { model, app in
         var edit = app
-        edit.session = model
+        edit.application = model
         return edit
       }
     }
@@ -1059,11 +1059,11 @@ class SessionTestCase: XCTestCase {
   }
   
   func testMomentaryState() {
-    var x = Session.Model.empty
+    var x = RxUIApplication.Model.empty
     x.isExperiencingHealthAuthorizationRequest = true
 
     XCTAssertEqual(
-      SessionTestCase.statesFrom(stream: .just(x))
+      RxUIApplicationTestCase.statesFrom(stream: .just(x))
         .map { $0.isExperiencingHealthAuthorizationRequest }
       ,
       [false]
@@ -1072,12 +1072,12 @@ class SessionTestCase: XCTestCase {
   
   func testRenderingIsIgnoringUserEvents() {
 
-    let x = Session.Model.empty
+    let x = RxUIApplication.Model.empty
     var y = x; y.isIgnoringUserEvents = true
     var z = y; z.isIgnoringUserEvents = false
     
     XCTAssert(
-      SessionTestCase.statesFrom(stream: Observable.of(x, y, x))
+      RxUIApplicationTestCase.statesFrom(stream: Observable.of(x, y, x))
       .map { $0.isIgnoringUserEvents }
       ==
       [
@@ -1090,12 +1090,12 @@ class SessionTestCase: XCTestCase {
   
   func testRenderingIsIdleTimerDisabled() {
     
-    let x = Session.Model.empty
+    let x = RxUIApplication.Model.empty
     var y = x; y.isIdleTimerDisabled = true
     var z = y; z.isIdleTimerDisabled = false
     
     XCTAssert(
-      SessionTestCase.statesFrom(stream: Observable.of(x, y, x))
+      RxUIApplicationTestCase.statesFrom(stream: Observable.of(x, y, x))
       .map { $0.isIdleTimerDisabled }
       ==
       [
@@ -1107,10 +1107,10 @@ class SessionTestCase: XCTestCase {
   }
 
   func testRenderingURLActionOutgoingOpening() {
-    var x = Session.Model.empty
+    var x = RxUIApplication.Model.empty
     x.urlActionOutgoing = .attempting(URL(string: "https://www.duckduckgo.com")!)
     XCTAssertEqual(
-      SessionTestCase.statesFrom(stream: .just(x))
+      RxUIApplicationTestCase.statesFrom(stream: .just(x))
         .map { $0.urlActionOutgoing }
       ,
       [.opening(URL(string: "https://www.duckduckgo.com")!)]
@@ -1118,10 +1118,10 @@ class SessionTestCase: XCTestCase {
   }
   
   func testRenderingURLActionOutgoingIdle() {
-    var x = Session.Model.empty
+    var x = RxUIApplication.Model.empty
     x.urlActionOutgoing = .opening(URL(string: "https://www.duckduckgo.com")!)
     XCTAssertEqual(
-      SessionTestCase.statesFrom(stream: .just(x))
+      RxUIApplicationTestCase.statesFrom(stream: .just(x))
         .map { $0.urlActionOutgoing }
       ,
       [.idle]
@@ -1129,16 +1129,16 @@ class SessionTestCase: XCTestCase {
   }
   
   func testRenderingSendActionSending() {
-    let action = Session.Model.TargetAction(
+    let action = RxUIApplication.Model.TargetAction(
       action: #selector(getter: UIApplication.isIdleTimerDisabled),
       target: UIApplication.shared,
       sender: nil,
       event: nil
     )
-    var x = Session.Model.empty
+    var x = RxUIApplication.Model.empty
     x.targetAction = .sending(action)
     XCTAssertEqual(
-      SessionTestCase.statesFrom(stream: .just(x))
+      RxUIApplicationTestCase.statesFrom(stream: .just(x))
         .map { $0.targetAction }
       ,
       [.responding(action, true)]
@@ -1146,16 +1146,16 @@ class SessionTestCase: XCTestCase {
   }
   
   func testRenderingSendActionIdle() {
-    let action = Session.Model.TargetAction(
+    let action = RxUIApplication.Model.TargetAction(
       action: #selector(getter: UIApplication.isIdleTimerDisabled),
       target: UIApplication.shared,
       sender: nil,
       event: nil
     )
-    var x = Session.Model.empty
+    var x = RxUIApplication.Model.empty
     x.targetAction = .responding(action, true)
     XCTAssertEqual(
-      SessionTestCase.statesFrom(stream: .just(x))
+      RxUIApplicationTestCase.statesFrom(stream: .just(x))
         .map { $0.targetAction }
       ,
       [.idle]
@@ -1163,22 +1163,22 @@ class SessionTestCase: XCTestCase {
   }
   
   func testRenderingBackgroundTasksProgressing() {
-    var y = Session.Model.empty
+    var y = RxUIApplication.Model.empty
     y.backgroundTasks = [
-      Session.Model.BackgroundTask(
+      RxUIApplication.Model.BackgroundTask(
         name: "x",
         state: .pending
       )
     ]
     XCTAssert(
-      SessionTestCase.statesFrom(stream: .just(y))
+      RxUIApplicationTestCase.statesFrom(stream: .just(y))
       .map { $0.backgroundTasks }
       .flatMap { $0 }
       // This test will occasionally fail due to harcoded UIBackgroundTaskIdentifier.
       // Needs better solution
       ==
       [
-        Session.Model.BackgroundTask(
+        RxUIApplication.Model.BackgroundTask(
           name: "x",
           state: .progressing(1)
         )
@@ -1187,15 +1187,15 @@ class SessionTestCase: XCTestCase {
   }
   
   func testRenderingBackgroundTasksComplete() {
-    var y = Session.Model.empty
+    var y = RxUIApplication.Model.empty
     y.backgroundTasks = [
-      Session.Model.BackgroundTask(
+      RxUIApplication.Model.BackgroundTask(
         name: "x",
         state: .complete(1)
       )
     ]
     XCTAssertEqual(
-      SessionTestCase.statesFrom(stream: .just(y))
+      RxUIApplicationTestCase.statesFrom(stream: .just(y))
       .map { $0.backgroundTasks }
       .flatMap { $0 }
       ,
@@ -1205,7 +1205,7 @@ class SessionTestCase: XCTestCase {
   
   func testRenderingBackgroundFetchProgressCallback() {
     XCTAssertEqual(
-      SessionTestCase.statesFromCall(call: {
+      RxUIApplicationTestCase.statesFromCall(call: {
         $0.application(
           UIApplication.shared,
           performFetchWithCompletionHandler: { _ in }
@@ -1214,11 +1214,11 @@ class SessionTestCase: XCTestCase {
       .map { $0.fetch }
       ,
       [
-        Session.Model.BackgroundFetch(
+        RxUIApplication.Model.BackgroundFetch(
           minimumInterval: .never,
           state: .idle
         ),
-        Session.Model.BackgroundFetch(
+        RxUIApplication.Model.BackgroundFetch(
           minimumInterval: .never,
           state: .progressing({ _ in})
         )
@@ -1227,17 +1227,17 @@ class SessionTestCase: XCTestCase {
   }
   
   func testRenderingBackgroundFetchComplete() {
-    var x = Session.Model.empty
-    x.fetch = Session.Model.BackgroundFetch(
+    var x = RxUIApplication.Model.empty
+    x.fetch = RxUIApplication.Model.BackgroundFetch(
       minimumInterval: .never,
       state: .complete(.noData, { _ in})
     )
     XCTAssertEqual(
-      SessionTestCase.statesFrom(stream: .just(x))
+      RxUIApplicationTestCase.statesFrom(stream: .just(x))
       .map { $0.fetch }
       ,
       [
-        Session.Model.BackgroundFetch(
+        RxUIApplication.Model.BackgroundFetch(
           minimumInterval: .never,
           state: .idle
         )
@@ -1247,7 +1247,7 @@ class SessionTestCase: XCTestCase {
   
   func testRenderingBackgroundURLSessionActionProgressing() {
     XCTAssertEqual(
-      SessionTestCase.statesFromCall {
+      RxUIApplicationTestCase.statesFromCall {
         $0.application(
           UIApplication.shared,
           handleEventsForBackgroundURLSession: "id",
@@ -1258,7 +1258,7 @@ class SessionTestCase: XCTestCase {
       .flatMap { $0 }
       ,
       [
-        Session.Model.BackgroundURLSessionAction(
+        RxUIApplication.Model.BackgroundURLSessionAction(
           id: "id",
           completion: {},
           state: .progressing
@@ -1268,16 +1268,16 @@ class SessionTestCase: XCTestCase {
   }
   
   func testRenderingBackgroundURLSessionActionComplete() {
-    var x = Session.Model.empty
+    var x = RxUIApplication.Model.empty
     x.backgroundURLSessions = Set([
-      Session.Model.BackgroundURLSessionAction(
+      RxUIApplication.Model.BackgroundURLSessionAction(
         id: "id",
         completion: {},
         state: .complete
       )
     ])
     XCTAssertEqual(
-      SessionTestCase.statesFrom(stream: .just(x))
+      RxUIApplicationTestCase.statesFrom(stream: .just(x))
         .map { $0.backgroundURLSessions }
         .flatMap { $0 }
       ,
@@ -1318,27 +1318,27 @@ class SessionTestCase: XCTestCase {
   func testAdditions() {
     let x = ["x"]
     let y: [String] = []
-    let z = Session.additions(new: x, old: y)
+    let z = RxUIApplication.additions(new: x, old: y)
     XCTAssert(z.count == 1)
   }
   
   func testDeletions() {
     let x = ["x"]
     let y: [String] = []
-    let z = Session.deletions(old: x, new: y)
+    let z = RxUIApplication.deletions(old: x, new: y)
     XCTAssert(z.count == 1)
   }
   
   func testCompletedBackgroundIDs() {
-    let x = [Session.Model.BackgroundTask(name: "x", state: .complete(2017))]
+    let x = [RxUIApplication.Model.BackgroundTask(name: "x", state: .complete(2017))]
     let z = x.flatMap { $0.ID }
     XCTAssert(z == [2017])
   }
   
   func testDeletedBackgroundTaskIDs() {
-    let x = [Session.Model.BackgroundTask(name: "x", state: .progressing(2017))]
-    let y: [Session.Model.BackgroundTask] = []
-    let z = Session.deletions(old: x, new: y).flatMap { $0.ID }
+    let x = [RxUIApplication.Model.BackgroundTask(name: "x", state: .progressing(2017))]
+    let y: [RxUIApplication.Model.BackgroundTask] = []
+    let z = RxUIApplication.deletions(old: x, new: y).flatMap { $0.ID }
     XCTAssert(z == [2017])
   }
 
@@ -1403,16 +1403,19 @@ class SessionTestCase: XCTestCase {
     }
   }
   
-  class SessionCycle: SinkSourceConverting {
-    struct DriverModels: Initializable {
-      var session = Session.Model.empty
+  class RxUIApplicationCycle: SinkSourceConverting {
+    struct Drivers: CycleDrivable {
+      var application: RxUIApplication!
     }
-    let filter: (Observable<DriverModels>, Session) -> Observable<DriverModels>
-    init(filter: @escaping (Observable<DriverModels>, Session) -> Observable<DriverModels>) {
+    struct DriverModels: Initializable {
+      var application = RxUIApplication.Model.empty
+    }
+    let filter: (Observable<DriverModels>, RxUIApplication) -> Observable<DriverModels>
+    init(filter: @escaping (Observable<DriverModels>, RxUIApplication) -> Observable<DriverModels>) {
       self.filter = filter
     }
-    func effectsFrom(events: Observable<DriverModels>, session: Session) -> Observable<DriverModels> { return
-      filter(events, session)
+    func effectsFrom(events: Observable<DriverModels>, drivers: Drivers) -> Observable<DriverModels> { return
+      filter(events, drivers.application)
     }
   }
   
@@ -1435,8 +1438,8 @@ class SessionTestCase: XCTestCase {
   }
 }
 
-extension Session.Model {
-  func with(shortcutItem: Session.Model.ShortcutAction) -> Session.Model {
+extension RxUIApplication.Model {
+  func with(shortcutItem: RxUIApplication.Model.ShortcutAction) -> RxUIApplication.Model {
     var edit = self
     edit.shortcutActions += [shortcutItem]
     return edit

@@ -21,16 +21,16 @@ class CycledApplicationDelegate<T: SinkSourceConverting>: UIResponder, UIApplica
     // Cycle is deferred to make sure window is ready for drivers.
     cycle = Cycle(
       transformer: filter,
-      application: UIApplication.shared
+      host: UIApplication.shared
     )
   }
   
   override func forwardingTarget(for input: Selector!) -> Any? { return
-    cycle.session
+    cycle.application
   }
   
   override func responds(to input: Selector!) -> Bool { return
-    cycle.session.responds(to: input) == true
+    cycle.application.responds(to: input) == true
   }
 }
 
@@ -45,20 +45,20 @@ final class Cycle<E: SinkSourceConverting> {
   fileprivate var events: Observable<E.Source>?
   fileprivate var eventsProxy: ReplaySubject<E.Source>?
   fileprivate var loop: Disposable?
-  fileprivate let session: Session
-  init(transformer: E, application: UIApplication) {
+  fileprivate let application: RxUIApplication
+  init(transformer: E, host: UIApplication) {
     eventsProxy = ReplaySubject.create(
       bufferSize: 1
     )
-    session = Session(
+    application = RxUIApplication(
       intitial: .empty,
-      application: application
+      application: host
     )
     events = transformer.effectsFrom(
       events: eventsProxy!,
       drivers: {
         var x = E.Drivers()
-        x.session = session
+        x.application = application
         return x
       }()
     )
@@ -76,14 +76,14 @@ protocol SinkSourceConverting {
   func effectsFrom(events: Observable<Source>, drivers: Drivers) -> Observable<Source>
 }
 
-protocol CycleDrivable: Initializable, Sessionable {}
+protocol CycleDrivable: Initializable, RxUIApplicationStoring {}
 
 protocol Initializable {
   init()
 }
 
-protocol Sessionable {
-  var session: Session! { get set } // Set internally by Cycle
+protocol RxUIApplicationStoring {
+  var application: RxUIApplication! { get set } // Set internally by Cycle
 }
 
 extension UIViewController {

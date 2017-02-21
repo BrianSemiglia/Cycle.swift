@@ -21,11 +21,11 @@ class Example: CycledApplicationDelegate<IntegerMutatingApp> {
 struct IntegerMutatingApp: SinkSourceConverting {
   struct Model: Initializable {
     var screen = ValueToggler.Model.empty
-    var session = Session.Model.empty
+    var application = RxUIApplication.Model.empty
   }
   struct Drivers: CycleDrivable {
     let toggler = ValueToggler()
-    var session: Session!
+    var application: RxUIApplication!
   }
   func effectsFrom(events: Observable<Model>, drivers: Drivers) -> Observable<Model> {
     let value = drivers.toggler
@@ -33,12 +33,12 @@ struct IntegerMutatingApp: SinkSourceConverting {
       .withLatestFrom(events) { ($0.0, $0.1) }
       .reduced()
     
-    let session = drivers.session
-      .rendered(events.map { $0.session })
+    let application = drivers.application
+      .rendered(events.map { $0.application })
       .withLatestFrom(events) { ($0.0, $0.1) }
       .reduced()
     
-    return Observable.of(value, session).merge()
+    return Observable.of(value, application).merge()
   }
 }
 
@@ -46,7 +46,7 @@ extension IntegerMutatingApp.Model {
   static var empty: IntegerMutatingApp.Model { return
     IntegerMutatingApp.Model(
       screen: .empty,
-      session: .empty
+      application: .empty
     )
   }
 }
@@ -69,13 +69,13 @@ extension ObservableType where E == (ValueToggler.Model, IntegerMutatingApp.Mode
   }
 }
 
-extension ObservableType where E == (Session.Model, IntegerMutatingApp.Model) {
+extension ObservableType where E == (RxUIApplication.Model, IntegerMutatingApp.Model) {
   func reduced() -> Observable<IntegerMutatingApp.Model> { return
     map { event, global in
       var c = global
       var model = event
       model.shouldLaunch = true
-      c.session = model
+      c.application = model
       var s = c.screen
       s.total = event.state == .pre(.active) ? "55" : s.total
       c.screen = s
