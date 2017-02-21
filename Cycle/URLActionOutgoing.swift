@@ -21,8 +21,11 @@ struct URLActionOutgoing: SinkSourceConverting {
   struct Model: Initializable {
     var session = Session.Model.empty
   }
-  func effectsFrom(events: Observable<Model>, session: Session) -> Observable<Model> { return
-    session
+  struct Drivers: CycleDrivable {
+    var session: Session!
+  }
+  func effectsFrom(events: Observable<Model>, drivers: Drivers) -> Observable<Model> { return
+    drivers.session
       .rendered(events.map { $0.session })
       .withLatestFrom(events) { ($0.0, $0.1) }
       .reduced()

@@ -47,16 +47,20 @@ final class Cycle<E: SinkSourceConverting> {
   fileprivate var loop: Disposable?
   fileprivate let session: Session
   init(transformer: E, application: UIApplication) {
+    eventsProxy = ReplaySubject.create(
+      bufferSize: 1
+    )
     session = Session(
       intitial: .empty,
       application: application
     )
-    eventsProxy = ReplaySubject.create(
-      bufferSize: 1
-    )
     events = transformer.effectsFrom(
       events: eventsProxy!,
-      session: session
+      drivers: {
+        var x = E.Drivers()
+        x.session = session
+        return x
+      }()
     )
     loop = events!
       .startWith(E.Source())
@@ -66,13 +70,20 @@ final class Cycle<E: SinkSourceConverting> {
   }
 }
 
+protocol SinkSourceConverting {
+  associatedtype Source: Initializable
+  associatedtype Drivers: CycleDrivable
+  func effectsFrom(events: Observable<Source>, drivers: Drivers) -> Observable<Source>
+}
+
+protocol CycleDrivable: Initializable, Sessionable {}
+
 protocol Initializable {
   init()
 }
 
-protocol SinkSourceConverting {
-  associatedtype Source: Initializable
-  func effectsFrom(events: Observable<Source>, session: Session) -> Observable<Source>
+protocol Sessionable {
+  var session: Session! { get set } // Set internally by Cycle
 }
 
 extension UIViewController {

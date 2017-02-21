@@ -9,6 +9,7 @@
 import Foundation
 import RxSwift
 
+@UIApplicationMain
 class Example: CycledApplicationDelegate<IntegerMutatingApp> {
   init() {
     super.init(
@@ -22,13 +23,17 @@ struct IntegerMutatingApp: SinkSourceConverting {
     var screen = ValueToggler.Model.empty
     var session = Session.Model.empty
   }
-  func effectsFrom(events: Observable<Model>, session: Session) -> Observable<Model> {
-    let value = ValueToggler.shared
+  struct Drivers: CycleDrivable {
+    let toggler = ValueToggler()
+    var session: Session!
+  }
+  func effectsFrom(events: Observable<Model>, drivers: Drivers) -> Observable<Model> {
+    let value = drivers.toggler
       .rendered(events.map { $0.screen })
       .withLatestFrom(events) { ($0.0, $0.1) }
       .reduced()
     
-    let session = session
+    let session = drivers.session
       .rendered(events.map { $0.session })
       .withLatestFrom(events) { ($0.0, $0.1) }
       .reduced()
