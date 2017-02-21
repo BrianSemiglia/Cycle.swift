@@ -462,6 +462,43 @@ class RxUIApplicationTestCase: XCTestCase {
     )
   }
   
+  func testHandleActionWithIdentifierResponseInfoRemoteComplete_ios9() {
+    var x = RxUIApplication.Model.empty
+    x.remoteAction = .complete(
+      .ios9(
+        id: .some( "x"),
+        userInfo: ["y":"z"],
+        responseInfo: ["a":"b"],
+        completion: {}
+      )
+    )
+    XCTAssert(
+      RxUIApplicationTestCase
+        .statesFrom(stream: .just(x))
+        .map { $0.remoteAction }
+        ==
+        [.idle]
+    )
+  }
+  
+  func testHandleActionWithIdentifierResponseInfoRemoteComplete_ios8() {
+    var x = RxUIApplication.Model.empty
+    x.remoteAction = .complete(
+      .ios8(
+        id: .some( "x"),
+        userInfo: ["y":"z"],
+        completion: {}
+      )
+    )
+    XCTAssert(
+      RxUIApplicationTestCase
+        .statesFrom(stream: .just(x))
+        .map { $0.remoteAction }
+        ==
+        [.idle]
+    )
+  }
+  
   func testHandleActionWithIdentifierRemote() {
     XCTAssert(
       RxUIApplicationTestCase
