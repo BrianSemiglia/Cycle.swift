@@ -8,7 +8,6 @@
 
 import UIKit
 import RxSwift
-import Curry
 
 class CycledApplicationDelegate<T: SinkSourceConverting>: UIResponder, UIApplicationDelegate {
   
