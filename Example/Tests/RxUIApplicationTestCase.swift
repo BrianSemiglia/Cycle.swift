@@ -237,7 +237,7 @@ class RxUIApplicationTestCase: XCTestCase {
       }
       .map { $0.stateRestoration }
       ==
-      [.idle, .didDecode(CoderStub(id: "x"))]
+      [.idle, .decoding(CoderStub(id: "x"))]
     )
   }
   
@@ -252,7 +252,7 @@ class RxUIApplicationTestCase: XCTestCase {
       }
       .map { $0.stateRestoration }
       ==
-      [.idle, .willEncode(CoderStub(id: "x"))]
+      [.idle, .encoding(CoderStub(id: "x"))]
     )
   }
   
