@@ -165,8 +165,8 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     }
     enum StateRestoration { // Readonly
       case idle
-      case willEncode(NSCoder)
-      case didDecode(NSCoder)
+      case encoding(NSCoder)
+      case decoding(NSCoder)
     }
     enum State { // Readonly
       case awaitingLaunch
@@ -266,6 +266,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     model.isObservingSignificantTimeChange = false
     model.stateRestoration = .idle
     model.isExperiencingHealthAuthorizationRequest = false
+    model.stateRestoration = .idle
     if
     case .completing = model.userActivityState,
     case .failing = model.userActivityState {
@@ -880,7 +881,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     _ application: UIApplication,
     willEncodeRestorableStateWith coder: NSCoder
   ) {
-    model.stateRestoration = .willEncode(coder)
+    model.stateRestoration = .encoding(coder)
     output.on(.next(model))
   }
 
@@ -888,7 +889,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     _ application: UIApplication,
     didDecodeRestorableStateWith coder: NSCoder
   ) {
-    model.stateRestoration = .didDecode(coder)
+    model.stateRestoration = .decoding(coder)
     output.on(.next(model))
   }
 
@@ -1469,8 +1470,8 @@ extension RxUIApplication.Model.StateRestoration: Equatable {
   ) -> Bool {
     switch (left, right) {
     case (.idle, .idle): return true
-    case (.willEncode(let a), .willEncode(let b)): return a == b
-    case (.didDecode(let a), didDecode(let b)): return a == b
+    case (.encoding(let a), .encoding(let b)): return a == b
+    case (.decoding(let a), decoding(let b)): return a == b
     default: return false
     }
   }
