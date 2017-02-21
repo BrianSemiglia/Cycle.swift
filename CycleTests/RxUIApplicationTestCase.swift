@@ -674,27 +674,45 @@ class RxUIApplicationTestCase: XCTestCase {
     )
   }
   
-  func testHandleWatchKitExtensionRequest() {
+  func testHandleWatchKitExtensionRequestProgressing() {
     XCTAssert(
       RxUIApplicationTestCase
-      .statesFromCall {
-        $0.application(
-          UIApplication.shared,
-          handleWatchKitExtensionRequest: ["x":"y"],
-          reply: { _ in }
-        )
-      }
-      .map { $0.watchKitExtensionRequest }
+        .statesFromCall {
+          $0.application(
+            UIApplication.shared,
+            handleWatchKitExtensionRequest: ["x":"y"],
+            reply: { _ in }
+          )
+        }
+        .map { $0.watchKitExtensionRequest }
+        .flatMap { $0 }
       ==
       [
-        .idle,
-        .progressing(
-          RxUIApplication.Model.WatchKitExtensionRequest(
-            userInfo: ["x":"y"],
-            reply: { _ in }
+        RxUIApplication.Model.WatchKitExtensionRequest(
+          completion: { _ in },
+          state: .progressing(
+            info: ["x":"y"]
           )
         )
       ]
+    )
+  }
+  
+  func testHandleWatchKitExtensionRequestResponding() {
+    var x = RxUIApplication.Model.empty
+    x.watchKitExtensionRequest = [
+      RxUIApplication.Model.WatchKitExtensionRequest(
+        completion: { _ in },
+        state: .responding(
+          response: ["x":"y"]
+        )
+      )
+    ]
+    XCTAssertEqual(
+      RxUIApplicationTestCase.statesFrom(stream: .just(x))
+        .map { $0.watchKitExtensionRequest }
+        .flatMap { $0 },
+      []
     )
   }
   
@@ -1108,7 +1126,7 @@ class RxUIApplicationTestCase: XCTestCase {
       .map { model -> RxUIApplication.Model in
         var new = model
         if case .isContinuing(let activity) = model.userActivityState {
-          new.userActivityState = .hasAvailableData(activity)
+          new.userActivityState = .hasAvailableData(activity.0)
         }
         return new
       }
