@@ -87,8 +87,17 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
       )
     }
     enum ActionLocal {
-      case ios8(ActionID, UILocalNotification, () -> Void)
-      case ios9(ActionID, UILocalNotification, [AnyHashable: Any], () -> Void)
+      case ios8(
+        id: ActionID,
+        notification: UILocalNotification,
+        completion: () -> Void
+      )
+      case ios9(
+        id: ActionID,
+        notification: UILocalNotification,
+        response: [AnyHashable: Any],
+        completion: () -> Void
+      )
     }
     enum URLActionOutgoing {
       case idle
@@ -272,6 +281,14 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
       case .ios8(_, _, let completion), .ios9(_, _, _, let completion):
         completion()
         model.remoteAction = .idle
+      }
+    }
+    
+    if case .complete(let action) = model.localAction {
+      switch action {
+      case .ios8(_, _, let completion), .ios9(_, _, _, let completion):
+        completion()
+        model.localAction = .idle
       }
     }
     
@@ -628,9 +645,9 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
   ) {
     model.localAction = .progressing(
       .ios8(
-        identifier.map {.some( $0)} ?? .defaultAction,
-        notification,
-        completionHandler
+        id: identifier.map {.some( $0)} ?? .defaultAction,
+        notification: notification,
+        completion: completionHandler
       )
     )
     output.on(.next(model))
@@ -679,10 +696,10 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
   ) {
     model.localAction = .progressing(
       .ios9(
-        identifier.map {.some( $0)} ?? .defaultAction,
-        notification,
-        responseInfo,
-        completionHandler
+        id: identifier.map {.some( $0)} ?? .defaultAction,
+        notification: notification,
+        response: responseInfo,
+        completion: completionHandler
       )
     )
     output.on(.next(model))
