@@ -267,6 +267,14 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     application.applicationIconBadgeNumber = model.iconBadgeNumber
     application.applicationSupportsShakeToEdit = model.supportsShakeToEdit
     
+    if case .complete(let action) = model.remoteAction {
+      switch action {
+      case .ios8(_, _, let completion), .ios9(_, _, _, let completion):
+        completion()
+        model.remoteAction = .idle
+      }
+    }
+    
     /*
      Tasks marked in-progress are begun.
      Tasks begun are marked expired and output on expiration.
