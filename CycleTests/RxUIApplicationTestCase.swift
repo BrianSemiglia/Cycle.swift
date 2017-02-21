@@ -346,7 +346,7 @@ class RxUIApplicationTestCase: XCTestCase {
       }
       .map { $0.userActivityState }
       ==
-      [.idle, .isContinuing(activity)]
+      [.idle, .isContinuing(activity, restoration: { _ in })]
     )
   }
   
