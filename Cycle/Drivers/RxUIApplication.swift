@@ -19,7 +19,6 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     var localAction: AsyncAction<ActionLocal>
     var userActivityState: UserActivityState
     var stateRestoration: StateRestoration
-    var userActivityContinuation: UserActivityState
     var watchKitExtensionRequest: AsyncAction<WatchKitExtensionRequest>
     var localNotification: UILocalNotification?
     var remoteNotifications: [RemoteNofitication]
@@ -1008,7 +1007,6 @@ extension RxUIApplication.Model: Equatable {
     left.localAction == right.localAction &&
     left.userActivityState == right.userActivityState &&
     left.stateRestoration == right.stateRestoration &&
-    left.userActivityContinuation == right.userActivityContinuation &&
     left.watchKitExtensionRequest == right.watchKitExtensionRequest &&
     left.localNotification == right.localNotification &&
     left.remoteNotifications == right.remoteNotifications &&
@@ -1148,7 +1146,6 @@ extension RxUIApplication.Model {
       localAction: .idle,
       userActivityState: .idle,
       stateRestoration: .idle,
-      userActivityContinuation: .idle,
       watchKitExtensionRequest: .idle,
       localNotification: nil,
       remoteNotifications: [],
