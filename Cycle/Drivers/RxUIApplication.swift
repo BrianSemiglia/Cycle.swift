@@ -157,7 +157,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     enum UserActivityState { // Readonly
       case idle
       case willContinue(String)
-      case isContinuing(NSUserActivity)
+      case isContinuing(NSUserActivity, restoration: ([UIResponder]?) -> Void)
       case hasAvailableData(NSUserActivity)
       case shouldNotifyUserActivitiesWithType(String)
       case completing(NSUserActivity)
@@ -910,7 +910,10 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     continue userActivity: NSUserActivity,
     restorationHandler: @escaping ([Any]?) -> Void
   ) -> Bool {
-    model.userActivityState = .isContinuing(userActivity)
+    model.userActivityState = .isContinuing(
+      userActivity,
+      restoration: { restorationHandler($0.map { [$0 as Any] }) }
+    )
     output.on(.next(model))
     if case .hasAvailableData(let confirmed) = model.userActivityState {
       return userActivity == confirmed
@@ -1444,7 +1447,7 @@ extension RxUIApplication.Model.UserActivityState: Equatable {
     case (.willContinue(let a), .willContinue(let b)): return
       a == b
     case (.isContinuing(let a), .isContinuing(let b)): return
-      a == b
+      a.0 == b.0
     case (.hasAvailableData(let a), .hasAvailableData(let b)): return
       a == b
     case (.shouldNotifyUserActivitiesWithType(let a), .shouldNotifyUserActivitiesWithType(let b)): return
