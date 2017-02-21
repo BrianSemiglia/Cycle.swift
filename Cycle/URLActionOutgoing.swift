@@ -19,14 +19,14 @@ class URLActionOutgoingDelegate: CycledApplicationDelegate<URLActionOutgoing> {
 
 struct URLActionOutgoing: SinkSourceConverting {
   struct Model: Initializable {
-    var session = Session.Model.empty
+    var application = RxUIApplication.Model.empty
   }
   struct Drivers: CycleDrivable {
-    var session: Session!
+    var application: RxUIApplication!
   }
   func effectsFrom(events: Observable<Model>, drivers: Drivers) -> Observable<Model> { return
-    drivers.session
-      .rendered(events.map { $0.session })
+    drivers.application
+      .rendered(events.map { $0.application })
       .withLatestFrom(events) { ($0.0, $0.1) }
       .reduced()
   }
@@ -35,24 +35,24 @@ struct URLActionOutgoing: SinkSourceConverting {
 extension URLActionOutgoing.Model {
   static var empty: URLActionOutgoing.Model { return
     URLActionOutgoing.Model(
-      session: .empty
+      application: .empty
     )
   }
 }
 
-extension ObservableType where E == (Session.Model, URLActionOutgoing.Model) {
+extension ObservableType where E == (RxUIApplication.Model, URLActionOutgoing.Model) {
   func reduced() -> Observable<URLActionOutgoing.Model> { return
     map { event, context in
       
       var e = event
       if
-      case .currently(.launched) = context.session.state,
+      case .currently(.launched) = context.application.state,
       case .currently(.active) = event.state {
         e.urlActionOutgoing = .attempting(URL(string: "https://www.duckduckgo.com")!)
       }
       
       var output = context
-      output.session = e
+      output.application = e
       return output
     }
   }
