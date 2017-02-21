@@ -429,7 +429,13 @@ class RxUIApplicationTestCase: XCTestCase {
       ==
       [
         .idle,
-        .progressing(.ios8(.some( "x"), UILocalNotification(), {}))
+        .progressing(
+          .ios8(
+            id: .some( "x"),
+            notification: UILocalNotification(),
+            completion: {}
+          )
+        )
       ]
     )
   }
@@ -543,13 +549,50 @@ class RxUIApplicationTestCase: XCTestCase {
         .idle,
         .progressing(
           .ios9(
-            .some( "x"),
-            UILocalNotification(),
-            ["y":"z"],
-            {}
+            id: .some( "x"),
+            notification: UILocalNotification(),
+            response: ["y":"z"],
+            completion: {}
           )
         )
       ]
+    )
+  }
+  
+  func testHandleActionLocalComplete_ios9() {
+    var x = RxUIApplication.Model.empty
+    x.localAction = .complete(
+      .ios9(
+        id: .defaultAction,
+        notification: UILocalNotification(),
+        response: ["a":"b"],
+        completion: {}
+      )
+    )
+    XCTAssert(
+      RxUIApplicationTestCase
+        .statesFrom(stream: .just(x))
+        .map { $0.localAction }
+        ==
+        [.idle]
+    )
+  }
+  
+  func testHandleActionLocalComplete_ios8() {
+    var x = RxUIApplication.Model.empty
+    x.localAction = .complete(
+      .ios8(
+        id: .defaultAction,
+        notification: UILocalNotification(),
+        completion: {}
+      )
+    )
+    XCTAssert(
+      RxUIApplicationTestCase
+        .statesFrom(stream: .just(x))
+        .map { $0.localAction }
+        ==
+        [.idle]
     )
   }
   
