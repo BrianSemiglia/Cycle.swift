@@ -9,7 +9,6 @@
 import Foundation
 import RxSwift
 
-@UIApplicationMain
 class ShortcutActionsExampleDelegate: CycledApplicationDelegate<ShortcutActionsExample> {
   init() {
     super.init(
@@ -23,14 +22,18 @@ struct ShortcutActionsExample: SinkSourceConverting {
     var session = Session.Model.empty
     var async = Timer.Model.empty
   }
-  func effectsFrom(events: Observable<Model>, session: Session) -> Observable<Model> {
+  struct Drivers: CycleDrivable {
+    let timer = Timer(.empty)
+    var session: Session!
+  }
+  func effectsFrom(events: Observable<Model>, drivers: Drivers) -> Observable<Model> {
     
-    let session = session
+    let session = drivers.session
     .rendered(events.map { $0.session })
     .withLatestFrom(events) { ($0.0, $0.1) }
     .reduced()
     
-    let timer = Timer.shared
+    let timer = drivers.timer
     .rendered(events.map { $0.async })
     .withLatestFrom(events) { ($0.0, $0.1) }
     .reduced()
