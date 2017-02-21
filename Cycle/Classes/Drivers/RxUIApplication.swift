@@ -1,5 +1,5 @@
 //
-//  Session.swift
+//  RxUIApplication.swift
 //  Cycle
 //
 //  Created by Brian Semiglia on 1/26/17.
@@ -10,7 +10,7 @@ import Foundation
 import RxSwift
 import Changeset
 
-class Session: NSObject, UIApplicationDelegate {
+class RxUIApplication: NSObject, UIApplicationDelegate {
   
   struct Model {
     var backgroundURLSessions: Set<BackgroundURLSessionAction>
@@ -50,7 +50,7 @@ class Session: NSObject, UIApplicationDelegate {
     var shouldSaveApplicationState: Filtered<NSCoder, Bool>
     var shouldRestoreApplicationState: Filtered<NSCoder, Bool>
     var shouldLaunch: Bool
-    var urlActionIncoming: Filtered<Session.Model.URLLaunch, URL>
+    var urlActionIncoming: Filtered<RxUIApplication.Model.URLLaunch, URL>
     var extensionPointIdentifier: Filtered<UIApplicationExtensionPointIdentifier, UIApplicationExtensionPointIdentifier>
     var interfaceOrientations: [Filtered<UIWindow, WindowResponse>]
     var viewControllerRestoration: Filtered<RestorationQuery, RestorationResponse>
@@ -272,7 +272,7 @@ class Session: NSObject, UIApplicationDelegate {
      Tasks begun are marked expired and output on expiration.
      */
     model.backgroundTasks = Set(
-      Session.additions(
+      RxUIApplication.additions(
         new: Array(model.backgroundTasks),
         old: Array(old.backgroundTasks)
       )
@@ -310,7 +310,7 @@ class Session: NSObject, UIApplicationDelegate {
      Tasks marked in-progress that were removed are considered canceled and are removed.
      */
     let complete = model.backgroundTasks.complete().flatMap { $0.ID }
-    let deletions = Session.deletions(
+    let deletions = RxUIApplication.deletions(
       old: Array(old.backgroundTasks),
       new: Array(model.backgroundTasks)
     )
@@ -343,7 +343,7 @@ class Session: NSObject, UIApplicationDelegate {
       }
     }
     
-    Session.deletions(
+    RxUIApplication.deletions(
       old: old.remoteNotifications,
       new: model.remoteNotifications
     )
@@ -370,7 +370,7 @@ class Session: NSObject, UIApplicationDelegate {
       application.presentLocalNotificationNow(new)
     }
     
-    Session.additions(
+    RxUIApplication.additions(
       new: model.scheduledLocalNotifications,
       old: old.scheduledLocalNotifications
     )
@@ -378,7 +378,7 @@ class Session: NSObject, UIApplicationDelegate {
       application.scheduleLocalNotification($0)
     }
     
-    Session.deletions(
+    RxUIApplication.deletions(
       old: old.scheduledLocalNotifications,
       new: model.scheduledLocalNotifications
     )
@@ -427,7 +427,7 @@ class Session: NSObject, UIApplicationDelegate {
       }
     }
 
-    Session.deletions(
+    RxUIApplication.deletions(
       old: Array(old.backgroundURLSessions),
       new: Array(model.backgroundURLSessions)
     )
@@ -686,7 +686,7 @@ class Session: NSObject, UIApplicationDelegate {
     fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
   ) {
     model.remoteNotifications += [
-      Session.Model.RemoteNofitication(
+      RxUIApplication.Model.RemoteNofitication(
         notification: info,
         state: .progressing(completionHandler)
       )
@@ -709,7 +709,7 @@ class Session: NSObject, UIApplicationDelegate {
   ) {
     model.shortcutActions = model.shortcutActions.map {
       if $0.item.type == shortcutItem.type {
-        return Session.Model.ShortcutAction(
+        return RxUIApplication.Model.ShortcutAction(
           item: shortcutItem,
           state: .progressing(completionHandler)
         )
@@ -728,7 +728,7 @@ class Session: NSObject, UIApplicationDelegate {
     model.backgroundURLSessions = Set(
       Array(model.backgroundURLSessions)
       + [
-        Session.Model.BackgroundURLSessionAction(
+        RxUIApplication.Model.BackgroundURLSessionAction(
           id: identifier,
           completion: completionHandler,
           state: .progressing
@@ -744,7 +744,7 @@ class Session: NSObject, UIApplicationDelegate {
     reply: @escaping ([AnyHashable : Any]?) -> Void
   ) {
     model.watchKitExtensionRequest = .progressing(
-      Session.Model.WatchKitExtensionRequest(
+      RxUIApplication.Model.WatchKitExtensionRequest(
         userInfo: userInfo,
         reply: reply
       )
@@ -815,7 +815,7 @@ class Session: NSObject, UIApplicationDelegate {
   ) -> UIViewController? {
     if let component = components.last as? String {
       model.viewControllerRestoration = .considering(
-        Session.Model.RestorationQuery(
+        RxUIApplication.Model.RestorationQuery(
           identifier: component,
           coder: coder
         )
@@ -923,7 +923,7 @@ func +<Key, Value> (left: [Key: Value], right: [Key: Value]) -> [Key: Value] {
   return x
 }
 
-extension Session {
+extension RxUIApplication {
   static func deletions<T: Equatable>(
     old: [T]?,
     new: [T]
@@ -946,7 +946,7 @@ extension Session {
   }
 }
 
-extension Session {
+extension RxUIApplication {
   static func additions<T: Equatable>(
     new: [T],
     old: [T]?
@@ -971,8 +971,8 @@ extension Session {
   }
 }
 
-extension Session.Model: Equatable {
-  static func == (left: Session.Model, right: Session.Model) -> Bool { return
+extension RxUIApplication.Model: Equatable {
+  static func == (left: RxUIApplication.Model, right: RxUIApplication.Model) -> Bool { return
     left.backgroundURLSessions == right.backgroundURLSessions &&
     left.fetch == right.fetch &&
     left.remoteAction == right.remoteAction &&
@@ -1023,7 +1023,7 @@ extension Edit {
   }
 }
 
-extension Session.Model.ShortcutAction: CustomDebugStringConvertible {
+extension RxUIApplication.Model.ShortcutAction: CustomDebugStringConvertible {
   var debugDescription: String { return
     item.type + " " + String(describing: state)
   }
@@ -1107,11 +1107,11 @@ enum AsyncAction<Handler: Equatable> {
   case complete(Handler)
 }
 
-extension Session.Model {
-  static var empty: Session.Model { return
-    Session.Model(
+extension RxUIApplication.Model {
+  static var empty: RxUIApplication.Model { return
+    RxUIApplication.Model(
       backgroundURLSessions: [],
-      fetch: Session.Model.BackgroundFetch(
+      fetch: RxUIApplication.Model.BackgroundFetch(
         minimumInterval: .never,
         state: .idle
       ),
@@ -1158,8 +1158,8 @@ extension Session.Model {
   }
 }
 
-extension Session.Model.State: Equatable {
-  static func ==(left: Session.Model.State, right: Session.Model.State) -> Bool {
+extension RxUIApplication.Model.State: Equatable {
+  static func ==(left: RxUIApplication.Model.State, right: RxUIApplication.Model.State) -> Bool {
     switch (left, right) {
     case (.awaitingLaunch, .awaitingLaunch): return
       true
@@ -1178,23 +1178,23 @@ extension Session.Model.State: Equatable {
   }
 }
 
-extension Session.Model.BackgroundURLSessionAction: Hashable {
+extension RxUIApplication.Model.BackgroundURLSessionAction: Hashable {
   var hashValue: Int { return
     id.hashValue
   }
   static func ==(
-    left: Session.Model.BackgroundURLSessionAction,
-    right: Session.Model.BackgroundURLSessionAction
+    left: RxUIApplication.Model.BackgroundURLSessionAction,
+    right: RxUIApplication.Model.BackgroundURLSessionAction
   ) -> Bool { return
     left.id == right.id &&
     left.state == right.state
   }
 }
 
-extension Session.Model.BackgroundURLSessionAction.State: Equatable {
+extension RxUIApplication.Model.BackgroundURLSessionAction.State: Equatable {
   static func ==(
-    left: Session.Model.BackgroundURLSessionAction.State,
-    right: Session.Model.BackgroundURLSessionAction.State
+    left: RxUIApplication.Model.BackgroundURLSessionAction.State,
+    right: RxUIApplication.Model.BackgroundURLSessionAction.State
   ) -> Bool {
     switch (left, right) {
     case (.progressing, .progressing): return
@@ -1207,8 +1207,8 @@ extension Session.Model.BackgroundURLSessionAction.State: Equatable {
   }
 }
 
-extension Session.Model.URLLaunch: Equatable {
-  static func ==(left: Session.Model.URLLaunch, right: Session.Model.URLLaunch) -> Bool {
+extension RxUIApplication.Model.URLLaunch: Equatable {
+  static func ==(left: RxUIApplication.Model.URLLaunch, right: RxUIApplication.Model.URLLaunch) -> Bool {
     switch (left, right) {
     case (.ios4(let a), .ios4(let b)): return
       a.url == b.url &&
@@ -1234,30 +1234,30 @@ extension AsyncAction: Equatable {
   }
 }
 
-extension Session.Model.RestorationQuery: Equatable {
+extension RxUIApplication.Model.RestorationQuery: Equatable {
   static func ==(
-    left: Session.Model.RestorationQuery,
-    right: Session.Model.RestorationQuery
+    left: RxUIApplication.Model.RestorationQuery,
+    right: RxUIApplication.Model.RestorationQuery
   ) -> Bool { return
     left.identifier == right.identifier &&
     left.coder == right.coder
   }
 }
 
-extension Session.Model.RestorationResponse: Equatable {
+extension RxUIApplication.Model.RestorationResponse: Equatable {
   static func ==(
-    left: Session.Model.RestorationResponse,
-    right: Session.Model.RestorationResponse
+    left: RxUIApplication.Model.RestorationResponse,
+    right: RxUIApplication.Model.RestorationResponse
   ) -> Bool { return
     left.identifier == right.identifier &&
     left.view == right.view
   }
 }
 
-extension Session.Model.TargetAction: Equatable {
+extension RxUIApplication.Model.TargetAction: Equatable {
   static func ==(
-    left: Session.Model.TargetAction,
-    right: Session.Model.TargetAction
+    left: RxUIApplication.Model.TargetAction,
+    right: RxUIApplication.Model.TargetAction
   ) -> Bool { return
     left.action == right.action
     && left.event === right.event
@@ -1266,10 +1266,10 @@ extension Session.Model.TargetAction: Equatable {
   }
 }
 
-extension Session.Model.BackgroundFetch.Interval: Equatable {
+extension RxUIApplication.Model.BackgroundFetch.Interval: Equatable {
   static func ==(
-    left: Session.Model.BackgroundFetch.Interval,
-    right: Session.Model.BackgroundFetch.Interval
+    left: RxUIApplication.Model.BackgroundFetch.Interval,
+    right: RxUIApplication.Model.BackgroundFetch.Interval
   ) -> Bool {
     switch (left, right) {
     case (.minimum, .minimum): return
@@ -1284,10 +1284,10 @@ extension Session.Model.BackgroundFetch.Interval: Equatable {
   }
 }
 
-extension Session.Model.ActionID: Equatable {
+extension RxUIApplication.Model.ActionID: Equatable {
   static func ==(
-    left: Session.Model.ActionID,
-    right: Session.Model.ActionID
+    left: RxUIApplication.Model.ActionID,
+    right: RxUIApplication.Model.ActionID
   ) -> Bool {
     switch (left, right) {
     case (.some(let a), .some(let b)): return
@@ -1300,10 +1300,10 @@ extension Session.Model.ActionID: Equatable {
   }
 }
 
-extension Session.Model.ActionRemote: Equatable {
+extension RxUIApplication.Model.ActionRemote: Equatable {
   static func ==(
-    left: Session.Model.ActionRemote,
-    right: Session.Model.ActionRemote
+    left: RxUIApplication.Model.ActionRemote,
+    right: RxUIApplication.Model.ActionRemote
   ) -> Bool {
     switch (left, right) {
     case (.ios9(let a), ios9(let b)): return
@@ -1319,10 +1319,10 @@ extension Session.Model.ActionRemote: Equatable {
   }
 }
 
-extension Session.Model.ActionLocal: Equatable {
+extension RxUIApplication.Model.ActionLocal: Equatable {
   static func ==(
-    left: Session.Model.ActionLocal,
-    right: Session.Model.ActionLocal
+    left: RxUIApplication.Model.ActionLocal,
+    right: RxUIApplication.Model.ActionLocal
   ) -> Bool {
     switch (left, right) {
     case (.ios9(let a), ios9(let b)): return
@@ -1338,10 +1338,10 @@ extension Session.Model.ActionLocal: Equatable {
   }
 }
 
-extension Session.Model.Notification: Equatable {
+extension RxUIApplication.Model.Notification: Equatable {
   static func ==(
-    left: Session.Model.Notification,
-    right: Session.Model.Notification
+    left: RxUIApplication.Model.Notification,
+    right: RxUIApplication.Model.Notification
   ) -> Bool {
     switch (left, right) {
     case (.local(let a), .local(let b)): return
@@ -1354,20 +1354,20 @@ extension Session.Model.Notification: Equatable {
   }
 }
 
-extension Session.Model.BackgroundFetch: Equatable {
+extension RxUIApplication.Model.BackgroundFetch: Equatable {
   static func == (
-    left: Session.Model.BackgroundFetch,
-    right: Session.Model.BackgroundFetch
+    left: RxUIApplication.Model.BackgroundFetch,
+    right: RxUIApplication.Model.BackgroundFetch
   ) -> Bool { return
     left.minimumInterval == right.minimumInterval &&
     left.state == right.state
   }
 }
 
-extension Session.Model.BackgroundFetch.State: Equatable {
+extension RxUIApplication.Model.BackgroundFetch.State: Equatable {
   static func ==(
-    left: Session.Model.BackgroundFetch.State,
-    right: Session.Model.BackgroundFetch.State
+    left: RxUIApplication.Model.BackgroundFetch.State,
+    right: RxUIApplication.Model.BackgroundFetch.State
   ) -> Bool {
     switch (left, right) {
     case (.idle, .idle): return
@@ -1382,20 +1382,20 @@ extension Session.Model.BackgroundFetch.State: Equatable {
   }
 }
 
-extension Session.Model.RemoteNofitication: Equatable {
+extension RxUIApplication.Model.RemoteNofitication: Equatable {
   static func == (
-    left: Session.Model.RemoteNofitication,
-    right: Session.Model.RemoteNofitication
+    left: RxUIApplication.Model.RemoteNofitication,
+    right: RxUIApplication.Model.RemoteNofitication
   ) -> Bool { return
     left.state == right.state &&
     NSDictionary(dictionary: left.notification) == NSDictionary(dictionary: right.notification)
   }
 }
 
-extension Session.Model.RemoteNofitication.State: Equatable {
+extension RxUIApplication.Model.RemoteNofitication.State: Equatable {
   static func ==(
-    left: Session.Model.RemoteNofitication.State,
-    right: Session.Model.RemoteNofitication.State
+    left: RxUIApplication.Model.RemoteNofitication.State,
+    right: RxUIApplication.Model.RemoteNofitication.State
   ) -> Bool {
     switch (left, right) {
     case (.progressing, .progressing): return
@@ -1408,10 +1408,10 @@ extension Session.Model.RemoteNofitication.State: Equatable {
   }
 }
 
-extension Session.Model.UserActivityState: Equatable {
+extension RxUIApplication.Model.UserActivityState: Equatable {
   static func ==(
-    left: Session.Model.UserActivityState,
-    right: Session.Model.UserActivityState
+    left: RxUIApplication.Model.UserActivityState,
+    right: RxUIApplication.Model.UserActivityState
   ) -> Bool {
     switch (left, right) {
     case (.idle, .idle): return
@@ -1434,10 +1434,10 @@ extension Session.Model.UserActivityState: Equatable {
   }
 }
 
-extension Session.Model.StateRestoration: Equatable {
+extension RxUIApplication.Model.StateRestoration: Equatable {
   static func == (
-    left: Session.Model.StateRestoration,
-    right: Session.Model.StateRestoration
+    left: RxUIApplication.Model.StateRestoration,
+    right: RxUIApplication.Model.StateRestoration
   ) -> Bool {
     switch (left, right) {
     case (.idle, .idle): return true
@@ -1448,30 +1448,30 @@ extension Session.Model.StateRestoration: Equatable {
   }
 }
 
-extension Session.Model.WatchKitExtensionRequest: Equatable {
+extension RxUIApplication.Model.WatchKitExtensionRequest: Equatable {
   static func ==(
-    left: Session.Model.WatchKitExtensionRequest,
-    right: Session.Model.WatchKitExtensionRequest
+    left: RxUIApplication.Model.WatchKitExtensionRequest,
+    right: RxUIApplication.Model.WatchKitExtensionRequest
   ) -> Bool { return
     left.userInfo.map { NSDictionary(dictionary: $0) } ==
     right.userInfo.map { NSDictionary(dictionary: $0) }
   }
 }
 
-extension Session.Model.WindowResponse: Equatable {
+extension RxUIApplication.Model.WindowResponse: Equatable {
   static func ==(
-    left: Session.Model.WindowResponse,
-    right: Session.Model.WindowResponse
+    left: RxUIApplication.Model.WindowResponse,
+    right: RxUIApplication.Model.WindowResponse
   ) -> Bool { return
     left.window == right.window &&
     left.orientation == left.orientation
   }
 }
 
-extension Session.Model.RemoteNotificationRegistration: Equatable {
+extension RxUIApplication.Model.RemoteNotificationRegistration: Equatable {
   static func ==(
-    left: Session.Model.RemoteNotificationRegistration,
-    right: Session.Model.RemoteNotificationRegistration
+    left: RxUIApplication.Model.RemoteNotificationRegistration,
+    right: RxUIApplication.Model.RemoteNotificationRegistration
   ) -> Bool {
     switch (left, right) {
     case (.none, .none): return true
@@ -1483,10 +1483,10 @@ extension Session.Model.RemoteNotificationRegistration: Equatable {
   }
 }
 
-extension Session.Model.ShortcutAction.State: Equatable {
+extension RxUIApplication.Model.ShortcutAction.State: Equatable {
   static func ==(
-    left: Session.Model.ShortcutAction.State,
-    right: Session.Model.ShortcutAction.State
+    left: RxUIApplication.Model.ShortcutAction.State,
+    right: RxUIApplication.Model.ShortcutAction.State
   ) -> Bool {
     switch (left, right) {
     case (.idle, .idle): return
@@ -1501,10 +1501,10 @@ extension Session.Model.ShortcutAction.State: Equatable {
   }
 }
 
-extension Session.Model.ShortcutAction: Equatable {
+extension RxUIApplication.Model.ShortcutAction: Equatable {
   static func ==(
-    left: Session.Model.ShortcutAction,
-    right: Session.Model.ShortcutAction
+    left: RxUIApplication.Model.ShortcutAction,
+    right: RxUIApplication.Model.ShortcutAction
   ) -> Bool { return
     left.item == right.item &&
     left.state == right.state
@@ -1526,10 +1526,10 @@ extension EditOperation: Equatable {
   }
 }
 
-extension Session.Model.URLActionOutgoing: Equatable {
+extension RxUIApplication.Model.URLActionOutgoing: Equatable {
   static func ==(
-    left: Session.Model.URLActionOutgoing,
-    right: Session.Model.URLActionOutgoing
+    left: RxUIApplication.Model.URLActionOutgoing,
+    right: RxUIApplication.Model.URLActionOutgoing
   ) -> Bool {
     switch (left, right) {
     case (.idle, .idle): return
@@ -1546,10 +1546,10 @@ extension Session.Model.URLActionOutgoing: Equatable {
   }
 }
 
-extension Session.Model.TartgetActionProcess: Equatable {
+extension RxUIApplication.Model.TartgetActionProcess: Equatable {
   static func ==(
-    left: Session.Model.TartgetActionProcess,
-    right: Session.Model.TartgetActionProcess
+    left: RxUIApplication.Model.TartgetActionProcess,
+    right: RxUIApplication.Model.TartgetActionProcess
   ) -> Bool {
     switch (left, right) {
     case (.idle, .idle): return true
@@ -1560,23 +1560,23 @@ extension Session.Model.TartgetActionProcess: Equatable {
   }
 }
 
-extension Session.Model.BackgroundTask: Hashable {
+extension RxUIApplication.Model.BackgroundTask: Hashable {
   var hashValue: Int { return
     name.hashValue
   }
   static func ==(
-    left: Session.Model.BackgroundTask,
-    right: Session.Model.BackgroundTask
+    left: RxUIApplication.Model.BackgroundTask,
+    right: RxUIApplication.Model.BackgroundTask
   ) -> Bool { return
     left.name == right.name &&
     left.state == right.state
   }
 }
 
-extension Session.Model.BackgroundTask.State: Equatable {
+extension RxUIApplication.Model.BackgroundTask.State: Equatable {
   static func ==(
-    left: Session.Model.BackgroundTask.State,
-    right: Session.Model.BackgroundTask.State
+    left: RxUIApplication.Model.BackgroundTask.State,
+    right: RxUIApplication.Model.BackgroundTask.State
   ) -> Bool {
     switch (left, right) {
     case (.pending, .pending): return true
@@ -1587,7 +1587,7 @@ extension Session.Model.BackgroundTask.State: Equatable {
   }
 }
 
-extension Session.Model.BackgroundFetch.Interval {
+extension RxUIApplication.Model.BackgroundFetch.Interval {
   func asUIApplicationBackgroundFetchInterval() -> TimeInterval {
     switch self {
     case .minimum:
@@ -1600,14 +1600,14 @@ extension Session.Model.BackgroundFetch.Interval {
   }
 }
 
-extension Collection where Iterator.Element == Session.Model.BackgroundTask {
-  func progressing() -> [Session.Model.BackgroundTask] { return
+extension Collection where Iterator.Element == RxUIApplication.Model.BackgroundTask {
+  func progressing() -> [RxUIApplication.Model.BackgroundTask] { return
     flatMap {
       if case .progressing = $0.state { return $0 }
       else { return nil }
     }
   }
-  func complete() -> [Session.Model.BackgroundTask] { return
+  func complete() -> [RxUIApplication.Model.BackgroundTask] { return
     flatMap {
       if case .complete = $0.state { return $0 }
       else { return nil }
@@ -1615,7 +1615,7 @@ extension Collection where Iterator.Element == Session.Model.BackgroundTask {
   }
 }
 
-extension Session.Model.BackgroundTask {
+extension RxUIApplication.Model.BackgroundTask {
   var ID: UIBackgroundTaskIdentifier? {
     if case .progressing(let id) = state { return id }
     else if case .complete(let id) = state { return id }

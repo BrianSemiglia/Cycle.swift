@@ -19,17 +19,17 @@ class ShortcutActionsExampleDelegate: CycledApplicationDelegate<ShortcutActionsE
 
 struct ShortcutActionsExample: SinkSourceConverting {
   struct Model: Initializable {
-    var session = Session.Model.empty
+    var application = RxUIApplication.Model.empty
     var async = Timer.Model.empty
   }
   struct Drivers: CycleDrivable {
     let timer = Timer(.empty)
-    var session: Session!
+    var application: RxUIApplication!
   }
   func effectsFrom(events: Observable<Model>, drivers: Drivers) -> Observable<Model> {
     
-    let session = drivers.session
-    .rendered(events.map { $0.session })
+    let application = drivers.application
+    .rendered(events.map { $0.application })
     .withLatestFrom(events) { ($0.0, $0.1) }
     .reduced()
     
@@ -38,27 +38,27 @@ struct ShortcutActionsExample: SinkSourceConverting {
     .withLatestFrom(events) { ($0.0, $0.1) }
     .reduced()
     
-    return Observable.of(session, timer).merge()
+    return Observable.of(application, timer).merge()
   }
 }
 
 extension ShortcutActionsExample.Model {
   static var empty: ShortcutActionsExample.Model { return
     ShortcutActionsExample.Model(
-      session: .empty,
+      application: .empty,
       async: .empty
     )
   }
 }
 
-extension ObservableType where E == (Session.Model, ShortcutActionsExample.Model) {
+extension ObservableType where E == (RxUIApplication.Model, ShortcutActionsExample.Model) {
   func reduced() -> Observable<ShortcutActionsExample.Model> { return
     map { event, context in
       
       var e = event
       if case .pre(.resigned) = e.state {
         e.shortcutActions = Array(0...arc4random_uniform(3)).map {
-          Session.Model.ShortcutAction(
+          RxUIApplication.Model.ShortcutAction(
             item: UIApplicationShortcutItem(
               type: "test " + String($0),
               localizedTitle: "test " + String($0)
@@ -83,7 +83,7 @@ extension ObservableType where E == (Session.Model, ShortcutActionsExample.Model
       
       var output = context
       output.async = a
-      output.session = e
+      output.application = e
       return output
     }
   }
@@ -93,7 +93,7 @@ extension ObservableType where E == (Timer.Model, ShortcutActionsExample.Model) 
   func reduced() -> Observable<ShortcutActionsExample.Model> { return
     map { event, global in
 
-      var s = global.session
+      var s = global.application
       s.shortcutActions = s.shortcutActions.map { item in
         if let _ = event.operations.filter({ $0.id == item.item.type && $0.running == false }).first {
           if case .progressing(let a) = item.state {
@@ -109,7 +109,7 @@ extension ObservableType where E == (Timer.Model, ShortcutActionsExample.Model) 
       }
       
       var output = global
-      output.session = s
+      output.application = s
       output.async = event
       return output
     }
