@@ -19,7 +19,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     var localAction: AsyncAction<ActionLocal>
     var userActivityState: UserActivityState
     var stateRestoration: StateRestoration
-    var watchKitExtensionRequest: AsyncAction<WatchKitExtensionRequest>
+    var watchKitExtensionRequest: [WatchKitExtensionRequest]
     var localNotification: UILocalNotification?
     var remoteNotifications: [RemoteNofitication]
     var notificationSettings: UIUserNotificationSettings?
@@ -145,8 +145,12 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
       }
     }
     struct WatchKitExtensionRequest {
-      var userInfo: [AnyHashable: Any]? // Readonly
-      var reply: ([AnyHashable : Any]?) -> Void // Readonly
+      let completion: ([AnyHashable : Any]?) -> Void
+      var state: State
+      enum State {
+        case progressing(info: [AnyHashable: Any]?)
+        case responding(response: [AnyHashable : Any]?)
+      }
     }
     enum BackgroundURLSessionDataAvailability {
       case none // Readonly
@@ -289,6 +293,19 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
       case .ios8(_, _, let completion), .ios9(_, _, _, let completion):
         completion()
         model.localAction = .idle
+      }
+    }
+    
+    /* 
+     Deleted requests are left unresponded to.
+     Responding requests are removed.
+     */
+    model.watchKitExtensionRequest = model.watchKitExtensionRequest.flatMap {
+      if case .responding(let reply) = $0.state {
+        $0.completion(reply)
+        return nil
+      } else {
+        return $0
       }
     }
     
@@ -768,12 +785,14 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     handleWatchKitExtensionRequest userInfo: [AnyHashable : Any]?,
     reply: @escaping ([AnyHashable : Any]?) -> Void
   ) {
-    model.watchKitExtensionRequest = .progressing(
+    model.watchKitExtensionRequest += [
       RxUIApplication.Model.WatchKitExtensionRequest(
-        userInfo: userInfo,
-        reply: reply
+        completion: reply,
+        state: .progressing(
+          info: userInfo
+        )
       )
-    )
+    ]
     output.on(.next(model))
   }
 
@@ -1146,7 +1165,7 @@ extension RxUIApplication.Model {
       localAction: .idle,
       userActivityState: .idle,
       stateRestoration: .idle,
-      watchKitExtensionRequest: .idle,
+      watchKitExtensionRequest: [], // Readonly
       localNotification: nil,
       remoteNotifications: [],
       notificationSettings: nil,
@@ -1478,9 +1497,17 @@ extension RxUIApplication.Model.WatchKitExtensionRequest: Equatable {
   static func ==(
     left: RxUIApplication.Model.WatchKitExtensionRequest,
     right: RxUIApplication.Model.WatchKitExtensionRequest
-  ) -> Bool { return
-    left.userInfo.map { NSDictionary(dictionary: $0) } ==
-    right.userInfo.map { NSDictionary(dictionary: $0) }
+  ) -> Bool {
+    switch (left.state, right.state) {
+    case (.progressing(let a), .progressing(let b)): return
+      a.map(NSDictionary.init(dictionary:)) ==
+      b.map(NSDictionary.init(dictionary:))
+    case (.responding(let a), .responding(let b)): return
+      a.map(NSDictionary.init(dictionary:)) ==
+      b.map(NSDictionary.init(dictionary:))
+    default: return
+      false
+    }
   }
 }
 
