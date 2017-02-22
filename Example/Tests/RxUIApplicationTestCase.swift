@@ -63,7 +63,7 @@ class RxUIApplicationTestCase: XCTestCase {
       .statesFromCall { $0.applicationDidBecomeActive(UIApplication.shared) }
       .map { $0.session.state }
       ==
-      [.currently(.awaitingLaunch), .currently(.active)]
+      [.currently(.awaitingLaunch), .currently(.active(.some))]
     )
   }
   
@@ -98,7 +98,7 @@ class RxUIApplicationTestCase: XCTestCase {
       }
       .map { $0.session.state }
       ==
-      [.currently(.awaitingLaunch), .pre(.launched(nil))]
+      [.currently(.awaitingLaunch), .pre(.active(.first(nil)))]
     )
   }
   
@@ -113,17 +113,17 @@ class RxUIApplicationTestCase: XCTestCase {
       }
       .map { $0.session.state }
       ==
-      [.currently(.awaitingLaunch), .currently(.launched(nil))]
+      [.currently(.awaitingLaunch), .currently(.active(.first(nil)))]
     )
   }
   
   func testWillEnterBackground() {
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
       .statesFromCall { $0.applicationWillEnterForeground(UIApplication.shared) }
       .map { $0.session.state }
-      ==
-      [.currently(.awaitingLaunch), .pre(.active)]
+      ,
+      [.currently(.awaitingLaunch), .pre(.active(.some))]
     )
   }
   
@@ -780,7 +780,7 @@ class RxUIApplicationTestCase: XCTestCase {
         switch model.session.state {
         case .pre(let a):
           switch a {
-          case .launched(_):
+          case .active(.first):
             var new = model
             new.shouldLaunch = false
             return new

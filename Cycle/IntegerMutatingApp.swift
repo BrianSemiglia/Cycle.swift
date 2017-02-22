@@ -77,7 +77,9 @@ extension ObservableType where E == (RxUIApplication.Model, IntegerMutatingApp.M
       model.shouldLaunch = true
       c.application = model
       var s = c.screen
-      s.total = event.session.state == .pre(.active) ? "55" : s.total
+      if case .pre(.active(.some)) = event.session.state {
+        s.total = "55"
+      }
       c.screen = s
       return c
     }
