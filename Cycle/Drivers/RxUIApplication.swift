@@ -22,7 +22,6 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     var watchKitExtensionRequest: [WatchKitExtensionRequest]
     var localNotification: UILocalNotification?
     var remoteNotifications: [RemoteNofitication]
-    var notificationSettings: UIUserNotificationSettings?
     var isObservingSignificantTimeChange: Bool
     var isExperiencingMemoryWarning: Bool
     var state: Change<State>
@@ -42,7 +41,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     var supportsShakeToEdit: Bool
     var presentedLocalNotification: UILocalNotification?
     var scheduledLocalNotifications: [UILocalNotification]
-    var registeredUserNotificationSettings: UIUserNotificationSettings?
+    var userNotificationSettings: UserNotificationSettingsState
     var isReceivingRemoteControlEvents: Bool
     var newsStandIconImage: UIImage?
     var shortcutActions: [ShortcutAction]
@@ -59,6 +58,11 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
       case attempting
       case some(token: Data)
       case error(Error)
+    }
+    enum UserNotificationSettingsState {
+      case idle
+      case attempting(UIUserNotificationSettings)
+      case registered(UIUserNotificationSettings)
     }
     enum URLLaunch {
       case ios4(url: URL, app: String?, annotation: Any)
@@ -429,9 +433,9 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     }
     
     if
-    let new = model.registeredUserNotificationSettings,
-    old.registeredUserNotificationSettings != new {
-      application.registerUserNotificationSettings(new)
+    case .attempting(let settings) = model.userNotificationSettings,
+    model.userNotificationSettings != old.userNotificationSettings {
+      application.registerUserNotificationSettings(settings)
     }
     
     if old.isReceivingRemoteControlEvents != model.isReceivingRemoteControlEvents {
@@ -626,7 +630,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     _ application: UIApplication,
     didRegister notificationSettings: UIUserNotificationSettings
   ) {
-    model.registeredUserNotificationSettings = notificationSettings
+    model.userNotificationSettings = .registered(notificationSettings)
     output.on(.next(model))
   }
 
@@ -1029,7 +1033,6 @@ extension RxUIApplication.Model: Equatable {
     left.watchKitExtensionRequest == right.watchKitExtensionRequest &&
     left.localNotification == right.localNotification &&
     left.remoteNotifications == right.remoteNotifications &&
-    left.notificationSettings == right.notificationSettings &&
     left.isObservingSignificantTimeChange == right.isObservingSignificantTimeChange &&
     left.isExperiencingMemoryWarning == right.isExperiencingMemoryWarning &&
     left.state == right.state &&
@@ -1049,7 +1052,7 @@ extension RxUIApplication.Model: Equatable {
     left.supportsShakeToEdit == right.supportsShakeToEdit &&
     left.presentedLocalNotification == right.presentedLocalNotification &&
     left.scheduledLocalNotifications == right.scheduledLocalNotifications &&
-    left.registeredUserNotificationSettings == right.registeredUserNotificationSettings &&
+    left.userNotificationSettings == right.userNotificationSettings &&
     left.isReceivingRemoteControlEvents == right.isReceivingRemoteControlEvents &&
     left.newsStandIconImage == right.newsStandIconImage &&
     left.shortcutActions == right.shortcutActions &&
@@ -1168,7 +1171,6 @@ extension RxUIApplication.Model {
       watchKitExtensionRequest: [], // Readonly
       localNotification: nil,
       remoteNotifications: [],
-      notificationSettings: nil,
       isObservingSignificantTimeChange: false,
       isExperiencingMemoryWarning: false,
       state: .currently(.awaitingLaunch),
@@ -1188,7 +1190,7 @@ extension RxUIApplication.Model {
       supportsShakeToEdit: true,
       presentedLocalNotification: nil,
       scheduledLocalNotifications: [],
-      registeredUserNotificationSettings: nil,
+      userNotificationSettings: .idle,
       isReceivingRemoteControlEvents: false,
       newsStandIconImage: nil,
       shortcutActions: [],
@@ -1635,6 +1637,20 @@ extension RxUIApplication.Model.BackgroundTask.State: Equatable {
     case (.pending, .pending): return true
     case (.progressing(let a), .progressing(let b)): return a == b
     case (.complete, .complete): return true
+    default: return false
+    }
+  }
+}
+
+extension RxUIApplication.Model.UserNotificationSettingsState: Equatable {
+  static func ==(
+    left: RxUIApplication.Model.UserNotificationSettingsState,
+    right: RxUIApplication.Model.UserNotificationSettingsState
+  ) -> Bool {
+    switch (left, right) {
+    case (.idle, .idle): return true
+    case (.attempting(let a), .attempting(let b)): return a == b
+    case (.registered(let a), .registered(let b)): return a == b
     default: return false
     }
   }
