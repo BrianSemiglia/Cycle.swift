@@ -19,7 +19,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     var localAction: AsyncAction<ActionLocal>
     var userActivityState: UserActivityState
     var stateRestoration: StateRestoration
-    var watchKitExtensionRequest: [WatchKitExtensionRequest]
+    var watchKitExtensionRequests: [watchKitExtensionRequests]
     var localNotification: UILocalNotification?
     var remoteNotifications: [RemoteNofitication]
     var isObservingSignificantTimeChange: Bool
@@ -148,7 +148,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
         case complete(UIBackgroundFetchResult, (UIBackgroundFetchResult) -> Void)
       }
     }
-    struct WatchKitExtensionRequest {
+    struct watchKitExtensionRequests {
       let completion: ([AnyHashable : Any]?) -> Void
       var state: State
       enum State {
@@ -312,7 +312,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
      Deleted requests are left unresponded to.
      Responding requests are removed.
      */
-    model.watchKitExtensionRequest = model.watchKitExtensionRequest.flatMap {
+    model.watchKitExtensionRequests = model.watchKitExtensionRequests.flatMap {
       if case .responding(let reply) = $0.state {
         $0.completion(reply)
         return nil
@@ -802,11 +802,11 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
 
   func application(
     _ application: UIApplication,
-    handleWatchKitExtensionRequest userInfo: [AnyHashable : Any]?,
+    handlewatchKitExtensionRequests userInfo: [AnyHashable : Any]?,
     reply: @escaping ([AnyHashable : Any]?) -> Void
   ) {
-    model.watchKitExtensionRequest += [
-      RxUIApplication.Model.WatchKitExtensionRequest(
+    model.watchKitExtensionRequests += [
+      RxUIApplication.Model.watchKitExtensionRequests(
         completion: reply,
         state: .progressing(
           info: userInfo
@@ -1046,7 +1046,7 @@ extension RxUIApplication.Model: Equatable {
     left.localAction == right.localAction &&
     left.userActivityState == right.userActivityState &&
     left.stateRestoration == right.stateRestoration &&
-    left.watchKitExtensionRequest == right.watchKitExtensionRequest &&
+    left.watchKitExtensionRequests == right.watchKitExtensionRequests &&
     left.localNotification == right.localNotification &&
     left.remoteNotifications == right.remoteNotifications &&
     left.isObservingSignificantTimeChange == right.isObservingSignificantTimeChange &&
@@ -1184,7 +1184,7 @@ extension RxUIApplication.Model {
       localAction: .idle,
       userActivityState: .idle,
       stateRestoration: .idle,
-      watchKitExtensionRequest: [], // Readonly
+      watchKitExtensionRequests: [], // Readonly
       localNotification: nil,
       remoteNotifications: [],
       isObservingSignificantTimeChange: false,
@@ -1541,10 +1541,10 @@ extension RxUIApplication.Model.StateRestoration: Equatable {
   }
 }
 
-extension RxUIApplication.Model.WatchKitExtensionRequest: Equatable {
+extension RxUIApplication.Model.watchKitExtensionRequests: Equatable {
   static func ==(
-    left: RxUIApplication.Model.WatchKitExtensionRequest,
-    right: RxUIApplication.Model.WatchKitExtensionRequest
+    left: RxUIApplication.Model.watchKitExtensionRequests,
+    right: RxUIApplication.Model.watchKitExtensionRequests
   ) -> Bool {
     switch (left.state, right.state) {
     case (.progressing(let a), .progressing(let b)): return
