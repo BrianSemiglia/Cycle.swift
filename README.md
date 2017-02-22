@@ -28,36 +28,39 @@ A sample project of the infamous 'Counter' app is included.
   struct MyFilter: SinkSourceConverting {
 
     struct AppModel {
-      var network: Network.Model
-      var screen:  Screen.Model
-      var session: Session.Model
+      var network = Network.Model()
+      var screen = Screen.Model()
+      var session = Session.Model()
+    }
+    
+    struct Drivers: CycleDrivable {
+      var network = Network()
+      var screen = Screen()
+      var application = RxUIApplication! // Provided by Cycle internally. Struct must be able to host.
     }
 
-    func effectFrom(event: Observable<AppModel>) -> Observable<AppModel> {
+    func effectFrom(events: Observable<AppModel>, drivers: Drivers) -> Observable<AppModel> {
 
-      let network = Network.shared
-        .rendered(event.map { $0.network })
-        .withLatestFrom(event) { ($0.0, $0.1) }
+      let network = drivers.network
+        .rendered(events.map { $0.network })
+        .withLatestFrom(events) { ($0.0, $0.1) }
         .reducingFuctionOfYourChoice()
 
-      let screen = Screen.shared
-        .rendered(event.map { $0.screen })
-        .withLatestFrom(event) { ($0.0, $0.1) }
+      let screen = drivers.screen
+        .rendered(events.map { $0.screen })
+        .withLatestFrom(events) { ($0.0, $0.1) }
         .reduced()
 
-      let session = Session.shared
-        .rendered(event.map { $0.session })
-        .withLatestFrom(event) { ($0.0, $0.1) }
+      let application = drivers.application.shared
+        .rendered(events.map { $0.session })
+        .withLatestFrom(events) { ($0.0, $0.1) }
         .reduced()
 
       return Observable
-        .of(network, screen, session)
+        .of(network, screen, application)
         .merge()
     }
 
-    func start() -> AppModel { return
-        AppModel.empty
-    }
   }
   ```
 2. Define reducers.
