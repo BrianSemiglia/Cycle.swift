@@ -475,8 +475,8 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     .edits
     .forEach {
       if case .insertion = $0.operation,
-         case .complete(let x) = $0.value.state {
-        return x.1(x.0)
+         case .complete(let result, let completion) = $0.value.state {
+        completion(result)
       }
     }
 
