@@ -1,5 +1,5 @@
 //
-//  RxUIApplication.swift
+//  RxUIApplicationTestCase.swift
 //  Cycle
 //
 //  Created by Brian Semiglia on 1/27/17.

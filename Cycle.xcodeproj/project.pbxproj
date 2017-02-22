@@ -16,7 +16,7 @@
 		D349A9D81E37CFA5005F521E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D349A9D71E37CFA5005F521E /* Assets.xcassets */; };
 		D349A9DA1E37D079005F521E /* ValueToggler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D349A9D91E37D079005F521E /* ValueToggler.swift */; };
 		D349A9DE1E3B0A59005F521E /* RxUIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = D349A9DD1E3B0A59005F521E /* RxUIApplication.swift */; };
-		D36E49211E3BF0B500CD0590 /* SessionTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36E49201E3BF0B500CD0590 /* SessionTestCase.swift */; };
+		D36E49211E3BF0B500CD0590 /* RxUIApplicationTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36E49201E3BF0B500CD0590 /* RxUIApplicationTestCase.swift */; };
 		D36E49221E3BF32800CD0590 /* RxUIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = D349A9DD1E3B0A59005F521E /* RxUIApplication.swift */; };
 		D3AE02191E53AA69003CEE01 /* PushNotificationRegistration.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3AE02181E53AA69003CEE01 /* PushNotificationRegistration.swift */; };
 		D3AEBA561E4D0A6000F98346 /* Timer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3AEBA551E4D0A6000F98346 /* Timer.swift */; };
@@ -50,7 +50,7 @@
 		D349A9D71E37CFA5005F521E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D349A9D91E37D079005F521E /* ValueToggler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ValueToggler.swift; sourceTree = "<group>"; };
 		D349A9DD1E3B0A59005F521E /* RxUIApplication.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RxUIApplication.swift; sourceTree = "<group>"; };
-		D36E49201E3BF0B500CD0590 /* SessionTestCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionTestCase.swift; sourceTree = "<group>"; };
+		D36E49201E3BF0B500CD0590 /* RxUIApplicationTestCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RxUIApplicationTestCase.swift; sourceTree = "<group>"; };
 		D3AE02181E53AA69003CEE01 /* PushNotificationRegistration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushNotificationRegistration.swift; sourceTree = "<group>"; };
 		D3AE021A1E53ADF7003CEE01 /* Cycle.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Cycle.entitlements; sourceTree = "<group>"; };
 		D3AEBA551E4D0A6000F98346 /* Timer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Timer.swift; sourceTree = "<group>"; };
@@ -135,7 +135,7 @@
 		D349A9C61E37CE24005F521E /* CycleTests */ = {
 			isa = PBXGroup;
 			children = (
-				D36E49201E3BF0B500CD0590 /* SessionTestCase.swift */,
+				D36E49201E3BF0B500CD0590 /* RxUIApplicationTestCase.swift */,
 				D349A9C91E37CE25005F521E /* Info.plist */,
 			);
 			path = CycleTests;
@@ -422,7 +422,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D36E49221E3BF32800CD0590 /* RxUIApplication.swift in Sources */,
-				D36E49211E3BF0B500CD0590 /* SessionTestCase.swift in Sources */,
+				D36E49211E3BF0B500CD0590 /* RxUIApplicationTestCase.swift in Sources */,
 				D30354D71E425F6300E0A43C /* Cycle.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
