@@ -46,7 +46,7 @@ extension ObservableType where E == (RxUIApplication.Model, URLActionOutgoing.Mo
       
       var e = event
       if
-      case .currently(.launched) = context.application.session.state,
+      case .currently(.active(.first)) = context.application.session.state,
       case .currently(.active) = event.session.state {
         e.urlActionOutgoing = .attempting(URL(string: "https://www.duckduckgo.com")!)
       }
