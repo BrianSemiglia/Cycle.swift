@@ -39,7 +39,7 @@ A sample project of the infamous 'Counter' app is included.
     struct Drivers: CycleDrivable {
       var network = Network()
       var screen = Screen()
-      var application = RxUIApplication! // Provided by Cycle internally. Struct must be able to host.
+      var application = RxUIApplication! // Set internally by Cycle. Struct must be able to host.
     }
 
     func effectFrom(events: Observable<AppModel>, drivers: Drivers) -> Observable<AppModel> {
@@ -54,7 +54,7 @@ A sample project of the infamous 'Counter' app is included.
         .withLatestFrom(events) { ($0.0, $0.1) }
         .reduced()
 
-      let application = drivers.application.shared
+      let application = drivers.application
         .rendered(events.map { $0.application })
         .withLatestFrom(events) { ($0.0, $0.1) }
         .reduced()
