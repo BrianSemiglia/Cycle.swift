@@ -33,7 +33,7 @@ A sample project of the infamous 'Counter' app is included.
     struct AppModel: Initializable {
       var network = Network.Model()
       var screen = Screen.Model()
-      var session = Session.Model()
+      var application = RxUIApplication.Model()
     }
     
     struct Drivers: CycleDrivable {
@@ -55,7 +55,7 @@ A sample project of the infamous 'Counter' app is included.
         .reduced()
 
       let application = drivers.application.shared
-        .rendered(events.map { $0.session })
+        .rendered(events.map { $0.application })
         .withLatestFrom(events) { ($0.0, $0.1) }
         .reduced()
 
@@ -101,11 +101,11 @@ A sample project of the infamous 'Counter' app is included.
     }
   }
 
-  extension ObservableType where E == (Session.Model, AppModel) {
+  extension ObservableType where E == (RxUIApplication.Model, AppModel) {
     func reduced() -> Observable<AppModel> { return
       map { event, context in
         var new = context
-        switch event.state {
+        switch event.session.state {
           case .launching:
             new.screen = Screen.Model.downloadView
           default: 
