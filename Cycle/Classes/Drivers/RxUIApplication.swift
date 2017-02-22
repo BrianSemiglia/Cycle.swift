@@ -24,7 +24,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     var remoteNotifications: [RemoteNofitication]
     var isObservingSignificantTimeChange: Bool
     var isExperiencingMemoryWarning: Bool
-    var state: Change<State>
+    var session: Session
     var statusBarFrame: Change<CGRect>
     var isProtectedDataAvailable: Change<Bool>
     var remoteNotificationRegistration: RemoteNotificationRegistration
@@ -175,12 +175,16 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
       case encoding(NSCoder)
       case decoding(NSCoder)
     }
-    enum State { // Readonly
-      case awaitingLaunch
-      case launched([UIApplicationLaunchOptionsKey: Any]?)
-      case active
-      case resigned
-      case terminated
+    struct Session {
+      var shouldLaunch: Bool
+      var state: Change<State>
+      enum State { // Readonly
+        case awaitingLaunch
+        case launched([UIApplicationLaunchOptionsKey: Any]?)
+        case active
+        case resigned
+        case terminated
+      }
     }
     
     // IDEA: prevent transitioning between certain enum states with pattern matched conversion methods and private intializer
@@ -517,29 +521,29 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
 
   func application(
     _ application: UIApplication,
-    willFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil
+    willFinishLaunchingWithOptions options: [UIApplicationLaunchOptionsKey : Any]? = nil
   ) -> Bool {
-    model.state = .pre(.launched(launchOptions))
+    model.session.state = .pre(.launched(options))
     output.on(.next(model))
-    return model.shouldLaunch == true
+    return model.shouldLaunch
   }
 
   func application(
     _ application: UIApplication,
-    didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil
+    didFinishLaunchingWithOptions options: [UIApplicationLaunchOptionsKey : Any]? = nil
   ) -> Bool {
-    model.state = .currently(.launched(launchOptions))
+    model.session.state = .currently(.launched(options))
     output.on(.next(model))
-    return model.shouldLaunch == true
+    return model.shouldLaunch
   }
 
   func applicationDidBecomeActive(_ application: UIApplication) {
-    model.state = .currently(.active)
+    model.session.state = .currently(.active)
     output.on(.next(model))
   }
 
   func applicationWillResignActive(_ application: UIApplication) {
-    model.state = .pre(.resigned)
+    model.session.state = .pre(.resigned)
     output.on(.next(model))
   }
 
@@ -584,7 +588,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
   }
 
   func applicationWillTerminate(_ application: UIApplication) {
-    model.state = .pre(.terminated)
+    model.session.state = .pre(.terminated)
     output.on(.next(model))
   }
 
@@ -806,12 +810,12 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
   }
 
   func applicationDidEnterBackground(_ application: UIApplication) {
-    model.state = .currently(.resigned)
+    model.session.state = .currently(.resigned)
     output.on(.next(model))
   }
 
   func applicationWillEnterForeground(_ application: UIApplication) {
-    model.state = .pre(.active)
+    model.session.state = .pre(.active)
     output.on(.next(model))
   }
 
@@ -1035,7 +1039,7 @@ extension RxUIApplication.Model: Equatable {
     left.remoteNotifications == right.remoteNotifications &&
     left.isObservingSignificantTimeChange == right.isObservingSignificantTimeChange &&
     left.isExperiencingMemoryWarning == right.isExperiencingMemoryWarning &&
-    left.state == right.state &&
+    left.session == right.session &&
     left.statusBarFrame == right.statusBarFrame &&
     left.isProtectedDataAvailable == right.isProtectedDataAvailable &&
     left.remoteNotificationRegistration == right.remoteNotificationRegistration &&
@@ -1173,7 +1177,10 @@ extension RxUIApplication.Model {
       remoteNotifications: [],
       isObservingSignificantTimeChange: false,
       isExperiencingMemoryWarning: false,
-      state: .currently(.awaitingLaunch),
+      session: RxUIApplication.Model.Session(
+        shouldLaunch: true,
+        state: .currently(.awaitingLaunch)
+      ),
       statusBarFrame: .currently(.zero),
       isProtectedDataAvailable: .currently(false),
       remoteNotificationRegistration: .idle,
@@ -1205,8 +1212,21 @@ extension RxUIApplication.Model {
   }
 }
 
-extension RxUIApplication.Model.State: Equatable {
-  static func ==(left: RxUIApplication.Model.State, right: RxUIApplication.Model.State) -> Bool {
+extension RxUIApplication.Model.Session: Equatable {
+  static func ==(
+    left: RxUIApplication.Model.Session,
+    right: RxUIApplication.Model.Session
+  ) -> Bool { return
+    left.shouldLaunch == right.shouldLaunch &&
+    left.state == right.state
+  }
+}
+
+extension RxUIApplication.Model.Session.State: Equatable {
+  static func ==(
+    left: RxUIApplication.Model.Session.State,
+    right: RxUIApplication.Model.Session.State
+  ) -> Bool {
     switch (left, right) {
     case (.awaitingLaunch, .awaitingLaunch): return
       true

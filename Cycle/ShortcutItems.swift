@@ -56,7 +56,7 @@ extension ObservableType where E == (RxUIApplication.Model, ShortcutActionsExamp
     map { event, context in
       
       var e = event
-      if case .pre(.resigned) = e.state {
+      if case .pre(.resigned) = e.session.state {
         e.shortcutActions = Array(0...arc4random_uniform(3)).map {
           RxUIApplication.Model.ShortcutAction(
             item: UIApplicationShortcutItem(
