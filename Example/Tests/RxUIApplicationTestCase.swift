@@ -1309,7 +1309,7 @@ class RxUIApplicationTestCase: XCTestCase {
           performFetchWithCompletionHandler: { _ in }
         )
       })
-      .map { $0.fetch }
+      .map { $0.backgroundFetch }
       ,
       [
         RxUIApplication.Model.BackgroundFetch(
@@ -1326,13 +1326,13 @@ class RxUIApplicationTestCase: XCTestCase {
   
   func testRenderingBackgroundFetchComplete() {
     var x = RxUIApplication.Model.empty
-    x.fetch = RxUIApplication.Model.BackgroundFetch(
+    x.backgroundFetch = RxUIApplication.Model.BackgroundFetch(
       minimumInterval: .never,
       state: .complete(.noData, { _ in})
     )
     XCTAssertEqual(
       RxUIApplicationTestCase.statesFrom(stream: .just(x))
-      .map { $0.fetch }
+      .map { $0.backgroundFetch }
       ,
       [
         RxUIApplication.Model.BackgroundFetch(
