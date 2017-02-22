@@ -9,15 +9,14 @@
 /* Begin PBXBuildFile section */
 		4D554EA47F01A51A5D8E59DE /* Pods_CycleTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E1698EFB7DD5E9EBB517E954 /* Pods_CycleTests.framework */; };
 		D30354D71E425F6300E0A43C /* Cycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D349A9D51E37CE9F005F521E /* Cycle.swift */; };
+		D30604981E5E11EA007BE6F0 /* RxUIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = D30604971E5E11EA007BE6F0 /* RxUIApplication.swift */; };
 		D3131FE91E521D2D00E63101 /* URLActionOutgoing.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3131FE81E521D2D00E63101 /* URLActionOutgoing.swift */; };
 		D349A9BD1E37CE24005F521E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D349A9BB1E37CE24005F521E /* LaunchScreen.storyboard */; };
 		D349A9D41E37CE7A005F521E /* IntegerMutatingApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D349A9D31E37CE7A005F521E /* IntegerMutatingApp.swift */; };
 		D349A9D61E37CE9F005F521E /* Cycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D349A9D51E37CE9F005F521E /* Cycle.swift */; };
 		D349A9D81E37CFA5005F521E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D349A9D71E37CFA5005F521E /* Assets.xcassets */; };
 		D349A9DA1E37D079005F521E /* ValueToggler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D349A9D91E37D079005F521E /* ValueToggler.swift */; };
-		D349A9DE1E3B0A59005F521E /* RxUIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = D349A9DD1E3B0A59005F521E /* RxUIApplication.swift */; };
 		D36E49211E3BF0B500CD0590 /* RxUIApplicationTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36E49201E3BF0B500CD0590 /* RxUIApplicationTestCase.swift */; };
-		D36E49221E3BF32800CD0590 /* RxUIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = D349A9DD1E3B0A59005F521E /* RxUIApplication.swift */; };
 		D3AE02191E53AA69003CEE01 /* PushNotificationRegistration.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3AE02181E53AA69003CEE01 /* PushNotificationRegistration.swift */; };
 		D3AEBA561E4D0A6000F98346 /* Timer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3AEBA551E4D0A6000F98346 /* Timer.swift */; };
 		D3E273771E4C363A00B90946 /* ShortcutItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3E273761E4C363A00B90946 /* ShortcutItems.swift */; };
@@ -39,6 +38,7 @@
 		BA7384111A59B2C4111A97CA /* Pods-Cycle.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Cycle.release.xcconfig"; path = "Pods/Target Support Files/Pods-Cycle/Pods-Cycle.release.xcconfig"; sourceTree = "<group>"; };
 		BA991E8A4E0A374CFC26F41F /* Pods_Cycle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Cycle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDA09798D995F91F56702078 /* Pods-Cycle.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Cycle.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Cycle/Pods-Cycle.debug.xcconfig"; sourceTree = "<group>"; };
+		D30604971E5E11EA007BE6F0 /* RxUIApplication.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RxUIApplication.swift; sourceTree = "<group>"; };
 		D3131FE81E521D2D00E63101 /* URLActionOutgoing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = URLActionOutgoing.swift; sourceTree = "<group>"; };
 		D349A9AF1E37CE24005F521E /* Cycle.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cycle.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D349A9BC1E37CE24005F521E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -49,7 +49,6 @@
 		D349A9D51E37CE9F005F521E /* Cycle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cycle.swift; sourceTree = "<group>"; };
 		D349A9D71E37CFA5005F521E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D349A9D91E37D079005F521E /* ValueToggler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ValueToggler.swift; sourceTree = "<group>"; };
-		D349A9DD1E3B0A59005F521E /* RxUIApplication.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RxUIApplication.swift; sourceTree = "<group>"; };
 		D36E49201E3BF0B500CD0590 /* RxUIApplicationTestCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RxUIApplicationTestCase.swift; sourceTree = "<group>"; };
 		D3AE02181E53AA69003CEE01 /* PushNotificationRegistration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushNotificationRegistration.swift; sourceTree = "<group>"; };
 		D3AE021A1E53ADF7003CEE01 /* Cycle.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Cycle.entitlements; sourceTree = "<group>"; };
@@ -99,16 +98,23 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		D30604961E5E11EA007BE6F0 /* Drivers */ = {
+			isa = PBXGroup;
+			children = (
+				D30604971E5E11EA007BE6F0 /* RxUIApplication.swift */,
+			);
+			path = Drivers;
+			sourceTree = "<group>";
+		};
 		D349A9A61E37CE24005F521E = {
 			isa = PBXGroup;
 			children = (
 				D349A9B11E37CE24005F521E /* Cycle */,
-				D349A9DC1E3B0A25005F521E /* Drivers */,
-				D349A9D21E37CE50005F521E /* Example */,
 				D349A9C61E37CE24005F521E /* CycleTests */,
-				D349A9B01E37CE24005F521E /* Products */,
-				95ED425DDEDC204B0C6B23A5 /* Pods */,
+				D349A9D21E37CE50005F521E /* Example */,
 				C5B7F83E65027B941B710DB0 /* Frameworks */,
+				95ED425DDEDC204B0C6B23A5 /* Pods */,
+				D349A9B01E37CE24005F521E /* Products */,
 			);
 			sourceTree = "<group>";
 		};
@@ -124,10 +130,12 @@
 		D349A9B11E37CE24005F521E /* Cycle */ = {
 			isa = PBXGroup;
 			children = (
+				D30604961E5E11EA007BE6F0 /* Drivers */,
+				D349A9D71E37CFA5005F521E /* Assets.xcassets */,
 				D3AE021A1E53ADF7003CEE01 /* Cycle.entitlements */,
 				D349A9D51E37CE9F005F521E /* Cycle.swift */,
-				D349A9BB1E37CE24005F521E /* LaunchScreen.storyboard */,
 				D349A9BE1E37CE24005F521E /* Info.plist */,
+				D349A9BB1E37CE24005F521E /* LaunchScreen.storyboard */,
 			);
 			path = Cycle;
 			sourceTree = "<group>";
@@ -135,8 +143,8 @@
 		D349A9C61E37CE24005F521E /* CycleTests */ = {
 			isa = PBXGroup;
 			children = (
-				D36E49201E3BF0B500CD0590 /* RxUIApplicationTestCase.swift */,
 				D349A9C91E37CE25005F521E /* Info.plist */,
+				D36E49201E3BF0B500CD0590 /* RxUIApplicationTestCase.swift */,
 			);
 			path = CycleTests;
 			sourceTree = "<group>";
@@ -144,24 +152,13 @@
 		D349A9D21E37CE50005F521E /* Example */ = {
 			isa = PBXGroup;
 			children = (
-				D349A9D71E37CFA5005F521E /* Assets.xcassets */,
-				D3AE02171E53AA54003CEE01 /* PushNotificationRegistration */,
-				D3CE9E9C1E5385B700A60EEC /* URLActionOutgoing */,
-				D3E273751E4C35F000B90946 /* ShortcutItems */,
 				D3E273741E4C35E700B90946 /* IntegerMutatingApp */,
+				D3AE02171E53AA54003CEE01 /* PushNotificationRegistration */,
+				D3E273751E4C35F000B90946 /* ShortcutItems */,
+				D3CE9E9C1E5385B700A60EEC /* URLActionOutgoing */,
 			);
 			name = Example;
-			path = Cycle;
-			sourceTree = "<group>";
-		};
-		D349A9DC1E3B0A25005F521E /* Drivers */ = {
-			isa = PBXGroup;
-			children = (
-				D349A9DD1E3B0A59005F521E /* RxUIApplication.swift */,
-				D3AEBA551E4D0A6000F98346 /* Timer.swift */,
-			);
-			name = Drivers;
-			path = Cycle;
+			path = Example;
 			sourceTree = "<group>";
 		};
 		D3AE02171E53AA54003CEE01 /* PushNotificationRegistration */ = {
@@ -170,6 +167,7 @@
 				D3AE02181E53AA69003CEE01 /* PushNotificationRegistration.swift */,
 			);
 			name = PushNotificationRegistration;
+			path = PushNotificationRegistration;
 			sourceTree = "<group>";
 		};
 		D3CE9E9C1E5385B700A60EEC /* URLActionOutgoing */ = {
@@ -178,6 +176,7 @@
 				D3131FE81E521D2D00E63101 /* URLActionOutgoing.swift */,
 			);
 			name = URLActionOutgoing;
+			path = URLActionOutgoing;
 			sourceTree = "<group>";
 		};
 		D3E273741E4C35E700B90946 /* IntegerMutatingApp */ = {
@@ -187,14 +186,17 @@
 				D349A9D91E37D079005F521E /* ValueToggler.swift */,
 			);
 			name = IntegerMutatingApp;
+			path = IntegerMutatingApp;
 			sourceTree = "<group>";
 		};
 		D3E273751E4C35F000B90946 /* ShortcutItems */ = {
 			isa = PBXGroup;
 			children = (
 				D3E273761E4C363A00B90946 /* ShortcutItems.swift */,
+				D3AEBA551E4D0A6000F98346 /* Timer.swift */,
 			);
 			name = ShortcutItems;
+			path = ShortcutItems;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -406,11 +408,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D349A9DE1E3B0A59005F521E /* RxUIApplication.swift in Sources */,
 				D3E273771E4C363A00B90946 /* ShortcutItems.swift in Sources */,
 				D349A9D61E37CE9F005F521E /* Cycle.swift in Sources */,
 				D3AE02191E53AA69003CEE01 /* PushNotificationRegistration.swift in Sources */,
 				D3AEBA561E4D0A6000F98346 /* Timer.swift in Sources */,
+				D30604981E5E11EA007BE6F0 /* RxUIApplication.swift in Sources */,
 				D349A9D41E37CE7A005F521E /* IntegerMutatingApp.swift in Sources */,
 				D3131FE91E521D2D00E63101 /* URLActionOutgoing.swift in Sources */,
 				D349A9DA1E37D079005F521E /* ValueToggler.swift in Sources */,
@@ -421,7 +423,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D36E49221E3BF32800CD0590 /* RxUIApplication.swift in Sources */,
 				D36E49211E3BF0B500CD0590 /* RxUIApplicationTestCase.swift in Sources */,
 				D30354D71E425F6300E0A43C /* Cycle.swift in Sources */,
 			);
@@ -444,6 +445,7 @@
 				D349A9BC1E37CE24005F521E /* Base */,
 			);
 			name = LaunchScreen.storyboard;
+			path = .;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
