@@ -14,7 +14,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
   
   struct Model {
     var backgroundURLSessions: Set<BackgroundURLSessionAction>
-    var fetch: BackgroundFetch
+    var backgroundFetch: BackgroundFetch
     var remoteAction: AsyncAction<ActionRemote>
     var localAction: AsyncAction<ActionLocal>
     var userActivityState: UserActivityState
@@ -384,14 +384,14 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     }
     
     application.setMinimumBackgroundFetchInterval(
-      model.fetch.minimumInterval.asUIApplicationBackgroundFetchInterval()
+      model.backgroundFetch.minimumInterval.asUIApplicationBackgroundFetchInterval()
     )
     
     if
-    case .complete(let result, let handler) = model.fetch.state,
-    model.fetch != old.fetch {
+    case .complete(let result, let handler) = model.backgroundFetch.state,
+    model.backgroundFetch != old.backgroundFetch {
       handler(result)
-      model.fetch.state = .idle
+      model.backgroundFetch.state = .idle
     }
     
     if model.remoteNotificationRegistration != old.remoteNotificationRegistration {
@@ -760,7 +760,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     _ application: UIApplication,
     performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult
   ) -> Void) {
-    model.fetch.state = .progressing(completionHandler)
+    model.backgroundFetch.state = .progressing(completionHandler)
     output.on(.next(model))
   }
 
@@ -1041,7 +1041,7 @@ extension RxUIApplication {
 extension RxUIApplication.Model: Equatable {
   static func == (left: RxUIApplication.Model, right: RxUIApplication.Model) -> Bool { return
     left.backgroundURLSessions == right.backgroundURLSessions &&
-    left.fetch == right.fetch &&
+    left.backgroundFetch == right.backgroundFetch &&
     left.remoteAction == right.remoteAction &&
     left.localAction == right.localAction &&
     left.userActivityState == right.userActivityState &&
@@ -1176,7 +1176,7 @@ extension RxUIApplication.Model {
   static var empty: RxUIApplication.Model { return
     RxUIApplication.Model(
       backgroundURLSessions: [],
-      fetch: RxUIApplication.Model.BackgroundFetch(
+      backgroundFetch: RxUIApplication.Model.BackgroundFetch(
         minimumInterval: .never,
         state: .idle
       ),
