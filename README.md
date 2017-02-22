@@ -125,5 +125,5 @@ A sample project of the infamous 'Counter' app is included.
 ##Goals
 - [x] Push boilerplate code into framework.
 - [x] Refactor reducers to receive/output streams to allow for use of rx features.
-- [x] Reconsider use of singletons.
+- [x] Reconsider use of singleton drivers.
 - [x] Create drivers that provide app-state, push-notification, etc. events that the usual app-delegate would. 
