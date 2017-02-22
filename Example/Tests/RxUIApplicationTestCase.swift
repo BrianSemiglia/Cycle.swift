@@ -187,11 +187,11 @@ class RxUIApplicationTestCase: XCTestCase {
           didRegister: UIUserNotificationSettingsStub(id: "x")
         )
       }
-      .map { $0.registeredUserNotificationSettings }
+      .map { $0.userNotificationSettings }
       ==
       [
-        .none,
-        .some(UIUserNotificationSettingsStub(id: "x") as UIUserNotificationSettings)
+        .idle,
+        .registered(UIUserNotificationSettingsStub(id: "x") as UIUserNotificationSettings)
       ]
     )
   }
