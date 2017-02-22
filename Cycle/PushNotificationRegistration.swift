@@ -44,7 +44,7 @@ extension ObservableType where E == (application: RxUIApplication.Model, push: P
   func reduced() -> Observable<PushNotificationRegistration.Model> { return
     map { event, context in
       var edit = event
-      switch (event.state, context.application.state) {
+      switch (event.session.state, context.application.session.state) {
       case (.currently(.active), .currently(.launched)): // did change
         if case .idle = event.remoteNotificationRegistration {
           edit.remoteNotificationRegistration = .attempting
