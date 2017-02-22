@@ -606,7 +606,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     _ application: UIApplication,
     didChangeStatusBarOrientation oldStatusBarOrientation: UIInterfaceOrientation
   ) {
-    model.statusBarOrientation = .currently(oldStatusBarOrientation)
+    model.statusBarOrientation = .currently(UIApplication.shared.statusBarOrientation)
     output.on(.next(model))
   }
 
