@@ -29,37 +29,41 @@ A sample project of the infamous 'Counter' app is included.
 
   struct MyFilter: SinkSourceConverting {
 
-    struct AppModel {
-      var network: Network.Model
-      var screen:  Screen.Model
-      var session: Session.Model
+    // Serves as schema and initial state.
+    struct AppModel: Initializable {
+      var network = Network.Model()
+      var screen = Screen.Model()
+      var application = RxUIApplication.Model()
+    }
+    
+    struct Drivers: CycleDrivable {
+      var network = Network()
+      var screen = Screen()
+      var application = RxUIApplication! // Set internally by Cycle. Struct must be able to host.
     }
 
-    func effectFrom(event: Observable<AppModel>) -> Observable<AppModel> {
+    func effectFrom(events: Observable<AppModel>, drivers: Drivers) -> Observable<AppModel> {
 
-      let network = Network.shared
-        .rendered(event.map { $0.network })
-        .withLatestFrom(event) { ($0.0, $0.1) }
+      let network = drivers.network
+        .rendered(events.map { $0.network })
+        .withLatestFrom(events) { ($0.0, $0.1) }
         .reducingFuctionOfYourChoice()
 
-      let screen = Screen.shared
-        .rendered(event.map { $0.screen })
-        .withLatestFrom(event) { ($0.0, $0.1) }
+      let screen = drivers.screen
+        .rendered(events.map { $0.screen })
+        .withLatestFrom(events) { ($0.0, $0.1) }
         .reduced()
 
-      let session = Session.shared
-        .rendered(event.map { $0.session })
-        .withLatestFrom(event) { ($0.0, $0.1) }
+      let application = drivers.application
+        .rendered(events.map { $0.application })
+        .withLatestFrom(events) { ($0.0, $0.1) }
         .reduced()
 
       return Observable
-        .of(network, screen, session)
+        .of(network, screen, application)
         .merge()
     }
 
-    func start() -> AppModel { return
-        AppModel.empty
-    }
   }
   ```
 2. Define reducers.
@@ -97,11 +101,11 @@ A sample project of the infamous 'Counter' app is included.
     }
   }
 
-  extension ObservableType where E == (Session.Model, AppModel) {
+  extension ObservableType where E == (RxUIApplication.Model, AppModel) {
     func reduced() -> Observable<AppModel> { return
       map { event, context in
         var new = context
-        switch event.state {
+        switch event.session.state {
           case .launching:
             new.screen = Screen.Model.downloadView
           default: 
@@ -121,5 +125,5 @@ A sample project of the infamous 'Counter' app is included.
 ##Goals
 - [x] Push boilerplate code into framework.
 - [x] Refactor reducers to receive/output streams to allow for use of rx features.
-- [ ] Reconsider use of singletons.
-- [ ] Create drivers that provide app-state, push-notification, etc. events that the usual app-delegate would. 
+- [x] Reconsider use of singleton drivers.
+- [x] Create drivers that provide app-state, push-notification, etc. events that the usual app-delegate would. 

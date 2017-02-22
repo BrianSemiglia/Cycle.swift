@@ -8,28 +8,37 @@
 
 import Foundation
 import RxSwift
-import Curry
 
 @UIApplicationMain
 class Example: CycledApplicationDelegate<IntegerMutatingApp> {
   init() {
-    super.init(handler: IntegerMutatingApp())
+    super.init(
+      filter: IntegerMutatingApp()
+    )
   }
 }
 
 struct IntegerMutatingApp: SinkSourceConverting {
-  struct Model {
-    var screen: ValueToggler.Model
-    var test: String
+  struct Model: Initializable {
+    var screen = ValueToggler.Model.empty
+    var application = RxUIApplication.Model.empty
   }
-  func effectsFrom(events: Observable<Model>) -> Observable<Model> { return
-    ValueToggler.shared
+  struct Drivers: CycleDrivable {
+    let toggler = ValueToggler()
+    var application: RxUIApplication!
+  }
+  func effectsFrom(events: Observable<Model>, drivers: Drivers) -> Observable<Model> {
+    let value = drivers.toggler
       .rendered(events.map { $0.screen })
       .withLatestFrom(events) { ($0.0, $0.1) }
       .reduced()
-  }
-  func start() -> Model { return
-      .empty
+    
+    let application = drivers.application
+      .rendered(events.map { $0.application })
+      .withLatestFrom(events) { ($0.0, $0.1) }
+      .reduced()
+    
+    return Observable.of(value, application).merge()
   }
 }
 
@@ -37,15 +46,15 @@ extension IntegerMutatingApp.Model {
   static var empty: IntegerMutatingApp.Model { return
     IntegerMutatingApp.Model(
       screen: .empty,
-      test: ""
+      application: .empty
     )
   }
 }
 
 extension ObservableType where E == (ValueToggler.Model, IntegerMutatingApp.Model) {
   func reduced() -> Observable<IntegerMutatingApp.Model> { return
-    map { event, context in
-      var x = context
+    map { event, global in
+      var x = global
       x.screen = event
       if event.increment.state == .highlighted {
         x.screen.total = Int(x.screen.total).map { $0 + 1 }.map(String.init) ?? ""
@@ -60,8 +69,19 @@ extension ObservableType where E == (ValueToggler.Model, IntegerMutatingApp.Mode
   }
 }
 
-extension String {
-  func reduced(_ input: IntegerMutatingApp.Model) -> IntegerMutatingApp.Model { return
-    input
+extension ObservableType where E == (RxUIApplication.Model, IntegerMutatingApp.Model) {
+  func reduced() -> Observable<IntegerMutatingApp.Model> { return
+    map { event, global in
+      var c = global
+      var model = event
+      model.shouldLaunch = true
+      c.application = model
+      var s = c.screen
+      if case .pre(.active(.some)) = event.session.state {
+        s.total = "55"
+      }
+      c.screen = s
+      return c
+    }
   }
 }

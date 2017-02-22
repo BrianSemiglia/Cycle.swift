@@ -58,11 +58,11 @@ class ValueToggler {
   var disposable: Disposable?
   
   init() {
-    self.increment.backgroundColor = .gray
-    self.decrement.backgroundColor = .red
-    UIApplication.shared.keyWindow?.rootViewController?.view.addSubview(self.label)
-    UIApplication.shared.keyWindow?.rootViewController?.view.addSubview(self.increment)
-    UIApplication.shared.keyWindow?.rootViewController?.view.addSubview(self.decrement)
+    increment.backgroundColor = .gray
+    decrement.backgroundColor = .red
+    UIApplication.shared.keyWindow?.rootViewController?.view.addSubview(label)
+    UIApplication.shared.keyWindow?.rootViewController?.view.addSubview(increment)
+    UIApplication.shared.keyWindow?.rootViewController?.view.addSubview(decrement)
   }
   
   func rendered(_ input: Observable<ValueToggler.Model>) -> Observable<ValueToggler.Model> {

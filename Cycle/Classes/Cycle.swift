@@ -8,47 +8,61 @@
 
 import UIKit
 import RxSwift
-import Curry
 
-protocol Reduceable {
-  associatedtype Reduced
-  func reduced(_: Reduced) -> Reduced
-}
-
-class CycledApplicationDelegate<C: SinkSourceConverting>: UIResponder, UIApplicationDelegate {
+class CycledApplicationDelegate<T: SinkSourceConverting>: UIResponder, UIApplicationDelegate {
   
+  private var cycle: Cycle<T>
   var window: UIWindow?
-  private var deferred: (() -> Cycle<C>)?
-  private var realized: Cycle<C>?
   
-  init(handler: C) {
-    self.deferred = { Cycle(transformer: handler) }
+  init(filter: T) {
+    window = UIWindow(frame: UIScreen.main.bounds, root: .empty)
+    window?.makeKeyAndVisible()
+    // Cycle is deferred to make sure window is ready for drivers.
+    cycle = Cycle(
+      transformer: filter,
+      host: UIApplication.shared
+    )
   }
   
-  func application(_ app: UIApplication, didFinishLaunchingWithOptions options: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
-    
-    window = UIWindow(frame: UIScreen.main.bounds)
-    window?.rootViewController = .empty
-    window?.makeKeyAndVisible()
-    
-    // Cycle is deferred to make sure window is ready for drivers.
-    realized = deferred?()
-    deferred = nil
-    
-    return true
+  override func forwardingTarget(for input: Selector!) -> Any? { return
+    cycle.application
+  }
+  
+  override func responds(to input: Selector!) -> Bool { return
+    cycle.application.responds(to: input) == true
   }
 }
 
-class Cycle<E: SinkSourceConverting> {
-  var events: Observable<E.Source>?
-  var eventsProxy: ReplaySubject<E.Source>?
-  var loop: Disposable?
-  
-  init(transformer: E) {
-    eventsProxy = ReplaySubject.create(bufferSize: 1)
-    events = transformer.effectsFrom(events: eventsProxy!)
+extension UIWindow {
+  convenience init(frame: CGRect, root: UIViewController) {
+    self.init(frame: frame)
+    rootViewController = root
+  }
+}
+
+final class Cycle<E: SinkSourceConverting> {
+  fileprivate var events: Observable<E.Source>?
+  fileprivate var eventsProxy: ReplaySubject<E.Source>?
+  fileprivate var loop: Disposable?
+  fileprivate let application: RxUIApplication
+  init(transformer: E, host: UIApplication) {
+    eventsProxy = ReplaySubject.create(
+      bufferSize: 1
+    )
+    application = RxUIApplication(
+      intitial: .empty,
+      application: host
+    )
+    events = transformer.effectsFrom(
+      events: eventsProxy!,
+      drivers: {
+        var x = E.Drivers()
+        x.application = application
+        return x
+      }()
+    )
     loop = events!
-      .startWith(transformer.start())
+      .startWith(E.Source())
       .subscribe { [weak self] in
         self?.eventsProxy?.on($0)
     }
@@ -56,13 +70,23 @@ class Cycle<E: SinkSourceConverting> {
 }
 
 protocol SinkSourceConverting {
-  associatedtype Source
-  func effectsFrom(events: Observable<Source>) -> Observable<Source>
-  func start() -> Source
+  associatedtype Source: Initializable
+  associatedtype Drivers: CycleDrivable
+  func effectsFrom(events: Observable<Source>, drivers: Drivers) -> Observable<Source>
+}
+
+protocol CycleDrivable: Initializable, RxUIApplicationStoring {}
+
+protocol Initializable {
+  init()
+}
+
+protocol RxUIApplicationStoring {
+  var application: RxUIApplication! { get set } // Set internally by Cycle
 }
 
 extension UIViewController {
-  static var empty: UIViewController {
+  public static var empty: UIViewController {
     let x = UIViewController()
     x.view.backgroundColor = .white
     return x

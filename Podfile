@@ -7,11 +7,16 @@ target 'Cycle' do
 
   pod 'RxSwift'
   pod 'RxCocoa'
-  pod 'Curry'
+  pod 'Changeset'
+  pod 'Curry', '~> 3.0'
 
   target 'CycleTests' do
     inherit! :search_paths
     # Pods for testing
+    pod 'RxSwift'
+    pod 'RxCocoa'
+    pod 'Changeset'
+    pod 'Curry', '~> 3.0'
   end
 
 end
