@@ -211,7 +211,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
         case pending
         case progressing(UIBackgroundTaskIdentifier) // Readonly
         case complete(UIBackgroundTaskIdentifier)
-        case expired // Readonly
+        case expiring // Readonly
       }
     }
     enum TartgetActionProcess {
@@ -260,6 +260,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     
     if let new = model.sendingEvent {
       application.sendEvent(new)
+      // Momentary
       model.sendingEvent = nil
     }
     
@@ -338,14 +339,15 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
           withName: task.name,
           expirationHandler: { [weak self] in
             if let strong = self {
-              strong.application.endBackgroundTask(ID) // SIDE EFFECT!
               strong.model.backgroundTasks = Set(
-                strong.model.backgroundTasks
-                .filter { $0.name == task.name }
-                .map {
-                  var edit = $0
-                  edit.state = .expired
-                  return edit
+                strong.model.backgroundTasks.map {
+                  if $0.name == task.name {
+                    var edit = $0
+                    edit.state = .expiring
+                    return edit
+                  } else {
+                    return $0
+                  }
                 }
               )
               strong.output.on(.next(strong.model))
@@ -362,7 +364,14 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
      Tasks marked completed are ended.
      Tasks marked in-progress that were removed are considered canceled and are removed.
      */
-    let complete = model.backgroundTasks.complete().flatMap { $0.ID }
+    let finished = model.backgroundTasks.flatMap { x -> UIBackgroundTaskIdentifier? in
+      switch x.state {
+      case .complete: return x.ID
+      case .expiring: return x.ID
+      default: return nil
+      }
+    }
+
     let deletions = RxUIApplication.deletions(
       old: Array(old.backgroundTasks),
       new: Array(model.backgroundTasks)
@@ -370,7 +379,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     .progressing()
     .flatMap { $0.ID }
     
-    (complete + deletions).forEach {
+    (finished + deletions).forEach {
       application.endBackgroundTask($0)
     }
     
@@ -1188,7 +1197,7 @@ extension RxUIApplication.Model {
       isProtectedDataAvailable: .currently(false),
       remoteNotificationRegistration: .idle,
       statusBarOrientation: .currently(.unknown),
-      backgroundTasks: Set(),
+      backgroundTasks: [],
       isExperiencingHealthAuthorizationRequest: false,
       isIgnoringUserEvents: false,
       isIdleTimerDisabled: false,
