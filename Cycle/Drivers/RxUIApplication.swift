@@ -180,10 +180,13 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
       var state: Change<State>
       enum State { // Readonly
         case awaitingLaunch
-        case launched([UIApplicationLaunchOptionsKey: Any]?)
-        case active
+        case active(Count)
         case resigned
         case terminated
+        enum Count {
+          case first([UIApplicationLaunchOptionsKey: Any]?)
+          case some
+        }
       }
     }
     
@@ -523,7 +526,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     _ application: UIApplication,
     willFinishLaunchingWithOptions options: [UIApplicationLaunchOptionsKey : Any]? = nil
   ) -> Bool {
-    model.session.state = .pre(.launched(options))
+    model.session.state = .pre(.active(.first(options)))
     output.on(.next(model))
     return model.shouldLaunch
   }
@@ -532,13 +535,13 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     _ application: UIApplication,
     didFinishLaunchingWithOptions options: [UIApplicationLaunchOptionsKey : Any]? = nil
   ) -> Bool {
-    model.session.state = .currently(.launched(options))
+    model.session.state = .currently(.active(.first(options)))
     output.on(.next(model))
     return model.shouldLaunch
   }
 
   func applicationDidBecomeActive(_ application: UIApplication) {
-    model.session.state = .currently(.active)
+    model.session.state = .currently(.active(.some))
     output.on(.next(model))
   }
 
@@ -815,7 +818,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
   }
 
   func applicationWillEnterForeground(_ application: UIApplication) {
-    model.session.state = .pre(.active)
+    model.session.state = .pre(.active(.some))
     output.on(.next(model))
   }
 
@@ -1230,14 +1233,28 @@ extension RxUIApplication.Model.Session.State: Equatable {
     switch (left, right) {
     case (.awaitingLaunch, .awaitingLaunch): return
       true
-    case (.launched(let a), .launched(let b)): return
-      a.map { NSDictionary(dictionary: $0) } ==
-        b.map { NSDictionary(dictionary: $0) }
-    case (.active, .active): return
-      true
+    case (.active(let a), .active(let b)): return
+      a == b
     case (.resigned, .resigned): return
       true
     case (.terminated, .terminated): return
+      true
+    default: return
+      false
+    }
+  }
+}
+
+extension RxUIApplication.Model.Session.State.Count: Equatable {
+  static func ==(
+    left: RxUIApplication.Model.Session.State.Count,
+    right: RxUIApplication.Model.Session.State.Count
+  ) -> Bool {
+    switch (left, right) {
+    case (.first(let a), .first(let b)): return
+      a.map { NSDictionary(dictionary: $0) } ==
+      b.map { NSDictionary(dictionary: $0) }
+    case (.some, .some): return
       true
     default: return
       false
