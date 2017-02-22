@@ -11,7 +11,6 @@ import RxSwift
 
 class RxUIApplicationTestCase: XCTestCase {
   
-  
   // Starts with EMPTY always
   static func statesFromCall(
     initial: RxUIApplication.Model = .empty,
@@ -207,7 +206,7 @@ class RxUIApplicationTestCase: XCTestCase {
       }
       .map { $0.remoteNotificationRegistration }
       ==
-      [.none, .error(ErrorStub(id: "x") as Error)]
+      [.idle, .error(ErrorStub(id: "x") as Error)]
     )
   }
   
@@ -222,7 +221,7 @@ class RxUIApplicationTestCase: XCTestCase {
       }
       .map { $0.remoteNotificationRegistration }
       ==
-      [.none, .some(token: Data())]
+      [.idle, .some(token: Data())]
     )
   }
   
