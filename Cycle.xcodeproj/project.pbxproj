@@ -10,6 +10,7 @@
 		4D554EA47F01A51A5D8E59DE /* Pods_CycleTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E1698EFB7DD5E9EBB517E954 /* Pods_CycleTests.framework */; };
 		D30354D71E425F6300E0A43C /* Cycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D349A9D51E37CE9F005F521E /* Cycle.swift */; };
 		D30604981E5E11EA007BE6F0 /* RxUIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = D30604971E5E11EA007BE6F0 /* RxUIApplication.swift */; };
+		D30604991E5E2C1A007BE6F0 /* RxUIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = D30604971E5E11EA007BE6F0 /* RxUIApplication.swift */; };
 		D3131FE91E521D2D00E63101 /* URLActionOutgoing.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3131FE81E521D2D00E63101 /* URLActionOutgoing.swift */; };
 		D349A9BD1E37CE24005F521E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D349A9BB1E37CE24005F521E /* LaunchScreen.storyboard */; };
 		D349A9D41E37CE7A005F521E /* IntegerMutatingApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D349A9D31E37CE7A005F521E /* IntegerMutatingApp.swift */; };
@@ -157,7 +158,6 @@
 				D3E273751E4C35F000B90946 /* ShortcutItems */,
 				D3CE9E9C1E5385B700A60EEC /* URLActionOutgoing */,
 			);
-			name = Example;
 			path = Example;
 			sourceTree = "<group>";
 		};
@@ -166,7 +166,6 @@
 			children = (
 				D3AE02181E53AA69003CEE01 /* PushNotificationRegistration.swift */,
 			);
-			name = PushNotificationRegistration;
 			path = PushNotificationRegistration;
 			sourceTree = "<group>";
 		};
@@ -175,7 +174,6 @@
 			children = (
 				D3131FE81E521D2D00E63101 /* URLActionOutgoing.swift */,
 			);
-			name = URLActionOutgoing;
 			path = URLActionOutgoing;
 			sourceTree = "<group>";
 		};
@@ -185,7 +183,6 @@
 				D349A9D31E37CE7A005F521E /* IntegerMutatingApp.swift */,
 				D349A9D91E37D079005F521E /* ValueToggler.swift */,
 			);
-			name = IntegerMutatingApp;
 			path = IntegerMutatingApp;
 			sourceTree = "<group>";
 		};
@@ -195,7 +192,6 @@
 				D3E273761E4C363A00B90946 /* ShortcutItems.swift */,
 				D3AEBA551E4D0A6000F98346 /* Timer.swift */,
 			);
-			name = ShortcutItems;
 			path = ShortcutItems;
 			sourceTree = "<group>";
 		};
@@ -425,6 +421,7 @@
 			files = (
 				D36E49211E3BF0B500CD0590 /* RxUIApplicationTestCase.swift in Sources */,
 				D30354D71E425F6300E0A43C /* Cycle.swift in Sources */,
+				D30604991E5E2C1A007BE6F0 /* RxUIApplication.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
