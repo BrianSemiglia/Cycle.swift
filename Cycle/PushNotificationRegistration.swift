@@ -46,7 +46,7 @@ extension ObservableType where E == (application: RxUIApplication.Model, push: P
       var edit = event
       switch (event.state, context.application.state) {
       case (.currently(.active), .currently(.launched)): // did change
-        if case .none = event.remoteNotificationRegistration {
+        if case .idle = event.remoteNotificationRegistration {
           edit.remoteNotificationRegistration = .attempting
         }
       case (.currently(.active), .currently(.active)):

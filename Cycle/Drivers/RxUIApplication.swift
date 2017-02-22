@@ -54,7 +54,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     var viewControllerRestoration: Filtered<RestorationQuery, RestorationResponse>
     
     enum RemoteNotificationRegistration {
-      case none
+      case idle
       case attempting
       case some(token: Data)
       case error(Error)
@@ -382,7 +382,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
       switch model.remoteNotificationRegistration {
       case .attempting:
         application.registerForRemoteNotifications()
-      case .none:
+      case .idle:
         application.unregisterForRemoteNotifications()
       default:
         break
@@ -1176,7 +1176,7 @@ extension RxUIApplication.Model {
       state: .currently(.awaitingLaunch),
       statusBarFrame: .currently(.zero),
       isProtectedDataAvailable: .currently(false),
-      remoteNotificationRegistration: .none,
+      remoteNotificationRegistration: .idle,
       statusBarOrientation: .currently(.unknown),
       backgroundTasks: Set(),
       isExperiencingHealthAuthorizationRequest: false,
@@ -1529,7 +1529,7 @@ extension RxUIApplication.Model.RemoteNotificationRegistration: Equatable {
     right: RxUIApplication.Model.RemoteNotificationRegistration
   ) -> Bool {
     switch (left, right) {
-    case (.none, .none): return true
+    case (.idle, .idle): return true
     case (.attempting, .attempting): return true
     case (.some(let a), .some(let b)): return a == b
     case (.error, .error): return true // Needs to compare errors
