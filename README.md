@@ -27,7 +27,8 @@ A sample project of the infamous 'Counter' app is included.
 
   struct MyFilter: SinkSourceConverting {
 
-    struct AppModel {
+    // Serves as schema and initial state.
+    struct AppModel: Initializable {
       var network = Network.Model()
       var screen = Screen.Model()
       var session = Session.Model()
