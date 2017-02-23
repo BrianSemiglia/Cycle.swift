@@ -126,17 +126,15 @@ A sample project of the infamous 'Counter' app is included.
 3. Define drivers that, given a stream of event-models, can produce streams of effect-models (hand-waving)
 
 ##Notes of Interest
-2. Drivers of similar libraries communicate with the shared store directly. Cycle inverts that dependancy a bit with the use of observables (versus drivers subscribing to the app model) and with the return of models that are owned by the drivers (versus actions owned by the app model).
+Drivers of similar libraries communicate with the shared store directly. Cycle inverts that dependancy a bit with the use of observables (versus drivers subscribing to the app model) and with the return of models that are owned by the drivers (versus actions owned by the app model).
 
 ## Example
-
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
 ## Requirements
 iOS 9+
 
 ## Installation
-
 Cycle is available through [CocoaPods](http://cocoapods.org). To install
 it, simply add the following line to your Podfile:
 
@@ -145,9 +143,7 @@ pod "Cycle"
 ```
 
 ## Author
-
 brian.semiglia@gmail.com, brian.semiglia@gmail.com
 
 ## License
-
 Cycle is available under the MIT license. See the LICENSE file for more info.
