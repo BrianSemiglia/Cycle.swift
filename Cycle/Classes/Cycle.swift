@@ -9,12 +9,12 @@
 import UIKit
 import RxSwift
 
-class CycledApplicationDelegate<T: SinkSourceConverting>: UIResponder, UIApplicationDelegate {
+open class CycledApplicationDelegate<T: SinkSourceConverting>: UIResponder, UIApplicationDelegate {
   
   private var cycle: Cycle<T>
-  var window: UIWindow?
+  public var window: UIWindow?
   
-  init(filter: T) {
+  public init(filter: T) {
     window = UIWindow(frame: UIScreen.main.bounds, root: .empty)
     window?.makeKeyAndVisible()
     // Cycle is deferred to make sure window is ready for drivers.
@@ -24,11 +24,11 @@ class CycledApplicationDelegate<T: SinkSourceConverting>: UIResponder, UIApplica
     )
   }
   
-  override func forwardingTarget(for input: Selector!) -> Any? { return
+  override open func forwardingTarget(for input: Selector!) -> Any? { return
     cycle.application
   }
   
-  override func responds(to input: Selector!) -> Bool { return
+  override open func responds(to input: Selector!) -> Bool { return
     cycle.application.responds(to: input) == true
   }
 }
@@ -40,12 +40,12 @@ extension UIWindow {
   }
 }
 
-final class Cycle<E: SinkSourceConverting> {
+public final class Cycle<E: SinkSourceConverting> {
   fileprivate var events: Observable<E.Source>?
   fileprivate var eventsProxy: ReplaySubject<E.Source>?
   fileprivate var loop: Disposable?
   fileprivate let application: RxUIApplication
-  init(transformer: E, host: UIApplication) {
+  public init(transformer: E, host: UIApplication) {
     eventsProxy = ReplaySubject.create(
       bufferSize: 1
     )
@@ -69,19 +69,19 @@ final class Cycle<E: SinkSourceConverting> {
   }
 }
 
-protocol SinkSourceConverting {
+public protocol SinkSourceConverting {
   associatedtype Source: Initializable
   associatedtype Drivers: CycleDrivable
   func effectsFrom(events: Observable<Source>, drivers: Drivers) -> Observable<Source>
 }
 
-protocol CycleDrivable: Initializable, RxUIApplicationStoring {}
+public protocol CycleDrivable: Initializable, RxUIApplicationStoring {}
 
-protocol Initializable {
+public protocol Initializable {
   init()
 }
 
-protocol RxUIApplicationStoring {
+public protocol RxUIApplicationStoring {
   var application: RxUIApplication! { get set } // Set internally by Cycle
 }
 

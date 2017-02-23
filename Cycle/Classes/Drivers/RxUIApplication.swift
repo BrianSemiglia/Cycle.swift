@@ -10,73 +10,73 @@ import Foundation
 import RxSwift
 import Changeset
 
-class RxUIApplication: NSObject, UIApplicationDelegate {
+public class RxUIApplication: NSObject, UIApplicationDelegate {
   
-  struct Model {
-    var backgroundURLSessions: Set<BackgroundURLSessionAction>
-    var backgroundFetch: BackgroundFetch
-    var remoteAction: AsyncAction<ActionRemote>
-    var localAction: AsyncAction<ActionLocal>
-    var userActivityState: UserActivityState
-    var stateRestoration: StateRestoration
-    var watchKitExtensionRequests: [watchKitExtensionRequests]
-    var localNotification: UILocalNotification?
-    var remoteNotifications: [RemoteNofitication]
-    var isObservingSignificantTimeChange: Bool
-    var isExperiencingMemoryWarning: Bool
-    var session: Session
-    var statusBarFrame: Change<CGRect>
-    var isProtectedDataAvailable: Change<Bool>
-    var remoteNotificationRegistration: RemoteNotificationRegistration
-    var statusBarOrientation: Change<UIInterfaceOrientation>
-    var backgroundTasks: Set<BackgroundTask>
-    var isExperiencingHealthAuthorizationRequest: Bool
-    var isIgnoringUserEvents: Bool
-    var isIdleTimerDisabled: Bool
-    var urlActionOutgoing: URLActionOutgoing
-    var sendingEvent: UIEvent?
-    var targetAction: TartgetActionProcess
-    var isNetworkActivityIndicatorVisible: Bool
-    var iconBadgeNumber: Int
-    var supportsShakeToEdit: Bool
-    var presentedLocalNotification: UILocalNotification?
-    var scheduledLocalNotifications: [UILocalNotification]
-    var userNotificationSettings: UserNotificationSettingsState
-    var isReceivingRemoteControlEvents: Bool
-    var newsStandIconImage: UIImage?
-    var shortcutActions: [ShortcutAction]
-    var shouldSaveApplicationState: Filtered<NSCoder, Bool>
-    var shouldRestoreApplicationState: Filtered<NSCoder, Bool>
-    var shouldLaunch: Bool
-    var urlActionIncoming: Filtered<RxUIApplication.Model.URLLaunch, URL>
-    var extensionPointIdentifier: Filtered<UIApplicationExtensionPointIdentifier, UIApplicationExtensionPointIdentifier>
-    var interfaceOrientations: [Filtered<UIWindow, WindowResponse>]
-    var viewControllerRestoration: Filtered<RestorationQuery, RestorationResponse>
+  public struct Model {
+    public var backgroundURLSessions: Set<BackgroundURLSessionAction>
+    public var backgroundFetch: BackgroundFetch
+    public var remoteAction: AsyncAction<ActionRemote>
+    public var localAction: AsyncAction<ActionLocal>
+    public var userActivityState: UserActivityState
+    public var stateRestoration: StateRestoration
+    public var watchKitExtensionRequests: [watchKitExtensionRequests]
+    public var localNotification: UILocalNotification?
+    public var remoteNotifications: [RemoteNofitication]
+    public var isObservingSignificantTimeChange: Bool
+    public var isExperiencingMemoryWarning: Bool
+    public var session: Session
+    public var statusBarFrame: Change<CGRect>
+    public var isProtectedDataAvailable: Change<Bool>
+    public var remoteNotificationRegistration: RemoteNotificationRegistration
+    public var statusBarOrientation: Change<UIInterfaceOrientation>
+    public var backgroundTasks: Set<BackgroundTask>
+    public var isExperiencingHealthAuthorizationRequest: Bool
+    public var isIgnoringUserEvents: Bool
+    public var isIdleTimerDisabled: Bool
+    public var urlActionOutgoing: URLActionOutgoing
+    public var sendingEvent: UIEvent?
+    public var targetAction: TartgetActionProcess
+    public var isNetworkActivityIndicatorVisible: Bool
+    public var iconBadgeNumber: Int
+    public var supportsShakeToEdit: Bool
+    public var presentedLocalNotification: UILocalNotification?
+    public var scheduledLocalNotifications: [UILocalNotification]
+    public var userNotificationSettings: UserNotificationSettingsState
+    public var isReceivingRemoteControlEvents: Bool
+    public var newsStandIconImage: UIImage?
+    public var shortcutActions: [ShortcutAction]
+    public var shouldSaveApplicationState: Filtered<NSCoder, Bool>
+    public var shouldRestoreApplicationState: Filtered<NSCoder, Bool>
+    public var shouldLaunch: Bool
+    public var urlActionIncoming: Filtered<RxUIApplication.Model.URLLaunch, URL>
+    public var extensionPointIdentifier: Filtered<UIApplicationExtensionPointIdentifier, UIApplicationExtensionPointIdentifier>
+    public var interfaceOrientations: [Filtered<UIWindow, WindowResponse>]
+    public var viewControllerRestoration: Filtered<RestorationQuery, RestorationResponse>
     
-    enum RemoteNotificationRegistration {
+    public enum RemoteNotificationRegistration {
       case idle
       case attempting
       case some(token: Data)
       case error(Error)
     }
-    enum UserNotificationSettingsState {
+    public enum UserNotificationSettingsState {
       case idle
       case attempting(UIUserNotificationSettings)
       case registered(UIUserNotificationSettings)
     }
-    enum URLLaunch {
+    public enum URLLaunch {
       case ios4(url: URL, app: String?, annotation: Any)
       case ios9(url: URL, options: [UIApplicationOpenURLOptionsKey : Any])
     }
-    enum Notification {
+    public enum Notification {
       case local(value: UILocalNotification)
       case remote(value: [AnyHashable: Any])
     }
-    enum ActionID {
+    public enum ActionID {
       case some( String)
       case defaultAction
     }
-    enum ActionRemote {
+    public enum ActionRemote {
       case ios8(
         id: ActionID,
         userInfo: [AnyHashable: Any],
@@ -89,7 +89,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
         completion: () -> Void
       )
     }
-    enum ActionLocal {
+    public enum ActionLocal {
       case ios8(
         id: ActionID,
         notification: UILocalNotification,
@@ -102,66 +102,66 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
         completion: () -> Void
       )
     }
-    enum URLActionOutgoing {
+    public enum URLActionOutgoing {
       case idle
       case attempting(URL)
       case opening(URL)
       case failing(URL)
     }
-    struct BackgroundURLSessionAction {
-      let id: String // Readonly
-      let completion: (Void) -> Void // Readonly
-      var state: State
-      enum State {
+    public struct BackgroundURLSessionAction {
+      public let id: String // Readonly
+      public let completion: (Void) -> Void // Readonly
+      public var state: State
+      public enum State {
         case progressing // Readonly
         case complete
       }
     }
-    struct BackgroundFetch {
-      var minimumInterval: Interval
-      var state: State
-      enum State {
+    public struct BackgroundFetch {
+      public var minimumInterval: Interval
+      public var state: State
+      public enum State {
         case idle // Readonly
         case progressing((UIBackgroundFetchResult) -> Void) // Readonly
         case complete(UIBackgroundFetchResult, (UIBackgroundFetchResult) -> Void)
       }
-      enum Interval {
+      public enum Interval {
         case minimum
         case some(TimeInterval)
         case never
       }
     }
-    struct ShortcutAction {
-      var item: UIApplicationShortcutItem
-      var state: State
-      enum State {
+    public struct ShortcutAction {
+      public var item: UIApplicationShortcutItem
+      public var state: State
+      public enum State {
         case idle
         case progressing((Bool) -> Void) // Readonly
         case complete(Bool, (Bool) -> Void)
       }
     }
-    struct RemoteNofitication {
-      var notification: [AnyHashable : Any] // Readonly
-      var state: State
-      enum State {
+    public struct RemoteNofitication {
+      public var notification: [AnyHashable : Any] // Readonly
+      public var state: State
+      public enum State {
         case progressing((UIBackgroundFetchResult) -> Void) // Readonly
         case complete(UIBackgroundFetchResult, (UIBackgroundFetchResult) -> Void)
       }
     }
-    struct watchKitExtensionRequests {
-      let completion: ([AnyHashable : Any]?) -> Void
-      var state: State
-      enum State {
+    public struct watchKitExtensionRequests {
+      public let completion: ([AnyHashable : Any]?) -> Void
+      public var state: State
+      public enum State {
         case progressing(info: [AnyHashable: Any]?)
         case responding(response: [AnyHashable : Any]?)
       }
     }
-    enum BackgroundURLSessionDataAvailability {
+    public enum BackgroundURLSessionDataAvailability {
       case none // Readonly
       case some (String, (Void) -> Void) // Readonly
       case ending ((Void) -> Void)
     }
-    enum UserActivityState { // Readonly
+    public enum UserActivityState { // Readonly
       case idle
       case willContinue(String)
       case isContinuing(NSUserActivity, restoration: ([UIResponder]?) -> Void)
@@ -170,20 +170,20 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
       case completing(NSUserActivity)
       case failing(String, Error)
     }
-    enum StateRestoration { // Readonly
+    public enum StateRestoration { // Readonly
       case idle
       case encoding(NSCoder)
       case decoding(NSCoder)
     }
-    struct Session {
-      var shouldLaunch: Bool
-      var state: Change<State>
-      enum State { // Readonly
+    public struct Session {
+      public var shouldLaunch: Bool
+      public var state: Change<State>
+      public enum State { // Readonly
         case awaitingLaunch
         case active(Count)
         case resigned
         case terminated
-        enum Count {
+        public enum Count {
           case first([UIApplicationLaunchOptionsKey: Any]?)
           case some
         }
@@ -192,38 +192,38 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     
     // IDEA: prevent transitioning between certain enum states with pattern matched conversion methods and private intializer
     
-    struct WindowResponse {
-      var window: UIWindow
-      var orientation: UIInterfaceOrientationMask
+    public struct WindowResponse {
+      public var window: UIWindow
+      public var orientation: UIInterfaceOrientationMask
     }
-    struct RestorationQuery {
-      var identifier: String
-      var coder: NSCoder
+    public struct RestorationQuery {
+      public var identifier: String
+      public var coder: NSCoder
     }
-    struct RestorationResponse {
-      var identifier: String
-      var view: UIViewController
+    public struct RestorationResponse {
+      public var identifier: String
+      public var view: UIViewController
     }
-    struct BackgroundTask {
-      var name: String // Readonly
-      var state: State
-      enum State {
+    public struct BackgroundTask {
+      public var name: String // Readonly
+      public var state: State
+      public enum State {
         case pending
         case progressing(UIBackgroundTaskIdentifier) // Readonly
         case complete(UIBackgroundTaskIdentifier)
         case expiring // Readonly
       }
     }
-    enum TartgetActionProcess {
+    public enum TartgetActionProcess {
       case idle
       case sending(TargetAction)
       case responding(TargetAction, Bool) // Readonly
     }
-    struct TargetAction {
-      var action: Selector
-      var target: Any?
-      var sender: Any?
-      var event: UIEvent?
+    public struct TargetAction {
+      public var action: Selector
+      public var target: Any?
+      public var sender: Any?
+      public var event: UIEvent?
     }
   }
   
@@ -513,7 +513,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     output.on(.next(model))
   }
   
-  func rendered(_ input: Observable<Model>) -> Observable<Model> { return
+  public func rendered(_ input: Observable<Model>) -> Observable<Model> { return
     input.distinctUntilChanged().flatMap { model in
       Observable.create { [weak self] observer in
         if let strong = self {
@@ -531,7 +531,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     }
   }
 
-  func application(
+  public func application(
     _ application: UIApplication,
     willFinishLaunchingWithOptions options: [UIApplicationLaunchOptionsKey : Any]? = nil
   ) -> Bool {
@@ -540,7 +540,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     return model.shouldLaunch
   }
 
-  func application(
+  public func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions options: [UIApplicationLaunchOptionsKey : Any]? = nil
   ) -> Bool {
@@ -549,17 +549,17 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     return model.shouldLaunch
   }
 
-  func applicationDidBecomeActive(_ application: UIApplication) {
+  public func applicationDidBecomeActive(_ application: UIApplication) {
     model.session.state = .currently(.active(.some))
     output.on(.next(model))
   }
 
-  func applicationWillResignActive(_ application: UIApplication) {
+  public func applicationWillResignActive(_ application: UIApplication) {
     model.session.state = .pre(.resigned)
     output.on(.next(model))
   }
 
-  func application(
+  public func application(
     _ application: UIApplication,
     open url: URL,
     sourceApplication: String?,
@@ -580,7 +580,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     }
   }
 
-  func application(
+  public func application(
     _ application: UIApplication,
     open url: URL,
     options: [UIApplicationOpenURLOptionsKey : Any] = [:]
@@ -594,22 +594,22 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     }
   }
 
-  func applicationDidReceiveMemoryWarning(_ application: UIApplication) {
+  public func applicationDidReceiveMemoryWarning(_ application: UIApplication) {
     model.isExperiencingMemoryWarning = true
     output.on(.next(model))
   }
 
-  func applicationWillTerminate(_ application: UIApplication) {
+  public func applicationWillTerminate(_ application: UIApplication) {
     model.session.state = .pre(.terminated)
     output.on(.next(model))
   }
 
-  func applicationSignificantTimeChange(_ application: UIApplication) {
+  public func applicationSignificantTimeChange(_ application: UIApplication) {
     model.isObservingSignificantTimeChange = true
     output.on(.next(model))
   }
 
-  func application(
+  public func application(
     _ application: UIApplication,
     willChangeStatusBarOrientation newStatusBarOrientation: UIInterfaceOrientation,
     duration: TimeInterval
@@ -618,7 +618,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     output.on(.next(model))
   }
 
-  func application(
+  public func application(
     _ application: UIApplication,
     didChangeStatusBarOrientation oldStatusBarOrientation: UIInterfaceOrientation
   ) {
@@ -626,7 +626,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     output.on(.next(model))
   }
 
-  func application(
+  public func application(
     _ application: UIApplication,
     willChangeStatusBarFrame new: CGRect
   ) {
@@ -634,7 +634,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     output.on(.next(model))
   }
 
-  func application(
+  public func application(
     _ application: UIApplication,
     didChangeStatusBarFrame old: CGRect
   ) {
@@ -642,7 +642,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     output.on(.next(model))
   }
 
-  func application(
+  public func application(
     _ application: UIApplication,
     didRegister notificationSettings: UIUserNotificationSettings
   ) {
@@ -650,7 +650,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     output.on(.next(model))
   }
 
-  func application(
+  public func application(
     _ application: UIApplication,
     didRegisterForRemoteNotificationsWithDeviceToken token: Data
   ) {
@@ -658,7 +658,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     output.on(.next(model))
   }
 
-  func application(
+  public func application(
     _ application: UIApplication,
     didFailToRegisterForRemoteNotificationsWithError error: Error
   ) {
@@ -666,7 +666,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     output.on(.next(model))
   }
 
-  func application(
+  public func application(
     _ application: UIApplication,
     didReceive notification: UILocalNotification
   ) {
@@ -674,7 +674,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     output.on(.next(model))
   }
 
-  func application(
+  public func application(
     _ application: UIApplication,
     handleActionWithIdentifier identifier: String?,
     for notification: UILocalNotification,
@@ -690,7 +690,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     output.on(.next(model))
   }
 
-  func application(
+  public func application(
     _ application: UIApplication,
     handleActionWithIdentifier identifier: String?,
     forRemoteNotification userInfo: [AnyHashable : Any],
@@ -708,7 +708,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     output.on(.next(model))
   }
 
-  func application(
+  public func application(
     _ application: UIApplication,
     handleActionWithIdentifier identifier: String?,
     forRemoteNotification userInfo: [AnyHashable : Any],
@@ -724,7 +724,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     output.on(.next(model))
   }
 
-  func application(
+  public func application(
     _ application: UIApplication,
     handleActionWithIdentifier identifier: String?,
     for notification: UILocalNotification,
@@ -742,7 +742,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     output.on(.next(model))
   }
 
-  func application(
+  public func application(
     _ application: UIApplication,
     didReceiveRemoteNotification info: [AnyHashable : Any],
     fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
@@ -756,7 +756,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     output.on(.next(model))
   }
 
-  func application(
+  public func application(
     _ application: UIApplication,
     performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult
   ) -> Void) {
@@ -764,7 +764,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     output.on(.next(model))
   }
 
-  func application(
+  public func application(
     _ application: UIApplication,
     performActionFor shortcutItem: UIApplicationShortcutItem,
     completionHandler: @escaping (Bool) -> Void
@@ -782,7 +782,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     output.on(.next(model))
   }
 
-  func application(
+  public func application(
     _ application: UIApplication,
     handleEventsForBackgroundURLSession identifier: String,
     completionHandler: @escaping () -> Void
@@ -816,32 +816,32 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     output.on(.next(model))
   }
 
-  func applicationShouldRequestHealthAuthorization(_ application: UIApplication) {
+  public func applicationShouldRequestHealthAuthorization(_ application: UIApplication) {
     model.isExperiencingHealthAuthorizationRequest = true
     output.on(.next(model))
   }
 
-  func applicationDidEnterBackground(_ application: UIApplication) {
+  public func applicationDidEnterBackground(_ application: UIApplication) {
     model.session.state = .currently(.resigned)
     output.on(.next(model))
   }
 
-  func applicationWillEnterForeground(_ application: UIApplication) {
+  public func applicationWillEnterForeground(_ application: UIApplication) {
     model.session.state = .pre(.active(.some))
     output.on(.next(model))
   }
 
-  func applicationProtectedDataWillBecomeUnavailable(_ application: UIApplication) {
+  public func applicationProtectedDataWillBecomeUnavailable(_ application: UIApplication) {
     model.isProtectedDataAvailable = .pre(false)
     output.on(.next(model))
   }
 
-  func applicationProtectedDataDidBecomeAvailable(_ application: UIApplication) {
+  public func applicationProtectedDataDidBecomeAvailable(_ application: UIApplication) {
     model.isProtectedDataAvailable = .currently(true)
     output.on(.next(model))
   }
 
-  func application(
+  public func application(
     _ application: UIApplication,
     supportedInterfaceOrientationsFor window: UIWindow?
   ) -> UIInterfaceOrientationMask {
@@ -859,7 +859,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     }
   }
 
-  func application(
+  public func application(
     _ application: UIApplication,
     shouldAllowExtensionPointIdentifier ID: UIApplicationExtensionPointIdentifier
   ) -> Bool {
@@ -872,7 +872,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     }
   }
 
-  func application(
+  public func application(
     _ application: UIApplication,
     viewControllerWithRestorationIdentifierPath components: [Any],
     coder: NSCoder
@@ -897,7 +897,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     }
   }
 
-  func application(
+  public func application(
     _ application: UIApplication,
     shouldSaveApplicationState coder: NSCoder
   ) -> Bool {
@@ -906,7 +906,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     return model.shouldSaveApplicationState == .allowing(true)
   }
 
-  func application(
+  public func application(
     _ application: UIApplication,
     shouldRestoreApplicationState coder: NSCoder
   ) -> Bool {
@@ -915,7 +915,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     return model.shouldRestoreApplicationState.allowed() == true
   }
 
-  func application(
+  public func application(
     _ application: UIApplication,
     willEncodeRestorableStateWith coder: NSCoder
   ) {
@@ -923,7 +923,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     output.on(.next(model))
   }
 
-  func application(
+  public func application(
     _ application: UIApplication,
     didDecodeRestorableStateWith coder: NSCoder
   ) {
@@ -931,7 +931,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     output.on(.next(model))
   }
 
-  func application(
+  public func application(
     _ application: UIApplication,
     willContinueUserActivityWithType type: String
   ) -> Bool {
@@ -944,7 +944,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     }
   }
 
-  func application(
+  public func application(
     _ application: UIApplication,
     continue userActivity: NSUserActivity,
     restorationHandler: @escaping ([Any]?) -> Void
@@ -961,7 +961,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     }
   }
 
-  func application(
+  public func application(
     _ application: UIApplication,
     didFailToContinueUserActivityWithType userActivityType: String,
     error: Error
@@ -970,7 +970,7 @@ class RxUIApplication: NSObject, UIApplicationDelegate {
     output.on(.next(model))
   }
 
-  func application(
+  public func application(
     _ application: UIApplication,
     didUpdate userActivity: NSUserActivity
   ) {
@@ -1039,7 +1039,7 @@ extension RxUIApplication {
 }
 
 extension RxUIApplication.Model: Equatable {
-  static func == (left: RxUIApplication.Model, right: RxUIApplication.Model) -> Bool { return
+  public static func == (left: RxUIApplication.Model, right: RxUIApplication.Model) -> Bool { return
     left.backgroundURLSessions == right.backgroundURLSessions &&
     left.backgroundFetch == right.backgroundFetch &&
     left.remoteAction == right.remoteAction &&
@@ -1089,13 +1089,13 @@ extension Edit {
 }
 
 extension RxUIApplication.Model.ShortcutAction: CustomDebugStringConvertible {
-  var debugDescription: String { return
+  public var debugDescription: String { return
     item.type + " " + String(describing: state)
   }
 }
 
 extension AsyncAction: CustomDebugStringConvertible {
-  var debugDescription: String {
+  public var debugDescription: String {
     switch self {
     case .complete: return
       ".complete"
@@ -1107,13 +1107,13 @@ extension AsyncAction: CustomDebugStringConvertible {
   }
 }
 
-enum Change<T: Equatable> {
+public enum Change<T: Equatable> {
   case pre(T)
   case currently(T)
 }
 
 extension Change: Equatable {
-  static func ==(left: Change, right: Change) -> Bool {
+  public static func ==(left: Change, right: Change) -> Bool {
     switch (left, right) {
     case (.pre(let a), .pre(let b)): return
       a == b
@@ -1125,7 +1125,7 @@ extension Change: Equatable {
   }
 }
 
-enum Filtered<T: Equatable, U: Equatable> {
+public enum Filtered<T: Equatable, U: Equatable> {
   case idle
   case considering(T)
   case allowing(U)
@@ -1152,7 +1152,7 @@ extension AsyncAction {
 }
 
 extension Filtered: Equatable {
-  static func ==(left: Filtered, right: Filtered) -> Bool {
+  public static func ==(left: Filtered, right: Filtered) -> Bool {
     switch (left, right) {
     case (.idle, .idle): return
       true
@@ -1166,14 +1166,14 @@ extension Filtered: Equatable {
   }
 }
 
-enum AsyncAction<Handler: Equatable> {
+public enum AsyncAction<Handler: Equatable> {
   case idle
   case progressing(Handler)
   case complete(Handler)
 }
 
 extension RxUIApplication.Model {
-  static var empty: RxUIApplication.Model { return
+  public static var empty: RxUIApplication.Model { return
     RxUIApplication.Model(
       backgroundURLSessions: [],
       backgroundFetch: RxUIApplication.Model.BackgroundFetch(
@@ -1225,7 +1225,7 @@ extension RxUIApplication.Model {
 }
 
 extension RxUIApplication.Model.Session: Equatable {
-  static func ==(
+  public static func ==(
     left: RxUIApplication.Model.Session,
     right: RxUIApplication.Model.Session
   ) -> Bool { return
@@ -1235,7 +1235,7 @@ extension RxUIApplication.Model.Session: Equatable {
 }
 
 extension RxUIApplication.Model.Session.State: Equatable {
-  static func ==(
+  public static func ==(
     left: RxUIApplication.Model.Session.State,
     right: RxUIApplication.Model.Session.State
   ) -> Bool {
@@ -1255,7 +1255,7 @@ extension RxUIApplication.Model.Session.State: Equatable {
 }
 
 extension RxUIApplication.Model.Session.State.Count: Equatable {
-  static func ==(
+  public static func ==(
     left: RxUIApplication.Model.Session.State.Count,
     right: RxUIApplication.Model.Session.State.Count
   ) -> Bool {
@@ -1272,10 +1272,10 @@ extension RxUIApplication.Model.Session.State.Count: Equatable {
 }
 
 extension RxUIApplication.Model.BackgroundURLSessionAction: Hashable {
-  var hashValue: Int { return
+  public var hashValue: Int { return
     id.hashValue
   }
-  static func ==(
+  public static func ==(
     left: RxUIApplication.Model.BackgroundURLSessionAction,
     right: RxUIApplication.Model.BackgroundURLSessionAction
   ) -> Bool { return
@@ -1285,7 +1285,7 @@ extension RxUIApplication.Model.BackgroundURLSessionAction: Hashable {
 }
 
 extension RxUIApplication.Model.BackgroundURLSessionAction.State: Equatable {
-  static func ==(
+  public static func ==(
     left: RxUIApplication.Model.BackgroundURLSessionAction.State,
     right: RxUIApplication.Model.BackgroundURLSessionAction.State
   ) -> Bool {
@@ -1301,7 +1301,7 @@ extension RxUIApplication.Model.BackgroundURLSessionAction.State: Equatable {
 }
 
 extension RxUIApplication.Model.URLLaunch: Equatable {
-  static func ==(left: RxUIApplication.Model.URLLaunch, right: RxUIApplication.Model.URLLaunch) -> Bool {
+  public static func ==(left: RxUIApplication.Model.URLLaunch, right: RxUIApplication.Model.URLLaunch) -> Bool {
     switch (left, right) {
     case (.ios4(let a), .ios4(let b)): return
       a.url == b.url &&
@@ -1317,7 +1317,7 @@ extension RxUIApplication.Model.URLLaunch: Equatable {
 }
 
 extension AsyncAction: Equatable {
-  static func ==(left: AsyncAction, right: AsyncAction) -> Bool {
+  public static func ==(left: AsyncAction, right: AsyncAction) -> Bool {
     switch (left, right) {
     case (.idle, .idle): return true
     case (.progressing(let a), .progressing(let b)): return a == b
@@ -1328,7 +1328,7 @@ extension AsyncAction: Equatable {
 }
 
 extension RxUIApplication.Model.RestorationQuery: Equatable {
-  static func ==(
+  public static func ==(
     left: RxUIApplication.Model.RestorationQuery,
     right: RxUIApplication.Model.RestorationQuery
   ) -> Bool { return
@@ -1338,7 +1338,7 @@ extension RxUIApplication.Model.RestorationQuery: Equatable {
 }
 
 extension RxUIApplication.Model.RestorationResponse: Equatable {
-  static func ==(
+  public static func ==(
     left: RxUIApplication.Model.RestorationResponse,
     right: RxUIApplication.Model.RestorationResponse
   ) -> Bool { return
@@ -1348,7 +1348,7 @@ extension RxUIApplication.Model.RestorationResponse: Equatable {
 }
 
 extension RxUIApplication.Model.TargetAction: Equatable {
-  static func ==(
+  public static func ==(
     left: RxUIApplication.Model.TargetAction,
     right: RxUIApplication.Model.TargetAction
   ) -> Bool { return
@@ -1360,7 +1360,7 @@ extension RxUIApplication.Model.TargetAction: Equatable {
 }
 
 extension RxUIApplication.Model.BackgroundFetch.Interval: Equatable {
-  static func ==(
+  public static func ==(
     left: RxUIApplication.Model.BackgroundFetch.Interval,
     right: RxUIApplication.Model.BackgroundFetch.Interval
   ) -> Bool {
@@ -1378,7 +1378,7 @@ extension RxUIApplication.Model.BackgroundFetch.Interval: Equatable {
 }
 
 extension RxUIApplication.Model.ActionID: Equatable {
-  static func ==(
+  public static func ==(
     left: RxUIApplication.Model.ActionID,
     right: RxUIApplication.Model.ActionID
   ) -> Bool {
@@ -1394,7 +1394,7 @@ extension RxUIApplication.Model.ActionID: Equatable {
 }
 
 extension RxUIApplication.Model.ActionRemote: Equatable {
-  static func ==(
+  public static func ==(
     left: RxUIApplication.Model.ActionRemote,
     right: RxUIApplication.Model.ActionRemote
   ) -> Bool {
@@ -1413,7 +1413,7 @@ extension RxUIApplication.Model.ActionRemote: Equatable {
 }
 
 extension RxUIApplication.Model.ActionLocal: Equatable {
-  static func ==(
+  public static func ==(
     left: RxUIApplication.Model.ActionLocal,
     right: RxUIApplication.Model.ActionLocal
   ) -> Bool {
@@ -1432,7 +1432,7 @@ extension RxUIApplication.Model.ActionLocal: Equatable {
 }
 
 extension RxUIApplication.Model.Notification: Equatable {
-  static func ==(
+  public static func ==(
     left: RxUIApplication.Model.Notification,
     right: RxUIApplication.Model.Notification
   ) -> Bool {
@@ -1448,7 +1448,7 @@ extension RxUIApplication.Model.Notification: Equatable {
 }
 
 extension RxUIApplication.Model.BackgroundFetch: Equatable {
-  static func == (
+  public static func == (
     left: RxUIApplication.Model.BackgroundFetch,
     right: RxUIApplication.Model.BackgroundFetch
   ) -> Bool { return
@@ -1458,7 +1458,7 @@ extension RxUIApplication.Model.BackgroundFetch: Equatable {
 }
 
 extension RxUIApplication.Model.BackgroundFetch.State: Equatable {
-  static func ==(
+  public static func ==(
     left: RxUIApplication.Model.BackgroundFetch.State,
     right: RxUIApplication.Model.BackgroundFetch.State
   ) -> Bool {
@@ -1476,7 +1476,7 @@ extension RxUIApplication.Model.BackgroundFetch.State: Equatable {
 }
 
 extension RxUIApplication.Model.RemoteNofitication: Equatable {
-  static func == (
+  public static func == (
     left: RxUIApplication.Model.RemoteNofitication,
     right: RxUIApplication.Model.RemoteNofitication
   ) -> Bool { return
@@ -1486,7 +1486,7 @@ extension RxUIApplication.Model.RemoteNofitication: Equatable {
 }
 
 extension RxUIApplication.Model.RemoteNofitication.State: Equatable {
-  static func ==(
+  public static func ==(
     left: RxUIApplication.Model.RemoteNofitication.State,
     right: RxUIApplication.Model.RemoteNofitication.State
   ) -> Bool {
@@ -1502,7 +1502,7 @@ extension RxUIApplication.Model.RemoteNofitication.State: Equatable {
 }
 
 extension RxUIApplication.Model.UserActivityState: Equatable {
-  static func ==(
+  public static func ==(
     left: RxUIApplication.Model.UserActivityState,
     right: RxUIApplication.Model.UserActivityState
   ) -> Bool {
@@ -1528,7 +1528,7 @@ extension RxUIApplication.Model.UserActivityState: Equatable {
 }
 
 extension RxUIApplication.Model.StateRestoration: Equatable {
-  static func == (
+  public static func == (
     left: RxUIApplication.Model.StateRestoration,
     right: RxUIApplication.Model.StateRestoration
   ) -> Bool {
@@ -1542,7 +1542,7 @@ extension RxUIApplication.Model.StateRestoration: Equatable {
 }
 
 extension RxUIApplication.Model.watchKitExtensionRequests: Equatable {
-  static func ==(
+  public static func ==(
     left: RxUIApplication.Model.watchKitExtensionRequests,
     right: RxUIApplication.Model.watchKitExtensionRequests
   ) -> Bool {
@@ -1560,7 +1560,7 @@ extension RxUIApplication.Model.watchKitExtensionRequests: Equatable {
 }
 
 extension RxUIApplication.Model.WindowResponse: Equatable {
-  static func ==(
+  public static func ==(
     left: RxUIApplication.Model.WindowResponse,
     right: RxUIApplication.Model.WindowResponse
   ) -> Bool { return
@@ -1570,7 +1570,7 @@ extension RxUIApplication.Model.WindowResponse: Equatable {
 }
 
 extension RxUIApplication.Model.RemoteNotificationRegistration: Equatable {
-  static func ==(
+  public static func ==(
     left: RxUIApplication.Model.RemoteNotificationRegistration,
     right: RxUIApplication.Model.RemoteNotificationRegistration
   ) -> Bool {
@@ -1585,7 +1585,7 @@ extension RxUIApplication.Model.RemoteNotificationRegistration: Equatable {
 }
 
 extension RxUIApplication.Model.ShortcutAction.State: Equatable {
-  static func ==(
+  public static func ==(
     left: RxUIApplication.Model.ShortcutAction.State,
     right: RxUIApplication.Model.ShortcutAction.State
   ) -> Bool {
@@ -1603,7 +1603,7 @@ extension RxUIApplication.Model.ShortcutAction.State: Equatable {
 }
 
 extension RxUIApplication.Model.ShortcutAction: Equatable {
-  static func ==(
+  public static func ==(
     left: RxUIApplication.Model.ShortcutAction,
     right: RxUIApplication.Model.ShortcutAction
   ) -> Bool { return
@@ -1628,7 +1628,7 @@ extension EditOperation: Equatable {
 }
 
 extension RxUIApplication.Model.URLActionOutgoing: Equatable {
-  static func ==(
+  public static func ==(
     left: RxUIApplication.Model.URLActionOutgoing,
     right: RxUIApplication.Model.URLActionOutgoing
   ) -> Bool {
@@ -1648,7 +1648,7 @@ extension RxUIApplication.Model.URLActionOutgoing: Equatable {
 }
 
 extension RxUIApplication.Model.TartgetActionProcess: Equatable {
-  static func ==(
+  public static func ==(
     left: RxUIApplication.Model.TartgetActionProcess,
     right: RxUIApplication.Model.TartgetActionProcess
   ) -> Bool {
@@ -1662,10 +1662,10 @@ extension RxUIApplication.Model.TartgetActionProcess: Equatable {
 }
 
 extension RxUIApplication.Model.BackgroundTask: Hashable {
-  var hashValue: Int { return
+  public var hashValue: Int { return
     name.hashValue
   }
-  static func ==(
+  public static func ==(
     left: RxUIApplication.Model.BackgroundTask,
     right: RxUIApplication.Model.BackgroundTask
   ) -> Bool { return
@@ -1675,7 +1675,7 @@ extension RxUIApplication.Model.BackgroundTask: Hashable {
 }
 
 extension RxUIApplication.Model.BackgroundTask.State: Equatable {
-  static func ==(
+  public static func ==(
     left: RxUIApplication.Model.BackgroundTask.State,
     right: RxUIApplication.Model.BackgroundTask.State
   ) -> Bool {
@@ -1689,7 +1689,7 @@ extension RxUIApplication.Model.BackgroundTask.State: Equatable {
 }
 
 extension RxUIApplication.Model.UserNotificationSettingsState: Equatable {
-  static func ==(
+  public static func ==(
     left: RxUIApplication.Model.UserNotificationSettingsState,
     right: RxUIApplication.Model.UserNotificationSettingsState
   ) -> Bool {
@@ -1731,7 +1731,7 @@ extension Collection where Iterator.Element == RxUIApplication.Model.BackgroundT
 }
 
 extension RxUIApplication.Model.BackgroundTask {
-  var ID: UIBackgroundTaskIdentifier? {
+  public var ID: UIBackgroundTaskIdentifier? {
     if case .progressing(let id) = state { return id }
     else if case .complete(let id) = state { return id }
     else { return nil }
