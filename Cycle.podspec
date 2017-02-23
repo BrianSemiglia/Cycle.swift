@@ -22,7 +22,7 @@ TODO: Add long description of the pod here.
                        DESC
 
   s.homepage         = 'https://github.com/BrianSemiglia/Cycle.swift'
-  # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
+  # s.screenshots    = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'brian.semiglia@gmail.com' => 'brian.semiglia@gmail.com' }
   s.source           = { :git => 'https://github.com/BrianSemiglia/Cycle.swift.git', :tag => s.version.to_s }
