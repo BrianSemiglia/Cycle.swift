@@ -804,7 +804,7 @@ public class RxUIApplication: NSObject, UIApplicationDelegate {
     output.on(.next(model))
   }
   
-  func application(
+  public func application(
     _ application: UIApplication,
     handleWatchKitExtensionRequest userInfo: [AnyHashable : Any]?,
     reply: @escaping ([AnyHashable : Any]?) -> Void
