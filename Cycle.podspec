@@ -17,9 +17,7 @@ Pod::Spec.new do |s|
 #   * Write the description between the DESC delimiters below.
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
-  s.description      = <<-DESC
-TODO: Add long description of the pod here.
-                       DESC
+  s.description      = 'Cycle provides a means of writing an app as a filter over a stream of external events.'
 
   s.homepage         = 'https://github.com/BrianSemiglia/Cycle.swift'
   # s.screenshots    = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
