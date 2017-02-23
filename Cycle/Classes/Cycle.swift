@@ -22,6 +22,7 @@ open class CycledApplicationDelegate<T: SinkSourceConverting>: UIResponder, UIAp
       transformer: filter,
       host: UIApplication.shared
     )
+    super.init()
   }
   
   override open func forwardingTarget(for input: Selector!) -> Any? { return
