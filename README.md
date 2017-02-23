@@ -38,14 +38,14 @@ A sample project of the infamous 'Counter' app is included.
 
     // Serves as schema and initial state.
     struct AppModel: Initializable {
-      var network = Network.Model()
-      var screen = Screen.Model()
-      var application = RxUIApplication.Model()
+      let network = Network.Model()
+      let screen = Screen.Model()
+      let application = RxUIApplication.Model()
     }
     
     struct Drivers: CycleDrivable {
-      var network = Network()
-      var screen = Screen()
+      let network = Network()
+      let screen = Screen()
       var application = RxUIApplication! // Set internally by Cycle. Struct must be able to host.
     }
 
