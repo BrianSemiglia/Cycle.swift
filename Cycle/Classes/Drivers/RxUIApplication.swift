@@ -236,10 +236,10 @@ public class RxUIApplication: NSObject, UIApplicationDelegate {
   fileprivate let output: BehaviorSubject<Model>
   fileprivate var model: Model
 
-  public init(intitial: Model, application: UIApplication) {
-    self.application = application
-    model = intitial
-    output = BehaviorSubject<Model>(value: intitial)
+  public init(initial: Model) {
+    application = UIApplication.shared
+    model = initial
+    output = BehaviorSubject<Model>(value: initial)
   }
   
   func render(new: Model, old: Model) {

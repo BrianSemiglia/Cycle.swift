@@ -24,7 +24,7 @@ struct URLActionOutgoing: SinkSourceConverting {
     var application = RxUIApplication.Model.empty
   }
   struct Drivers: CycleDrivable {
-    var application: RxUIApplication!
+    let application = RxUIApplication(initial: .empty)
   }
   func effectsFrom(events: Observable<Model>, drivers: Drivers) -> Observable<Model> { return
     drivers.application

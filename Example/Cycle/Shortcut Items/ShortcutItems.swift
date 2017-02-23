@@ -26,7 +26,7 @@ struct ShortcutActionsExample: SinkSourceConverting {
   }
   struct Drivers: CycleDrivable {
     let timer = Timer(.empty)
-    var application: RxUIApplication!
+    let application = RxUIApplication(initial: .empty)
   }
   func effectsFrom(events: Observable<Model>, drivers: Drivers) -> Observable<Model> {
     

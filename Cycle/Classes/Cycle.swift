@@ -17,20 +17,16 @@ open class CycledApplicationDelegate<T: SinkSourceConverting>: UIResponder, UIAp
   public init(filter: T) {
     window = UIWindow(frame: UIScreen.main.bounds, root: .empty)
     window?.makeKeyAndVisible()
-    // Cycle is deferred to make sure window is ready for drivers.
-    cycle = Cycle(
-      transformer: filter,
-      host: UIApplication.shared
-    )
+    cycle = Cycle(transformer: filter)
     super.init()
   }
   
   override open func forwardingTarget(for input: Selector!) -> Any? { return
-    cycle.application
+    cycle.delegate
   }
   
   override open func responds(to input: Selector!) -> Bool { return
-    cycle.application.responds(to: input) == true
+    cycle.delegate.responds(to: input)
   }
 }
 
@@ -45,22 +41,16 @@ public final class Cycle<E: SinkSourceConverting> {
   fileprivate var events: Observable<E.Source>?
   fileprivate var eventsProxy: ReplaySubject<E.Source>?
   fileprivate var loop: Disposable?
-  fileprivate let application: RxUIApplication
-  public init(transformer: E, host: UIApplication) {
+  fileprivate let delegate: UIApplicationDelegate
+  public required init(transformer: E) {
     eventsProxy = ReplaySubject.create(
       bufferSize: 1
     )
-    application = RxUIApplication(
-      intitial: .empty,
-      application: host
-    )
+    var x = E.Drivers()
+    delegate = x.application
     events = transformer.effectsFrom(
       events: eventsProxy!,
-      drivers: {
-        var x = E.Drivers()
-        x.application = application
-        return x
-      }()
+      drivers: x
     )
     loop = events!
       .startWith(E.Source())
@@ -76,14 +66,15 @@ public protocol SinkSourceConverting {
   func effectsFrom(events: Observable<Source>, drivers: Drivers) -> Observable<Source>
 }
 
-public protocol CycleDrivable: Initializable, RxUIApplicationStoring {}
+public protocol CycleDrivable: Initializable, UIApplicationProviding {}
 
 public protocol Initializable {
   init()
 }
 
-public protocol RxUIApplicationStoring {
-  var application: RxUIApplication! { get set } // Set internally by Cycle
+public protocol UIApplicationProviding {
+  associatedtype Delegate: UIApplicationDelegate
+  var application: Delegate { get }
 }
 
 extension UIViewController {

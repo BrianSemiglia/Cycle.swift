@@ -26,7 +26,7 @@ struct IntegerMutatingApp: SinkSourceConverting {
   }
   struct Drivers: CycleDrivable {
     let toggler = ValueToggler()
-    var application: RxUIApplication!
+    let application = RxUIApplication(initial: .empty)
   }
   func effectsFrom(events: Observable<Model>, drivers: Drivers) -> Observable<Model> {
     let value = drivers.toggler

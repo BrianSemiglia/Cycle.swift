@@ -1507,7 +1507,10 @@ class RxUIApplicationTestCase: XCTestCase {
   
   class RxUIApplicationCycle: SinkSourceConverting {
     struct Drivers: CycleDrivable {
-      var application: RxUIApplication!
+      public var application: RxUIApplication!
+      static func constructedWith(app: UIApplication) -> RxUIApplication! {
+        return RxUIApplication(intitial: .empty, application: app)
+      }
     }
     struct DriverModels: Initializable {
       var application = RxUIApplication.Model.empty
