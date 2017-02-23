@@ -1,11 +1,17 @@
 use_frameworks!
 
-target 'Cycle_Example' do
+target 'Push Notification Registration' do
   pod 'Cycle', :path => '../'
-
   target 'Cycle_Tests' do
     inherit! :search_paths
-
-    
   end
+end
+
+target 'Shortcut Items' do
+  pod 'Cycle', :path => '../'
+end
+
+target 'Integer Mutation' do
+  pod 'Cycle', :path => '../'
+  pod 'RxCocoa', '3.2.0'
 end
