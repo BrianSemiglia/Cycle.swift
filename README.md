@@ -1,4 +1,4 @@
-# Cycle
+# Cycle.swift
 
 [![CI Status](http://img.shields.io/travis/brian.semiglia@gmail.com/Cycle.svg?style=flat)](https://travis-ci.org/brian.semiglia@gmail.com/Cycle)
 [![Version](https://img.shields.io/cocoapods/v/Cycle.svg?style=flat)](http://cocoapods.org/pods/Cycle)
