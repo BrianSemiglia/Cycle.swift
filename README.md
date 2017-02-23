@@ -126,7 +126,7 @@ A sample project of the infamous 'Counter' app is included.
 3. Define drivers that, given a stream of event-models, can produce streams of effect-models (hand-waving)
 
 ##Notes of Interest
-Drivers of similar libraries communicate with the shared store directly. Cycle inverts that dependancy a bit with the use of observables (versus drivers subscribing to the app model) and with the return of models that are owned by the drivers (versus actions owned by the app model).
+Drivers of similar libraries communicate with the shared store directly. Cycle inverts that dependancy a bit with the use of injected observables (versus drivers subscribing to the shared context model) and with the use of models that are owned by the drivers (versus actions owned by the app model).
 
 ## Requirements
 iOS 9+
