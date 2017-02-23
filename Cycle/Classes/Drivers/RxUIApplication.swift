@@ -803,10 +803,10 @@ public class RxUIApplication: NSObject, UIApplicationDelegate {
     )
     output.on(.next(model))
   }
-
+  
   func application(
     _ application: UIApplication,
-    handlewatchKitExtensionRequests userInfo: [AnyHashable : Any]?,
+    handleWatchKitExtensionRequest userInfo: [AnyHashable : Any]?,
     reply: @escaping ([AnyHashable : Any]?) -> Void
   ) {
     model.watchKitExtensionRequests += [

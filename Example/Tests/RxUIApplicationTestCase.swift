@@ -681,7 +681,7 @@ class RxUIApplicationTestCase: XCTestCase {
         .statesFromCall {
           $0.application(
             UIApplication.shared,
-            handlewatchKitExtensionRequests: ["x":"y"],
+            handleWatchKitExtensionRequest: ["x":"y"],
             reply: { _ in }
           )
         }
