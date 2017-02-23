@@ -8,8 +8,8 @@
 
 Pod::Spec.new do |s|
   s.name             = 'Cycle'
-  s.version          = '0.1.0'
-  s.summary          = 'A short description of Cycle.'
+  s.version          = '0.0.1'
+  s.summary          = 'An experiment in unidirectional-data-flow inspired by Cycle.js.'
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
@@ -21,12 +21,12 @@ Pod::Spec.new do |s|
 TODO: Add long description of the pod here.
                        DESC
 
-  s.homepage         = 'https://github.com/brian.semiglia@gmail.com/Cycle'
+  s.homepage         = 'https://github.com/BrianSemiglia/Cycle.swift'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'brian.semiglia@gmail.com' => 'brian.semiglia@gmail.com' }
-  s.source           = { :git => 'https://github.com/brian.semiglia@gmail.com/Cycle.git', :tag => s.version.to_s }
-  # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
+  s.source           = { :git => 'https://github.com/BrianSemiglia/Cycle.swift.git', :tag => s.version.to_s }
+  # s.social_media_url = 'https://twitter.com/brians_'
 
   s.ios.deployment_target = '9.0'
 
