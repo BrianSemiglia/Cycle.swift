@@ -139,6 +139,10 @@ public class RxUIApplication: NSObject, UIApplicationDelegate {
         case progressing((Bool) -> Void) // Readonly
         case complete(Bool, (Bool) -> Void)
       }
+      public init(item: UIApplicationShortcutItem, state: State) {
+        self.item = item
+        self.state = state
+      }
     }
     public struct RemoteNofitication {
       public var notification: [AnyHashable : Any] // Readonly

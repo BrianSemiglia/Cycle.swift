@@ -14,6 +14,12 @@
 		D30604ED1E5E5247007BE6F0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D30604E71E5E5247007BE6F0 /* Images.xcassets */; };
 		D30604EE1E5E5247007BE6F0 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D30604E81E5E5247007BE6F0 /* Info.plist */; };
 		D30604F11E5E5433007BE6F0 /* PushNotificationRegistration.swift in Sources */ = {isa = PBXBuildFile; fileRef = D30604F01E5E5433007BE6F0 /* PushNotificationRegistration.swift */; };
+		D30604F71E5E65FD007BE6F0 /* Pods_Cycle_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D52CE39479F27A0E80FE3B37 /* Pods_Cycle_Example.framework */; };
+		D30604F91E5E65FD007BE6F0 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D30604E81E5E5247007BE6F0 /* Info.plist */; };
+		D30604FA1E5E65FD007BE6F0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D30604E71E5E5247007BE6F0 /* Images.xcassets */; };
+		D30604FB1E5E65FD007BE6F0 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D30604E31E5E5247007BE6F0 /* LaunchScreen.xib */; };
+		D30605081E5E667F007BE6F0 /* ShortcutItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = D30605041E5E6656007BE6F0 /* ShortcutItems.swift */; };
+		D30605091E5E6684007BE6F0 /* Timer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D30605051E5E6656007BE6F0 /* Timer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,6 +45,10 @@
 		D30604E71E5E5247007BE6F0 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		D30604E81E5E5247007BE6F0 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D30604F01E5E5433007BE6F0 /* PushNotificationRegistration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushNotificationRegistration.swift; sourceTree = "<group>"; };
+		D30605011E5E65FD007BE6F0 /* Shortcut Items.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Shortcut Items.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D30605021E5E65FD007BE6F0 /* Push Notification Registration copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Push Notification Registration copy-Info.plist"; path = "/Users/Brian/Dropbox/Cycle/new-pod/Cycle/Example/Push Notification Registration copy-Info.plist"; sourceTree = "<absolute>"; };
+		D30605041E5E6656007BE6F0 /* ShortcutItems.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShortcutItems.swift; sourceTree = "<group>"; };
+		D30605051E5E6656007BE6F0 /* Timer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Timer.swift; sourceTree = "<group>"; };
 		D4EFA9981A51B308BE4F8758 /* Pods-Cycle_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Cycle_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-Cycle_Example/Pods-Cycle_Example.release.xcconfig"; sourceTree = "<group>"; };
 		D52CE39479F27A0E80FE3B37 /* Pods_Cycle_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Cycle_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E7642C66690A3E83DA25F858 /* Pods-Cycle_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Cycle_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Cycle_Tests/Pods-Cycle_Tests.release.xcconfig"; sourceTree = "<group>"; };
@@ -63,6 +73,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D30604F61E5E65FD007BE6F0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D30604F71E5E65FD007BE6F0 /* Pods_Cycle_Example.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -84,6 +102,7 @@
 				607FACD11AFB9204008FA782 /* Products */,
 				F9A6C6FB5832BFCE3FED7321 /* Pods */,
 				420949623F63038D9B3C3651 /* Frameworks */,
+				D30605021E5E65FD007BE6F0 /* Push Notification Registration copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -92,6 +111,7 @@
 			children = (
 				607FACD01AFB9204008FA782 /* Push Notification Registration.app */,
 				607FACE51AFB9204008FA782 /* Cycle_Tests.xctest */,
+				D30605011E5E65FD007BE6F0 /* Shortcut Items.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -99,6 +119,7 @@
 		607FACD21AFB9204008FA782 /* Examples */ = {
 			isa = PBXGroup;
 			children = (
+				D30605031E5E6656007BE6F0 /* Shortcut Items */,
 				D30604E11E5E5247007BE6F0 /* Push Notification Registration */,
 			);
 			name = Examples;
@@ -141,6 +162,15 @@
 				D30604E81E5E5247007BE6F0 /* Info.plist */,
 			);
 			path = "Push Notification Registration";
+			sourceTree = "<group>";
+		};
+		D30605031E5E6656007BE6F0 /* Shortcut Items */ = {
+			isa = PBXGroup;
+			children = (
+				D30605041E5E6656007BE6F0 /* ShortcutItems.swift */,
+				D30605051E5E6656007BE6F0 /* Timer.swift */,
+			);
+			path = "Shortcut Items";
 			sourceTree = "<group>";
 		};
 		F9A6C6FB5832BFCE3FED7321 /* Pods */ = {
@@ -198,6 +228,26 @@
 			productReference = 607FACE51AFB9204008FA782 /* Cycle_Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		D30604F21E5E65FD007BE6F0 /* Shortcut Items */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D30604FE1E5E65FD007BE6F0 /* Build configuration list for PBXNativeTarget "Shortcut Items" */;
+			buildPhases = (
+				D30604F31E5E65FD007BE6F0 /* [CP] Check Pods Manifest.lock */,
+				D30604F41E5E65FD007BE6F0 /* Sources */,
+				D30604F61E5E65FD007BE6F0 /* Frameworks */,
+				D30604F81E5E65FD007BE6F0 /* Resources */,
+				D30604FC1E5E65FD007BE6F0 /* [CP] Embed Pods Frameworks */,
+				D30604FD1E5E65FD007BE6F0 /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Shortcut Items";
+			productName = Cycle;
+			productReference = D30605011E5E65FD007BE6F0 /* Shortcut Items.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -234,6 +284,7 @@
 			targets = (
 				607FACCF1AFB9204008FA782 /* Push Notification Registration */,
 				607FACE41AFB9204008FA782 /* Cycle_Tests */,
+				D30604F21E5E65FD007BE6F0 /* Shortcut Items */,
 			);
 		};
 /* End PBXProject section */
@@ -253,6 +304,16 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D30604F81E5E65FD007BE6F0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D30604F91E5E65FD007BE6F0 /* Info.plist in Resources */,
+				D30604FA1E5E65FD007BE6F0 /* Images.xcassets in Resources */,
+				D30604FB1E5E65FD007BE6F0 /* LaunchScreen.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -334,6 +395,51 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Cycle_Tests/Pods-Cycle_Tests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		D30604F31E5E65FD007BE6F0 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		D30604FC1E5E65FD007BE6F0 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Cycle_Example/Pods-Cycle_Example-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D30604FD1E5E65FD007BE6F0 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Cycle_Example/Pods-Cycle_Example-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		E2D9D9C9C700B8534D582081 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -365,6 +471,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				607FACEC1AFB9204008FA782 /* Tests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D30604F41E5E65FD007BE6F0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D30605091E5E6684007BE6F0 /* Timer.swift in Sources */,
+				D30605081E5E667F007BE6F0 /* ShortcutItems.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -543,6 +658,34 @@
 			};
 			name = Release;
 		};
+		D30604FF1E5E65FD007BE6F0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A6B9F3753E5A2FF6BE3043CC /* Pods-Cycle_Example.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = "Cycle/Shortcut Items/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MODULE_NAME = ExampleApp;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Debug;
+		};
+		D30605001E5E65FD007BE6F0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D4EFA9981A51B308BE4F8758 /* Pods-Cycle_Example.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = "Cycle/Shortcut Items/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MODULE_NAME = ExampleApp;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -569,6 +712,15 @@
 			buildConfigurations = (
 				607FACF31AFB9204008FA782 /* Debug */,
 				607FACF41AFB9204008FA782 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D30604FE1E5E65FD007BE6F0 /* Build configuration list for PBXNativeTarget "Shortcut Items" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D30604FF1E5E65FD007BE6F0 /* Debug */,
+				D30605001E5E65FD007BE6F0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
