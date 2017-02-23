@@ -7,6 +7,7 @@
 //
 
 import XCTest
+@testable import Cycle
 import RxSwift
 
 class RxUIApplicationTestCase: XCTestCase {
