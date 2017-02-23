@@ -15,10 +15,13 @@ class RxUIApplicationTestCase: XCTestCase {
   // Starts with EMPTY always
   static func statesFromCall(
     initial: RxUIApplication.Model = .empty,
-    call: (RxUIApplication) -> Any
+    call: (UIApplicationDelegate) -> Any
   ) -> [RxUIApplication.Model] {
     var output: [RxUIApplication.Model] = []
-    let application = RxUIApplication(intitial: initial, application: UIApplication.shared)
+    let application = RxUIApplication(
+      intitial: initial,
+      application: UIApplication.shared
+    )
     _ = application
       .rendered(.just(initial))
       .subscribe {
@@ -26,7 +29,7 @@ class RxUIApplicationTestCase: XCTestCase {
           output += [new]
         }
       }
-    _ = call(application)
+    _ = call(application as UIApplicationDelegate)
     return output
   }
   
@@ -51,7 +54,7 @@ class RxUIApplicationTestCase: XCTestCase {
     
     XCTAssert(
       RxUIApplicationTestCase
-      .statesFromCall { $0.applicationWillTerminate(UIApplication.shared) }
+      .statesFromCall { $0.applicationWillTerminate!(UIApplication.shared) }
       .map { $0.session.state }
       ==
       [.currently(.awaitingLaunch), .pre(.terminated)]
@@ -61,7 +64,7 @@ class RxUIApplicationTestCase: XCTestCase {
   func testDidBecomeActive() {
     XCTAssert(
       RxUIApplicationTestCase
-      .statesFromCall { $0.applicationDidBecomeActive(UIApplication.shared) }
+      .statesFromCall { $0.applicationDidBecomeActive!(UIApplication.shared) }
       .map { $0.session.state }
       ==
       [.currently(.awaitingLaunch), .currently(.active(.some))]
@@ -71,7 +74,7 @@ class RxUIApplicationTestCase: XCTestCase {
   func testWillResignActive() {
     XCTAssert(
       RxUIApplicationTestCase
-      .statesFromCall { $0.applicationWillResignActive(UIApplication.shared) }
+      .statesFromCall { $0.applicationWillResignActive!(UIApplication.shared) }
       .map { $0.session.state }
       ==
       [.currently(.awaitingLaunch), .pre(.resigned)]
@@ -81,7 +84,7 @@ class RxUIApplicationTestCase: XCTestCase {
   func testDidEnterBackground() {
     XCTAssert(
       RxUIApplicationTestCase
-      .statesFromCall { $0.applicationDidEnterBackground(UIApplication.shared) }
+      .statesFromCall { $0.applicationDidEnterBackground!(UIApplication.shared) }
       .map { $0.session.state }
       ==
       [.currently(.awaitingLaunch), .currently(.resigned)]
@@ -92,7 +95,7 @@ class RxUIApplicationTestCase: XCTestCase {
     XCTAssert(
       RxUIApplicationTestCase
       .statesFromCall {
-        $0.application(
+        $0.application!(
           UIApplication.shared,
           willFinishLaunchingWithOptions: nil
         )
@@ -107,7 +110,7 @@ class RxUIApplicationTestCase: XCTestCase {
     XCTAssert(
       RxUIApplicationTestCase
       .statesFromCall {
-        $0.application(
+        $0.application!(
           UIApplication.shared,
           didFinishLaunchingWithOptions: nil
         )
@@ -121,7 +124,7 @@ class RxUIApplicationTestCase: XCTestCase {
   func testWillEnterBackground() {
     XCTAssertEqual(
       RxUIApplicationTestCase
-      .statesFromCall { $0.applicationWillEnterForeground(UIApplication.shared) }
+      .statesFromCall { $0.applicationWillEnterForeground!(UIApplication.shared) }
       .map { $0.session.state }
       ,
       [.currently(.awaitingLaunch), .pre(.active(.some))]
@@ -131,7 +134,7 @@ class RxUIApplicationTestCase: XCTestCase {
   func testSignificantTimeChange() {
     XCTAssert(
       RxUIApplicationTestCase
-      .statesFromCall { $0.applicationSignificantTimeChange(UIApplication.shared) }
+      .statesFromCall { $0.applicationSignificantTimeChange!(UIApplication.shared) }
       .map { $0.isObservingSignificantTimeChange }
       ==
       [false, true]
@@ -141,7 +144,7 @@ class RxUIApplicationTestCase: XCTestCase {
   func testMemoryWarning() {
     XCTAssert(
       RxUIApplicationTestCase
-      .statesFromCall { $0.applicationDidReceiveMemoryWarning(UIApplication.shared) }
+      .statesFromCall { $0.applicationDidReceiveMemoryWarning!(UIApplication.shared) }
       .map { $0.isExperiencingMemoryWarning }
       ==
       [false, true]
@@ -151,7 +154,7 @@ class RxUIApplicationTestCase: XCTestCase {
   func testShouldRequestHealthAuthorization() {
     XCTAssert(
       RxUIApplicationTestCase
-      .statesFromCall { $0.applicationShouldRequestHealthAuthorization(UIApplication.shared) }
+      .statesFromCall { $0.applicationShouldRequestHealthAuthorization!(UIApplication.shared) }
       .map { $0.isExperiencingHealthAuthorizationRequest }
       ==
       [false, true]
@@ -161,7 +164,7 @@ class RxUIApplicationTestCase: XCTestCase {
   func testProtectedDataDidBecomeAvailable() {
     XCTAssert(
       RxUIApplicationTestCase
-      .statesFromCall { $0.applicationProtectedDataDidBecomeAvailable(UIApplication.shared) }
+      .statesFromCall { $0.applicationProtectedDataDidBecomeAvailable!(UIApplication.shared) }
       .map { $0.isProtectedDataAvailable }
       ==
       [.currently(false), .currently(true)]
@@ -171,7 +174,7 @@ class RxUIApplicationTestCase: XCTestCase {
   func testProtectedDataWillBecomeUnavailable() {
     XCTAssert(
       RxUIApplicationTestCase
-      .statesFromCall { $0.applicationProtectedDataWillBecomeUnavailable(UIApplication.shared) }
+      .statesFromCall { $0.applicationProtectedDataWillBecomeUnavailable!(UIApplication.shared) }
       .map { $0.isProtectedDataAvailable }
       ==
       [.currently(false), .pre(false)]
@@ -182,7 +185,7 @@ class RxUIApplicationTestCase: XCTestCase {
     XCTAssert(
       RxUIApplicationTestCase
       .statesFromCall {
-        $0.application(
+        $0.application!(
           UIApplication.shared,
           didRegister: UIUserNotificationSettingsStub(id: "x")
         )
@@ -200,7 +203,7 @@ class RxUIApplicationTestCase: XCTestCase {
     XCTAssert(
       RxUIApplicationTestCase
       .statesFromCall {
-        $0.application(
+        $0.application!(
           UIApplication.shared,
           didFailToRegisterForRemoteNotificationsWithError: ErrorStub(id: "x")
         )
@@ -215,7 +218,7 @@ class RxUIApplicationTestCase: XCTestCase {
     XCTAssert(
       RxUIApplicationTestCase
       .statesFromCall {
-        $0.application(
+        $0.application!(
           UIApplication.shared,
           didRegisterForRemoteNotificationsWithDeviceToken: Data()
         )
@@ -230,7 +233,7 @@ class RxUIApplicationTestCase: XCTestCase {
     XCTAssert(
       RxUIApplicationTestCase
       .statesFromCall {
-        $0.application(
+        $0.application!(
           UIApplication.shared,
           didDecodeRestorableStateWith: CoderStub(id: "x")
         )
@@ -245,7 +248,7 @@ class RxUIApplicationTestCase: XCTestCase {
     XCTAssert(
       RxUIApplicationTestCase
       .statesFromCall {
-        $0.application(
+        $0.application!(
           UIApplication.shared,
           willEncodeRestorableStateWith: CoderStub(id: "x")
         )
@@ -260,7 +263,7 @@ class RxUIApplicationTestCase: XCTestCase {
     XCTAssert(
       RxUIApplicationTestCase
       .statesFromCall {
-        $0.application(
+        $0.application!(
           UIApplication.shared,
           shouldSaveApplicationState: CoderStub(id: "x")
         )
@@ -275,7 +278,7 @@ class RxUIApplicationTestCase: XCTestCase {
     XCTAssert(
       RxUIApplicationTestCase
       .statesFromCall {
-        $0.application(
+        $0.application!(
           UIApplication.shared,
           shouldRestoreApplicationState: CoderStub(id: "x")
         )
@@ -290,7 +293,7 @@ class RxUIApplicationTestCase: XCTestCase {
     XCTAssert(
       RxUIApplicationTestCase
       .statesFromCall {
-        $0.application(
+        $0.application!(
           UIApplication.shared,
           willContinueUserActivityWithType: "x"
         )
@@ -305,7 +308,7 @@ class RxUIApplicationTestCase: XCTestCase {
     XCTAssert(
       RxUIApplicationTestCase
       .statesFromCall {
-        $0.application(
+        $0.application!(
           UIApplication.shared,
           didFailToContinueUserActivityWithType: "x",
           error: ErrorStub(id: "y")
@@ -322,7 +325,7 @@ class RxUIApplicationTestCase: XCTestCase {
     XCTAssert(
       RxUIApplicationTestCase
       .statesFromCall {
-        $0.application(
+        $0.application!(
           UIApplication.shared,
           didUpdate: activity
         )
@@ -338,7 +341,7 @@ class RxUIApplicationTestCase: XCTestCase {
     XCTAssert(
       RxUIApplicationTestCase
       .statesFromCall {
-        $0.application(
+        $0.application!(
           UIApplication.shared,
           continue: activity,
           restorationHandler: { _ in }
@@ -354,7 +357,7 @@ class RxUIApplicationTestCase: XCTestCase {
     XCTAssert(
       RxUIApplicationTestCase
       .statesFromCall {
-        $0.application(
+        $0.application!(
           UIApplication.shared,
           willChangeStatusBarOrientation: .landscapeLeft,
           duration: 0.0
@@ -371,7 +374,7 @@ class RxUIApplicationTestCase: XCTestCase {
     XCTAssertEqual(
       RxUIApplicationTestCase
       .statesFromCall {
-        $0.application(
+        $0.application!(
           UIApplication.shared,
           didChangeStatusBarOrientation: .landscapeLeft
         )
@@ -386,7 +389,7 @@ class RxUIApplicationTestCase: XCTestCase {
     XCTAssert(
       RxUIApplicationTestCase
       .statesFromCall {
-        $0.application(
+        $0.application!(
           UIApplication.shared,
           willChangeStatusBarFrame: CGRect(x: 1, y: 2, width: 3, height: 4)
         )
@@ -419,7 +422,7 @@ class RxUIApplicationTestCase: XCTestCase {
     XCTAssert(
       RxUIApplicationTestCase
       .statesFromCall {
-        $0.application(
+        $0.application!(
           UIApplication.shared,
           handleActionWithIdentifier: "x",
           for: UILocalNotification(),
@@ -445,7 +448,7 @@ class RxUIApplicationTestCase: XCTestCase {
     XCTAssert(
       RxUIApplicationTestCase
       .statesFromCall {
-        $0.application(
+        $0.application!(
           UIApplication.shared,
           handleActionWithIdentifier: "x",
           forRemoteNotification: ["y":"z"],
@@ -510,7 +513,7 @@ class RxUIApplicationTestCase: XCTestCase {
     XCTAssert(
       RxUIApplicationTestCase
       .statesFromCall {
-        $0.application(
+        $0.application!(
           UIApplication.shared,
           handleActionWithIdentifier: "x",
           forRemoteNotification: ["y":"z"],
@@ -536,7 +539,7 @@ class RxUIApplicationTestCase: XCTestCase {
     XCTAssert(
       RxUIApplicationTestCase
       .statesFromCall {
-        $0.application(
+        $0.application!(
           UIApplication.shared,
           handleActionWithIdentifier: "x",
           for: UILocalNotification(),
@@ -607,7 +610,7 @@ class RxUIApplicationTestCase: XCTestCase {
           )
         ),
         call: {
-          $0.application(
+          $0.application!(
             UIApplication.shared,
             performActionFor: .stub,
             completionHandler: { _ in }
@@ -634,7 +637,7 @@ class RxUIApplicationTestCase: XCTestCase {
     XCTAssert(
       RxUIApplicationTestCase
       .statesFromCall {
-        $0.application(
+        $0.application!(
           UIApplication.shared,
           handleEventsForBackgroundURLSession: "x",
           completionHandler: {}
@@ -657,7 +660,7 @@ class RxUIApplicationTestCase: XCTestCase {
     XCTAssert(
       RxUIApplicationTestCase
       .statesFromCall {
-        $0.application(
+        $0.application!(
           UIApplication.shared,
           didReceiveRemoteNotification: ["x":"y"],
           fetchCompletionHandler: { _ in }
@@ -679,7 +682,7 @@ class RxUIApplicationTestCase: XCTestCase {
     XCTAssert(
       RxUIApplicationTestCase
         .statesFromCall {
-          $0.application(
+          $0.application!(
             UIApplication.shared,
             handleWatchKitExtensionRequest: ["x":"y"],
             reply: { _ in }
@@ -721,7 +724,7 @@ class RxUIApplicationTestCase: XCTestCase {
     XCTAssert(
       RxUIApplicationTestCase
       .statesFromCall {
-        $0.application(
+        $0.application!(
           UIApplication.shared,
           shouldAllowExtensionPointIdentifier: .keyboard
         )
@@ -736,7 +739,7 @@ class RxUIApplicationTestCase: XCTestCase {
     XCTAssert(
       RxUIApplicationTestCase
       .statesFromCall {
-        $0.application(
+        $0.application!(
           UIApplication.shared,
           supportedInterfaceOrientationsFor: WindowStub(id: "x")
         )
@@ -752,7 +755,7 @@ class RxUIApplicationTestCase: XCTestCase {
     XCTAssert(
       RxUIApplicationTestCase
       .statesFromCall {
-        let x = $0.application(
+        let x = $0.application!(
           UIApplication.shared,
           viewControllerWithRestorationIdentifierPath: ["x"],
           coder: CoderStub(id: "y")
@@ -1305,7 +1308,7 @@ class RxUIApplicationTestCase: XCTestCase {
   func testRenderingBackgroundFetchProgressCallback() {
     XCTAssertEqual(
       RxUIApplicationTestCase.statesFromCall(call: {
-        $0.application(
+        $0.application!(
           UIApplication.shared,
           performFetchWithCompletionHandler: { _ in }
         )
@@ -1347,7 +1350,7 @@ class RxUIApplicationTestCase: XCTestCase {
   func testRenderingBackgroundURLSessionActionProgressing() {
     XCTAssertEqual(
       RxUIApplicationTestCase.statesFromCall {
-        $0.application(
+        $0.application!(
           UIApplication.shared,
           handleEventsForBackgroundURLSession: "id",
           completionHandler: {}
