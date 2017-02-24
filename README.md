@@ -21,7 +21,6 @@ For example:
 -> ScreenModel + ScreenModel  -> ScreenModel  -> Screen  -> NetworkModel ->
                  SessionModel    SessionModel -> Session
 ```
-A sample project of the infamous 'Counter' app is included.
 
 ##Design
 ```swift
@@ -32,10 +31,11 @@ public protocol SinkSourceConverting {
   associatedtype Source: Initializable
   
   /* 
-    Defines schema and initial values of Drivers. (Ideally, would come from Source but that has yet to come)
+    Defines schema and initial values of Drivers. (Ideally, initial values would come from Source definition above but is currently blocked from doing so by technical reasons.)
+
     Also requires two default drivers: 
-      1. UIApplicationProviding - can serve as UIApplicationDelegate
-      2. ScreenDrivable - can provide a root UIViewController
+      1. let application: UIApplicationProviding - can serve as UIApplicationDelegate
+      2. let screen: ScreenDrivable - can provide a root UIViewController
   */
   associatedtype Drivers: CycleDrivable
 
@@ -147,6 +147,8 @@ public protocol SinkSourceConverting {
   }
 ```
 3. Define drivers that, given a stream of event-models, can produce streams of effect-models (hand-waving)
+
+A sample project of the infamous 'Counter' app is included.
 
 ##Notes of Interest
 Drivers of similar libraries communicate with the shared store directly. Cycle inverts that dependancy a bit with the use of injected observables (versus drivers subscribing to the shared context model) and with the use of models that are owned by the drivers (versus actions owned by the app model).
