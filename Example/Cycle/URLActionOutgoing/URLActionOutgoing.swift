@@ -19,11 +19,16 @@ class URLActionOutgoingDelegate: CycledApplicationDelegate<URLActionOutgoing> {
   }
 }
 
+struct ScreenDriver: UIViewControllerProviding {
+  let root = UIViewController.empty
+}
+
 struct URLActionOutgoing: SinkSourceConverting {
   struct Model: Initializable {
     var application = RxUIApplication.Model.empty
   }
   struct Drivers: CycleDrivable {
+    let screen = ScreenDriver()
     let application = RxUIApplication(initial: .empty)
   }
   func effectsFrom(events: Observable<Model>, drivers: Drivers) -> Observable<Model> { return

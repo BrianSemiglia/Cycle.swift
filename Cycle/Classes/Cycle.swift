@@ -15,10 +15,20 @@ open class CycledApplicationDelegate<T: SinkSourceConverting>: UIResponder, UIAp
   public var window: UIWindow?
   
   public init(filter: T) {
-    window = UIWindow(frame: UIScreen.main.bounds, root: .empty)
-    window?.makeKeyAndVisible()
     cycle = Cycle(transformer: filter)
     super.init()
+  }
+  
+  public func application(
+    _ application: UIApplication,
+    willFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil
+  ) -> Bool {
+    window = UIWindow(frame: UIScreen.main.fixedCoordinateSpace.bounds, root: cycle.root)
+    window?.makeKeyAndVisible()
+    return cycle.delegate.application!(
+      application,
+      willFinishLaunchingWithOptions: launchOptions
+    )
   }
   
   override open func forwardingTarget(for input: Selector!) -> Any? { return
@@ -42,11 +52,13 @@ public final class Cycle<E: SinkSourceConverting> {
   fileprivate var eventsProxy: ReplaySubject<E.Source>?
   fileprivate var loop: Disposable?
   fileprivate let delegate: UIApplicationDelegate
+  fileprivate let root: UIViewController
   public required init(transformer: E) {
     eventsProxy = ReplaySubject.create(
       bufferSize: 1
     )
     let drivers = E.Drivers()
+    root = drivers.screen.root
     delegate = drivers.application
     events = transformer.effectsFrom(
       events: eventsProxy!,
@@ -66,10 +78,19 @@ public protocol SinkSourceConverting {
   func effectsFrom(events: Observable<Source>, drivers: Drivers) -> Observable<Source>
 }
 
-public protocol CycleDrivable: Initializable, UIApplicationProviding {}
+public protocol CycleDrivable: Initializable, UIApplicationProviding, ScreenDrivable {}
 
 public protocol Initializable {
   init()
+}
+
+public protocol ScreenDrivable {
+  associatedtype Driver: UIViewControllerProviding
+  var screen: Driver { get }
+}
+
+public protocol UIViewControllerProviding {
+  var root: UIViewController { get }
 }
 
 public protocol UIApplicationProviding {

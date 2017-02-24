@@ -1504,6 +1504,7 @@ class RxUIApplicationTestCase: XCTestCase {
   
   class RxUIApplicationCycle: SinkSourceConverting {
     struct Drivers: CycleDrivable {
+      let screen = ScreenDriverStub()
       let application = RxUIApplication(initial: .empty)
     }
     struct DriverModels: Initializable {
@@ -1557,4 +1558,8 @@ extension UIApplicationShortcutItem {
       localizedTitle: "y"
     )
   }
+}
+
+struct ScreenDriverStub: UIViewControllerProviding {
+  let root = UIViewController.empty
 }

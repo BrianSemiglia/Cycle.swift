@@ -25,11 +25,11 @@ struct IntegerMutatingApp: SinkSourceConverting {
     var application = RxUIApplication.Model.empty
   }
   struct Drivers: CycleDrivable {
-    let toggler = ValueToggler()
+    let screen = ValueToggler()
     let application = RxUIApplication(initial: .empty)
   }
   func effectsFrom(events: Observable<Model>, drivers: Drivers) -> Observable<Model> {
-    let value = drivers.toggler
+    let value = drivers.screen
       .rendered(events.map { $0.screen })
       .withLatestFrom(events) { ($0.0, $0.1) }
       .reduced()

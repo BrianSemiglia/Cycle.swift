@@ -19,12 +19,17 @@ class ShortcutActionsExampleDelegate: CycledApplicationDelegate<ShortcutActionsE
   }
 }
 
+struct ScreenDriver: UIViewControllerProviding {
+  let root = UIViewController.empty
+}
+
 struct ShortcutActionsExample: SinkSourceConverting {
   struct Model: Initializable {
     var application = RxUIApplication.Model.empty
     var async = Timer.Model.empty
   }
   struct Drivers: CycleDrivable {
+    let screen = ScreenDriver()
     let timer = Timer(.empty)
     let application = RxUIApplication(initial: .empty)
   }

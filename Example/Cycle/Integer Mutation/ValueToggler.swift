@@ -9,9 +9,10 @@
 import UIKit
 import RxCocoa
 import RxSwift
-import CoreLocation
+import CoreLocation //
+import Cycle
 
-class ValueToggler {
+class ValueToggler: UIViewControllerProviding {
   
   static var shared = ValueToggler()
   
@@ -56,13 +57,14 @@ class ValueToggler {
   )
   
   var disposable: Disposable?
+  let root = UIViewController.empty
   
   init() {
     increment.backgroundColor = .gray
     decrement.backgroundColor = .red
-    UIApplication.shared.keyWindow?.rootViewController?.view.addSubview(label)
-    UIApplication.shared.keyWindow?.rootViewController?.view.addSubview(increment)
-    UIApplication.shared.keyWindow?.rootViewController?.view.addSubview(decrement)
+    root.view.addSubview(label)
+    root.view.addSubview(increment)
+    root.view.addSubview(decrement)
   }
   
   func rendered(_ input: Observable<ValueToggler.Model>) -> Observable<ValueToggler.Model> {
