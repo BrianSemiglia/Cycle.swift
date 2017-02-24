@@ -14,7 +14,6 @@
 		B84ACAA946FD4DCD6390E833 /* Pods_Shortcut_Items.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 75F28F672F62AF841428AAE8 /* Pods_Shortcut_Items.framework */; };
 		D30604EB1E5E5247007BE6F0 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D30604E31E5E5247007BE6F0 /* LaunchScreen.xib */; };
 		D30604ED1E5E5247007BE6F0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D30604E71E5E5247007BE6F0 /* Images.xcassets */; };
-		D30604EE1E5E5247007BE6F0 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D30604E81E5E5247007BE6F0 /* Info.plist */; };
 		D30604F11E5E5433007BE6F0 /* PushNotificationRegistration.swift in Sources */ = {isa = PBXBuildFile; fileRef = D30604F01E5E5433007BE6F0 /* PushNotificationRegistration.swift */; };
 		D30604FA1E5E65FD007BE6F0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D30604E71E5E5247007BE6F0 /* Images.xcassets */; };
 		D30604FB1E5E65FD007BE6F0 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D30604E31E5E5247007BE6F0 /* LaunchScreen.xib */; };
@@ -24,14 +23,11 @@
 		D30605141E5E9CD5007BE6F0 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D30604E31E5E5247007BE6F0 /* LaunchScreen.xib */; };
 		D306051F1E5E9D46007BE6F0 /* IntegerMutatingApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D306051D1E5E9D46007BE6F0 /* IntegerMutatingApp.swift */; };
 		D30605201E5E9D46007BE6F0 /* ValueToggler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D306051E1E5E9D46007BE6F0 /* ValueToggler.swift */; };
-		D30605221E5EA2ED007BE6F0 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D30605211E5EA2ED007BE6F0 /* Info.plist */; };
-		D30605241E5EA303007BE6F0 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D30605231E5EA303007BE6F0 /* Info.plist */; };
 		D306052E1E5EA484007BE6F0 /* Pods_Integer_Mutation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AB3EC56074E54409661B9B4 /* Pods_Integer_Mutation.framework */; };
 		D30605301E5EA484007BE6F0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D30604E71E5E5247007BE6F0 /* Images.xcassets */; };
 		D30605311E5EA484007BE6F0 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D30604E31E5E5247007BE6F0 /* LaunchScreen.xib */; };
 		D306053C1E5EA54A007BE6F0 /* URLActionOutgoing.swift in Sources */ = {isa = PBXBuildFile; fileRef = D30605261E5EA45D007BE6F0 /* URLActionOutgoing.swift */; };
 		D306053E1E5EAC4D007BE6F0 /* RxUIApplicationTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = D306053D1E5EAC4D007BE6F0 /* RxUIApplicationTestCase.swift */; };
-		D30605461E6004C5007BE6F0 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D306053A1E5EA4F0007BE6F0 /* Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -413,7 +409,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D30604EE1E5E5247007BE6F0 /* Info.plist in Resources */,
 				D30604ED1E5E5247007BE6F0 /* Images.xcassets in Resources */,
 				D30604EB1E5E5247007BE6F0 /* LaunchScreen.xib in Resources */,
 			);
@@ -432,7 +427,6 @@
 			files = (
 				D30604FA1E5E65FD007BE6F0 /* Images.xcassets in Resources */,
 				D30604FB1E5E65FD007BE6F0 /* LaunchScreen.xib in Resources */,
-				D30605241E5EA303007BE6F0 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -442,7 +436,6 @@
 			files = (
 				D30605131E5E9CD5007BE6F0 /* Images.xcassets in Resources */,
 				D30605141E5E9CD5007BE6F0 /* LaunchScreen.xib in Resources */,
-				D30605221E5EA2ED007BE6F0 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -452,7 +445,6 @@
 			files = (
 				D30605301E5EA484007BE6F0 /* Images.xcassets in Resources */,
 				D30605311E5EA484007BE6F0 /* LaunchScreen.xib in Resources */,
-				D30605461E6004C5007BE6F0 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
