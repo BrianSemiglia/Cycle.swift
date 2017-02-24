@@ -34,6 +34,48 @@
                ReferencedContainer = "container:Cycle.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "D306050A1E5E9CD5007BE6F0"
+               BuildableName = "Integer Mutation.app"
+               BlueprintName = "Integer Mutation"
+               ReferencedContainer = "container:Cycle.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "D30604F21E5E65FD007BE6F0"
+               BuildableName = "Shortcut Items.app"
+               BlueprintName = "Shortcut Items"
+               ReferencedContainer = "container:Cycle.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "D30605281E5EA484007BE6F0"
+               BuildableName = "URL Action Outgoing.app"
+               BlueprintName = "URL Action Outgoing"
+               ReferencedContainer = "container:Cycle.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction

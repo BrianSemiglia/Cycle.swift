@@ -23,7 +23,30 @@ For example:
 ```
 A sample project of the infamous 'Counter' app is included.
 
-##Usage
+##Design
+```swift
+public protocol SinkSourceConverting {
+  /* 
+    Defines schema and initial values of Driver Models
+  */
+  associatedtype Source: Initializable
+  
+  /* 
+    Defines schema and initial values of Drivers. (Ideally, would come from Source but that has yet to come)
+    Also requires two default drivers: 
+      1. UIApplicationProviding - can serve as UIApplicationDelegate
+      2. ScreenDrivable - can provide a root UIViewController
+  */
+  associatedtype Drivers: CycleDrivable
+
+  /*
+    Returns an effect stream of Driver Model, given an event stream of Driver Model. See example for intended implementation.
+  */
+  func effectsFrom(events: Observable<Source>, drivers: Drivers) -> Observable<Source>
+}
+```
+
+##Example
 1. Subclass CycledApplicationDelegate and provide a SinkSourceConverting filter.
 
   ``` swift
@@ -45,8 +68,8 @@ A sample project of the infamous 'Counter' app is included.
     
     struct Drivers: CycleDrivable {
       let network = Network()
-      let screen = Screen()
-      let application = RxUIApplication(initial: .empty)
+      let screen = Screen() // Anything that provides a 'root' UIViewController
+      let application = RxUIApplication(initial: .empty) // Anything that conforms to UIApplicationDelegate
     }
 
     func effectFrom(events: Observable<AppModel>, drivers: Drivers) -> Observable<AppModel> {
