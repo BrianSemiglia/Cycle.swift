@@ -35,6 +35,8 @@ public protocol SinkSourceConverting {
     Also requires two default drivers: 
       1. let application: UIApplicationProviding - can serve as UIApplicationDelegate
       2. let screen: ScreenDrivable - can provide a root UIViewController
+
+    A default UIApplicationProviding driver, RxUIApplication, is included.
   */
   associatedtype Drivers: CycleDrivable
 
