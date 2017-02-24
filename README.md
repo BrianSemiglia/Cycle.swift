@@ -21,7 +21,7 @@ For example:
                  SessionModel    SessionModel -> Session
 ```
 
-##Design
+##Filter Design
 ```swift
 public protocol SinkSourceConverting {
   /* 
