@@ -46,11 +46,11 @@ public final class Cycle<E: SinkSourceConverting> {
     eventsProxy = ReplaySubject.create(
       bufferSize: 1
     )
-    var x = E.Drivers()
-    delegate = x.application
+    let drivers = E.Drivers()
+    delegate = drivers.application
     events = transformer.effectsFrom(
       events: eventsProxy!,
-      drivers: x
+      drivers: drivers
     )
     loop = events!
       .startWith(E.Source())
