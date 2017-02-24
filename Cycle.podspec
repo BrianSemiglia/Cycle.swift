@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'Cycle'
-  s.version          = '0.0.2'
+  s.version          = '0.0.3'
   s.summary          = 'An experiment in unidirectional-data-flow inspired by Cycle.js.'
 
 # This description is used to generate tags and improve search results.
