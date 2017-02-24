@@ -18,10 +18,7 @@ class RxUIApplicationTestCase: XCTestCase {
     call: (UIApplicationDelegate) -> Any
   ) -> [RxUIApplication.Model] {
     var output: [RxUIApplication.Model] = []
-    let application = RxUIApplication(
-      intitial: initial,
-      application: UIApplication.shared
-    )
+    let application = RxUIApplication(initial: initial)
     _ = application
       .rendered(.just(initial))
       .subscribe {
@@ -39,7 +36,7 @@ class RxUIApplicationTestCase: XCTestCase {
     model: RxUIApplication.Model = .empty
   ) -> [RxUIApplication.Model] {
     var output: [RxUIApplication.Model] = []
-    let application = RxUIApplication(intitial: model, application: UIApplication.shared)
+    let application = RxUIApplication(initial: model)
     _ = application
       .rendered(stream)
       .subscribe {
@@ -1507,10 +1504,7 @@ class RxUIApplicationTestCase: XCTestCase {
   
   class RxUIApplicationCycle: SinkSourceConverting {
     struct Drivers: CycleDrivable {
-      public var application: RxUIApplication!
-      static func constructedWith(app: UIApplication) -> RxUIApplication! {
-        return RxUIApplication(intitial: .empty, application: app)
-      }
+      let application = RxUIApplication(initial: .empty)
     }
     struct DriverModels: Initializable {
       var application = RxUIApplication.Model.empty
