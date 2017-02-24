@@ -46,7 +46,7 @@ A sample project of the infamous 'Counter' app is included.
     struct Drivers: CycleDrivable {
       let network = Network()
       let screen = Screen()
-      var application = RxUIApplication! // Set internally by Cycle. Struct must be able to host.
+      let application = RxUIApplication(initial: .empty)
     }
 
     func effectFrom(events: Observable<AppModel>, drivers: Drivers) -> Observable<AppModel> {
