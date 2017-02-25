@@ -192,9 +192,6 @@ class MyDriver {
 
 A sample project of the infamous 'Counter' app is included.
 
-##Notes of Interest
-Drivers of similar libraries communicate with the shared store directly. Cycle inverts that dependancy a bit with the use of injected observables (versus drivers subscribing to the shared context model) and with the use of models that are owned by the drivers (versus actions owned by the app model).
-
 ## Requirements
 iOS 9+
 
