@@ -30,7 +30,7 @@ public protocol SinkSourceConverting {
   associatedtype Source: Initializable
   
   /* 
-    Defines schema and initial values of Drivers. (Ideally, initial values would come from Source definition above but is currently blocked from doing so by technical reasons.)
+    Defines schema and initial values of Drivers. (Ideally, initial values would come from Source definition above but is currently not implemented as such.)
 
     Also requires two default drivers: 
       1. let application: UIApplicationProviding - can serve as UIApplicationDelegate
