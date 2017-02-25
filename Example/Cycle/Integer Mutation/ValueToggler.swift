@@ -56,7 +56,8 @@ class ValueToggler: UIViewControllerProviding {
     )
   )
   
-  var disposable: Disposable?
+  var cleanup = DisposeBag()
+  var input: Observable<Model>?
   let root = UIViewController.empty
   
   init() {
@@ -68,9 +69,9 @@ class ValueToggler: UIViewControllerProviding {
   }
   
   func rendered(_ input: Observable<ValueToggler.Model>) -> Observable<ValueToggler.Model> {
-    return input.flatMap { screen in
-      Observable<ValueToggler.Model>.create { observer in
-        
+    self.input = input
+    self.input?.subscribe { screen in
+      if let screen = screen.element {
         self.increment.setTitle(
           screen.increment.title,
           for: .normal
@@ -80,30 +81,25 @@ class ValueToggler: UIViewControllerProviding {
           for: .normal
         )
         self.label.text = screen.total
-        
-        if let x = self.disposable {
-          return x
-        } else {
-          let inc = self.increment.rx.tap.asObservable()
-            .withLatestFrom(input) { _, model -> ValueToggler.Model in
-              model.copyWith(
-                inc: ValueToggler.Model.Button.State.highlighted,
-                dec: model.decrement.state
-              )
-          }
-          
-          let dec = self.decrement.rx.tap.asObservable()
-            .withLatestFrom(input) { _, model -> ValueToggler.Model in
-              model.copyWith(
-                inc: model.increment.state,
-                dec: ValueToggler.Model.Button.State.highlighted
-              )
-          }
-          self.disposable = Observable.of(inc, dec).merge().subscribe { observer.on($0) }
-          return self.disposable!
-        }
       }
+    }.disposed(by:cleanup)
+
+    let inc = self.increment.rx.tap.asObservable()
+      .withLatestFrom(input) { _, model -> ValueToggler.Model in
+        model.copyWith(
+          inc: ValueToggler.Model.Button.State.highlighted,
+          dec: model.decrement.state
+        )
     }
+    
+    let dec = self.decrement.rx.tap.asObservable()
+      .withLatestFrom(input) { _, model -> ValueToggler.Model in
+        model.copyWith(
+          inc: model.increment.state,
+          dec: ValueToggler.Model.Button.State.highlighted
+        )
+    }
+    return Observable.of(inc, dec).merge()
   }
 }
 
