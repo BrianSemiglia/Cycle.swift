@@ -147,7 +147,48 @@ public protocol SinkSourceConverting {
     }
   }
 ```
-3. Define drivers that, given a stream of event-models, can produce streams of effect-models (hand-waving)
+3. Define drivers that, given a stream of event-models, can produce streams of effect-models
+
+  ```swift
+  class MyDriver {
+
+    fileprivate let input: Observable<Model>?
+    fileprivate let output: BehaviorSubject<Model>
+    fileprivate let model: Model
+
+    public init(initial: Model) {
+      model = initial
+      output = BehaviorSubject<Model>(value: initial)
+    }
+
+    public func rendered(_ input: Observable<Model>) -> Observable<Model> { 
+      self.input = input
+      self.input?.subscribe { [weak self] in
+        if let strong = self {
+          if let new = $0.element {
+            strong.render(model: new)
+          }
+        }
+      }.disposed(by: cleanup)
+      return output
+    }
+
+    func render(model: model) {
+      // Retain for async callback (-didReceiveEvent)
+      self.model = model
+      // Perform side-effects...
+      if case .sending = model.state {
+        // Imperative action
+      }
+    }
+
+    func didReceiveEvent() {
+      var edit = model
+      edit.state = .receiving
+      output.on(.next(edit))
+    }
+  }
+  ```
 
 A sample project of the infamous 'Counter' app is included.
 
