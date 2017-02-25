@@ -50,7 +50,7 @@ extension UIWindow {
 public final class Cycle<E: SinkSourceConverting> {
   fileprivate var events: Observable<E.Source>?
   fileprivate var eventsProxy: ReplaySubject<E.Source>?
-  fileprivate var loop: Disposable?
+  fileprivate let cleanup = DisposeBag()
   fileprivate let delegate: UIApplicationDelegate
   fileprivate let root: UIViewController
   public required init(transformer: E) {
@@ -64,11 +64,11 @@ public final class Cycle<E: SinkSourceConverting> {
       events: eventsProxy!,
       drivers: drivers
     )
-    loop = events!
+    events?
       .startWith(E.Source())
       .subscribe { [weak self] in
         self?.eventsProxy?.on($0)
-    }
+    }.disposed(by: cleanup)
   }
 }
 
