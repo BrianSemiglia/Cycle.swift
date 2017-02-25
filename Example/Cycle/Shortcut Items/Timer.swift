@@ -17,7 +17,8 @@ class Timer {
   }
   
   static let shared = Timer(.empty)
-  fileprivate var disposable: Disposable?
+  fileprivate var cleanup = DisposeBag()
+  fileprivate let input: Observable<Model>?
   fileprivate let output: BehaviorSubject<Model>
   fileprivate var model: Model {
     didSet {
@@ -56,20 +57,14 @@ class Timer {
     var operations: [Operation]
   }
   
-  func rendered(_ input: Observable<Model>) -> Observable<Model> { return
-    input.flatMap { model in
-      Observable.create { [weak self] observer in
-        self?.model = model
-        if self?.disposable == nil {
-          self?.disposable = self?.output.subscribe {
-            if let new = $0.element {
-              observer.on(.next(new))
-            }
-          }
-        }
-        return Disposables.create()
+  func rendered(_ input: Observable<Model>) -> Observable<Model> {
+    self.input = input
+    self.input?.subscribe {
+      if let model = $0.element {
+        self.model = model
       }
-    }
+    }.disposed(by: cleanup)
+    return output
   }
 }
 
