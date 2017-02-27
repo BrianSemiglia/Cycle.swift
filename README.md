@@ -172,7 +172,7 @@ class MyDriver {
     input.subscribe { [weak self] in
       if let strong = self {
         if let new = $0.element {
-          strong.model = model // Retain for async callback (-didReceiveEvent)
+          strong.model = new // Retain for async callback (-didReceiveEvent)
           strong.render(model: new)
         }
       }
