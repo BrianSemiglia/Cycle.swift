@@ -152,6 +152,14 @@ extension ObservableType where E == (RxUIApplication.Model, AppModel) {
 ```swift
 class MyDriver {
 
+  struct Model {
+    var state: State
+    enum State {
+      case sending
+      case receiving
+    }
+  }
+
   fileprivate let output: BehaviorSubject<Model>
   fileprivate let model: Model
 
@@ -172,7 +180,7 @@ class MyDriver {
     return self.output
   }
 
-  func render(model: model) {    
+  func render(model: Model) {    
     if case .sending = model.state {
       // Perform side-effects...
     }
