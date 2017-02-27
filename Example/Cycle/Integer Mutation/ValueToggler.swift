@@ -69,18 +69,17 @@ class ValueToggler: UIViewControllerProviding {
   }
   
   func rendered(_ input: Observable<ValueToggler.Model>) -> Observable<ValueToggler.Model> {
-    self.input = input
-    self.input?.subscribe { screen in
-      if let screen = screen.element {
+    input.subscribe { possible in
+      if let latest = possible.element {
         self.increment.setTitle(
-          screen.increment.title,
+          latest.increment.title,
           for: .normal
         )
         self.decrement.setTitle(
-          screen.decrement.title,
+          latest.decrement.title,
           for: .normal
         )
-        self.label.text = screen.total
+        self.label.text = latest.total
       }
     }.disposed(by:cleanup)
 
