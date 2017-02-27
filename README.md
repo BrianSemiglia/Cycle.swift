@@ -170,11 +170,9 @@ class MyDriver {
 
   public func rendered(_ input: Observable<Model>) -> Observable<Model> { 
     input.subscribe { [weak self] in
-      if let strong = self {
-        if let new = $0.element {
-          strong.model = new // Retain for async callback (-didReceiveEvent)
-          strong.render(model: new)
-        }
+      if let strong = self, let new = $0.element {
+        strong.model = new // Retain for async callback (-didReceiveEvent)
+        strong.render(model: new)
       }
     }.disposed(by: cleanup)
     return self.output
