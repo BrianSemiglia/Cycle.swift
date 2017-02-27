@@ -164,6 +164,7 @@ class MyDriver {
     input.subscribe { [weak self] in
       if let strong = self {
         if let new = $0.element {
+          strong.model = model // Retain for async callback (-didReceiveEvent)
           strong.render(model: new)
         }
       }
@@ -171,12 +172,9 @@ class MyDriver {
     return self.output
   }
 
-  func render(model: model) {
-    // Retain for async callback (-didReceiveEvent)
-    self.model = model
-    // Perform side-effects...
+  func render(model: model) {    
     if case .sending = model.state {
-      // Imperative action
+      // Perform side-effects...
     }
   }
 
