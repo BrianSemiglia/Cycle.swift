@@ -152,7 +152,6 @@ extension ObservableType where E == (RxUIApplication.Model, AppModel) {
 ```swift
 class MyDriver {
 
-  fileprivate let input: Observable<Model>?
   fileprivate let output: BehaviorSubject<Model>
   fileprivate let model: Model
 
@@ -162,15 +161,14 @@ class MyDriver {
   }
 
   public func rendered(_ input: Observable<Model>) -> Observable<Model> { 
-    self.input = input
-    self.input?.subscribe { [weak self] in
+    input.subscribe { [weak self] in
       if let strong = self {
         if let new = $0.element {
           strong.render(model: new)
         }
       }
     }.disposed(by: cleanup)
-    return output
+    return self.output
   }
 
   func render(model: model) {
