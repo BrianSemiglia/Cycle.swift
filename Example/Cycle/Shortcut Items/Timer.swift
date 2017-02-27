@@ -18,7 +18,6 @@ class Timer {
   
   static let shared = Timer(.empty)
   fileprivate var cleanup = DisposeBag()
-  fileprivate let input: Observable<Model>?
   fileprivate let output: BehaviorSubject<Model>
   fileprivate var model: Model {
     didSet {
@@ -58,8 +57,7 @@ class Timer {
   }
   
   func rendered(_ input: Observable<Model>) -> Observable<Model> {
-    self.input = input
-    self.input?.subscribe {
+    input.subscribe {
       if let model = $0.element {
         self.model = model
       }
