@@ -233,7 +233,6 @@ public class RxUIApplication: NSObject, UIApplicationDelegate {
   
   fileprivate let application: UIApplication
   fileprivate let cleanup = DisposeBag()
-  fileprivate var input: Observable<Model>?
   fileprivate let output: BehaviorSubject<Model>
   fileprivate var model: Model
 
@@ -519,15 +518,14 @@ public class RxUIApplication: NSObject, UIApplicationDelegate {
   }
   
   public func rendered(_ input: Observable<Model>) -> Observable<Model> {
-    self.input = input
-    self.input?.subscribe { [weak self] in
+    input.distinctUntilChanged().subscribe { [weak self] in
       if let strong = self {
         if let new = $0.element {
           strong.render(new: new, old: strong.model)
         }
       }
     }.disposed(by: cleanup)
-    return output
+    return output.distinctUntilChanged()
   }
 
   public func application(
