@@ -49,148 +49,147 @@ public protocol SinkSourceConverting {
 
 ##Example
 1. Subclass CycledApplicationDelegate and provide a SinkSourceConverting filter.
-
-``` swift
-@UIApplicationMain
-class Example: CycledApplicationDelegate<MyFilter> {
-  init() {
-    super.init(handler: MyFilter())
-  }
-}
-
-struct MyFilter: SinkSourceConverting {
-
-  // Serves as schema and initial state.
-  struct AppModel: Initializable {
-    let network = Network.Model()
-    let screen = Screen.Model()
-    let application = RxUIApplication.Model()
+  ``` swift
+  @UIApplicationMain
+  class Example: CycledApplicationDelegate<MyFilter> {
+    init() {
+      super.init(handler: MyFilter())
+    }
   }
   
-  struct Drivers: CycleDrivable {
-    let network = Network()
-    let screen = Screen() // Anything that provides a 'root' UIViewController
-    let application = RxUIApplication(initial: .empty) // Anything that conforms to UIApplicationDelegate
+  struct MyFilter: SinkSourceConverting {
+    
+    // Serves as schema and initial state.
+    struct AppModel: Initializable {
+      let network = Network.Model()
+      let screen = Screen.Model()
+      let application = RxUIApplication.Model()
+    }
+    
+    struct Drivers: CycleDrivable {
+      let network = Network()
+      let screen = Screen() // Anything that provides a 'root' UIViewController
+      let application = RxUIApplication(initial: .empty) // Anything that conforms to UIApplicationDelegate
+    }
+    
+    func effectFrom(events: Observable<AppModel>, drivers: Drivers) -> Observable<AppModel> {
+      
+      let network = drivers.network
+        .rendered(events.map { $0.network })
+        .withLatestFrom(events) { ($0.0, $0.1) }
+        .reducingFuctionOfYourChoice()
+      
+      let screen = drivers.screen
+        .rendered(events.map { $0.screen })
+        .withLatestFrom(events) { ($0.0, $0.1) }
+        .reduced()
+      
+      let application = drivers.application
+        .rendered(events.map { $0.application })
+        .withLatestFrom(events) { ($0.0, $0.1) }
+        .reduced()
+      
+      return Observable
+        .of(network, screen, application)
+        .merge()
+    }
+    
   }
-
-  func effectFrom(events: Observable<AppModel>, drivers: Drivers) -> Observable<AppModel> {
-
-    let network = drivers.network
-      .rendered(events.map { $0.network })
-      .withLatestFrom(events) { ($0.0, $0.1) }
-      .reducingFuctionOfYourChoice()
-
-    let screen = drivers.screen
-      .rendered(events.map { $0.screen })
-      .withLatestFrom(events) { ($0.0, $0.1) }
-      .reduced()
-
-    let application = drivers.application
-      .rendered(events.map { $0.application })
-      .withLatestFrom(events) { ($0.0, $0.1) }
-      .reduced()
-
-    return Observable
-      .of(network, screen, application)
-      .merge()
-  }
-
-}
-```
+  ```
+  
 2. Define reducers.
-
-```swift
-extension ObservableType where E == (Network.Model, AppModel) {
-  func reducingFuctionOfYourChoice() -> Observable<AppModel> { return
-    map { event, context in
-      var new = context
-      switch event.state {
+  ```swift
+  extension ObservableType where E == (Network.Model, AppModel) {
+    func reducingFuctionOfYourChoice() -> Observable<AppModel> { return
+      map { event, context in
+        var new = context
+        switch event.state {
         case .idle:
           new.screen.button.color = .blue
         case .awaitingStart, .awaitingResponse:
           new.screen.button.color = .grey
-        default: 
+        default:
           break
+        }
+        return new
       }
-      return new
     }
   }
-}
-
-extension ObservableType where E == (Screen.Model, AppModel) {
-  func reduced() -> Observable<AppModel> { return
-    map { event, context in
-      var new = context
-      switch event.button.state {
+  
+  extension ObservableType where E == (Screen.Model, AppModel) {
+    func reduced() -> Observable<AppModel> { return
+      map { event, context in
+        var new = context
+        switch event.button.state {
         case .highlighted:
           new.network.state = .awaitingStart
-        default: 
+        default:
           break
+        }
+        return new
       }
-      return new
     }
   }
-}
-
-extension ObservableType where E == (RxUIApplication.Model, AppModel) {
-  func reduced() -> Observable<AppModel> { return
-    map { event, context in
-      var new = context
-      switch event.session.state {
+  
+  extension ObservableType where E == (RxUIApplication.Model, AppModel) {
+    func reduced() -> Observable<AppModel> { return
+      map { event, context in
+        var new = context
+        switch event.session.state {
         case .launching:
           new.screen = Screen.Model.downloadView
-        default: 
+        default:
           break
+        }
+        return new
       }
-      return new
     }
   }
-}
-```
+  ```
+  
 3. Define drivers that, given a stream of event-models, can produce streams of effect-models
-
-```swift
-class MyDriver {
-
-  struct Model {
-    var state: State
-    enum State {
-      case sending
-      case receiving
-    }
-  }
-
-  fileprivate let output: BehaviorSubject<Model>
-  fileprivate let model: Model
-
-  public init(initial: Model) {
-    model = initial
-    output = BehaviorSubject<Model>(value: initial)
-  }
-
-  public func rendered(_ input: Observable<Model>) -> Observable<Model> { 
-    input.subscribe { [weak self] in
-      if let strong = self, let new = $0.element {
-        strong.model = new // Retain for async callback (-didReceiveEvent)
-        strong.render(model: new)
+  ```swift
+  class MyDriver {
+    
+    struct Model {
+      var state: State
+      enum State {
+        case sending
+        case receiving
       }
-    }.disposed(by: cleanup)
-    return self.output
-  }
-
-  func render(model: Model) {    
-    if case .sending = model.state {
-      // Perform side-effects...
+    }
+    
+    fileprivate let output: BehaviorSubject<Model>
+    fileprivate let model: Model
+    
+    public init(initial: Model) {
+      model = initial
+      output = BehaviorSubject<Model>(value: initial)
+    }
+    
+    public func rendered(_ input: Observable<Model>) -> Observable<Model> {
+      input.subscribe { [weak self] in
+        if let strong = self, let new = $0.element {
+          strong.model = new // Retain for async callback (-didReceiveEvent)
+          strong.render(model: new)
+        }
+        }.disposed(by: cleanup)
+      return self.output
+    }
+    
+    func render(model: Model) {
+      if case .sending = model.state {
+        // Perform side-effects...
+      }
+    }
+    
+    func didReceiveEvent() {
+      var edit = model
+      edit.state = .receiving
+      output.on(.next(edit))
     }
   }
-
-  func didReceiveEvent() {
-    var edit = model
-    edit.state = .receiving
-    output.on(.next(edit))
-  }
-}
-```
+  ```
 
 A sample project of the infamous 'Counter' app is included.
 
