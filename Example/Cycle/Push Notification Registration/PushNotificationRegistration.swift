@@ -27,9 +27,15 @@ struct PushNotificationRegistration: SinkSourceConverting {
   struct Model: Initializable {
     var application = RxUIApplication.Model.empty
   }
-  struct Drivers: CycleDrivable {
-    let screen = ScreenDriver()
-    let application = RxUIApplication(initial: .empty)
+  struct Drivers: UIApplicationDelegateProviding, ScreenDrivable {
+    let screen: ScreenDriver
+    let application: RxUIApplication
+  }
+  func driversFrom(initial: PushNotificationRegistration.Model) -> PushNotificationRegistration.Drivers { return
+    Drivers(
+      screen: ScreenDriver(),
+      application: RxUIApplication(initial: initial.application)
+    )
   }
   func effectsFrom(events: Observable<Model>, drivers: Drivers) -> Observable<Model> { return
     drivers.application
