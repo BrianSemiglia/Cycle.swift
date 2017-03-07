@@ -83,7 +83,7 @@ public protocol SinkSourceConverting {
       )
     }
 
-    func effectFrom(events: Observable<AppModel>, drivers: Drivers) -> Observable<AppModel> {
+    func effectsFrom(events: Observable<AppModel>, drivers: Drivers) -> Observable<AppModel> {
 
       let network = drivers.network
         .rendered(events.map { $0.network })
