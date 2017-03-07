@@ -13,9 +13,7 @@ import CoreLocation //
 import Cycle
 
 class ValueToggler: UIViewControllerProviding {
-  
-  static var shared = ValueToggler()
-  
+    
   struct Model {
     struct Button {
       enum State {
@@ -57,7 +55,6 @@ class ValueToggler: UIViewControllerProviding {
   )
   
   var cleanup = DisposeBag()
-  var input: Observable<Model>?
   let root = UIViewController.empty
   
   init() {
@@ -118,5 +115,13 @@ extension ValueToggler.Model {
       increment: ValueToggler.Model.Button(state: .enabled, title: "+"),
       decrement: ValueToggler.Model.Button(state: .enabled, title: "-")
     )
+  }
+}
+
+extension UIViewController {
+  public static var empty: UIViewController {
+    let x = UIViewController()
+    x.view.backgroundColor = .white
+    return x
   }
 }

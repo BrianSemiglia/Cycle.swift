@@ -25,20 +25,24 @@ For example:
 ```swift
 public protocol SinkSourceConverting {
   /* 
-    Defines schema and initial values of Driver Models
+    Defines schema and initial values of Driver Models.
   */
   associatedtype Source: Initializable
   
   /* 
-    Defines schema and initial values of Drivers. (Ideally, initial values would come from Source definition above but is currently not implemented as such.)
+    Defines drivers that handle effects, produce events. Requires two default drivers: 
 
-    Also requires two default drivers: 
-      1. let application: UIApplicationProviding - can serve as UIApplicationDelegate
+      1. let application: UIApplicationDelegateProviding - can serve as UIApplicationDelegate
       2. let screen: ScreenDrivable - can provide a root UIViewController
 
-    A default UIApplicationProviding driver, RxUIApplication, is included.
+    A default UIApplicationDelegateProviding driver, RxUIApplication, is included with Cycle.
   */
-  associatedtype Drivers: CycleDrivable
+  associatedtype Drivers: UIApplicationDelegateProviding, ScreenDrivable
+
+  /*
+    Instantiates drivers with initial model. Necessary to for drivers that require initial values.
+  */
+  func driversFrom(initial: Source) -> Drivers
 
   /*
     Returns an effect stream of Driver Model, given an event stream of Driver Model. See example for intended implementation.
@@ -56,44 +60,51 @@ public protocol SinkSourceConverting {
       super.init(handler: MyFilter())
     }
   }
-  
+
   struct MyFilter: SinkSourceConverting {
-    
-    // Serves as schema and initial state.
+
     struct AppModel: Initializable {
       let network = Network.Model()
       let screen = Screen.Model()
       let application = RxUIApplication.Model()
     }
     
-    struct Drivers: CycleDrivable {
-      let network = Network()
-      let screen = Screen() // Anything that provides a 'root' UIViewController
-      let application = RxUIApplication(initial: .empty) // Anything that conforms to UIApplicationDelegate
+    struct Drivers: UIApplicationDelegateProviding, ScreenDrivable {
+      let network: Network
+      let screen: Screen // Anything that provides a 'root' UIViewController
+      let application: RxUIApplication // Anything that conforms to UIApplicationDelegate
     }
-    
+
+    func driversFrom(initial: AppModel) -> Drivers { return
+      Drivers(
+        network = Network(model: intitial.network),
+        screen = Screen(model: intitial.screen),
+        application = RxUIApplication(model: initial.application)
+      )
+    }
+
     func effectFrom(events: Observable<AppModel>, drivers: Drivers) -> Observable<AppModel> {
-      
+
       let network = drivers.network
         .rendered(events.map { $0.network })
         .withLatestFrom(events) { ($0.0, $0.1) }
         .reducingFuctionOfYourChoice()
-      
+
       let screen = drivers.screen
         .rendered(events.map { $0.screen })
         .withLatestFrom(events) { ($0.0, $0.1) }
         .reduced()
-      
+
       let application = drivers.application
         .rendered(events.map { $0.application })
         .withLatestFrom(events) { ($0.0, $0.1) }
         .reduced()
-      
+
       return Observable
         .of(network, screen, application)
         .merge()
     }
-    
+
   }
   ```
   
@@ -104,42 +115,42 @@ public protocol SinkSourceConverting {
       map { event, context in
         var new = context
         switch event.state {
-        case .idle:
-          new.screen.button.color = .blue
-        case .awaitingStart, .awaitingResponse:
-          new.screen.button.color = .grey
-        default:
-          break
+          case .idle:
+            new.screen.button.color = .blue
+          case .awaitingStart, .awaitingResponse:
+            new.screen.button.color = .grey
+          default: 
+            break
         }
         return new
       }
     }
   }
-  
+
   extension ObservableType where E == (Screen.Model, AppModel) {
     func reduced() -> Observable<AppModel> { return
       map { event, context in
         var new = context
         switch event.button.state {
-        case .highlighted:
-          new.network.state = .awaitingStart
-        default:
-          break
+          case .highlighted:
+            new.network.state = .awaitingStart
+          default: 
+            break
         }
         return new
       }
     }
   }
-  
+
   extension ObservableType where E == (RxUIApplication.Model, AppModel) {
     func reduced() -> Observable<AppModel> { return
       map { event, context in
         var new = context
         switch event.session.state {
-        case .launching:
-          new.screen = Screen.Model.downloadView
-        default:
-          break
+          case .launching:
+            new.screen = Screen.Model.downloadView
+          default: 
+            break
         }
         return new
       }
@@ -150,7 +161,7 @@ public protocol SinkSourceConverting {
 3. Define drivers that, given a stream of event-models, can produce streams of effect-models
   ```swift
   class MyDriver {
-    
+
     struct Model {
       var state: State
       enum State {
@@ -158,29 +169,35 @@ public protocol SinkSourceConverting {
         case receiving
       }
     }
-    
+
     fileprivate let output: BehaviorSubject<Model>
     fileprivate let model: Model
-    
+
     public init(initial: Model) {
       model = initial
       output = BehaviorSubject<Model>(value: initial)
     }
-    
-    public func rendered(_ input: Observable<Model>) -> Observable<Model> {
+
+    public func rendered(_ input: Observable<Model>) -> Observable<Model> { 
       input.subscribe { [weak self] in
         if let strong = self, let new = $0.element {
           strong.model = new // Retain for async callback (-didReceiveEvent)
           strong.render(model: new)
         }
-        }.disposed(by: cleanup)
+      }.disposed(by: cleanup)
       return self.output
     }
-    
-    func render(model: Model) {
+
+    func render(model: Model) {    
       if case .sending = model.state {
         // Perform side-effects...
       }
+    }
+
+    func didReceiveEvent() {
+      var edit = model
+      edit.state = .receiving
+      output.on(.next(edit))
     }
     
     func didReceiveEvent() {

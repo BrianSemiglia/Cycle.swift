@@ -28,10 +28,17 @@ struct ShortcutActionsExample: SinkSourceConverting {
     var application = RxUIApplication.Model.empty
     var async = Timer.Model.empty
   }
-  struct Drivers: CycleDrivable {
-    let screen = ScreenDriver()
-    let timer = Timer(.empty)
-    let application = RxUIApplication(initial: .empty)
+  struct Drivers: UIApplicationDelegateProviding, ScreenDrivable {
+    let screen: ScreenDriver
+    let timer: Timer
+    let application: RxUIApplication
+  }
+  func driversFrom(initial: ShortcutActionsExample.Model) -> ShortcutActionsExample.Drivers {
+    return Drivers(
+      screen: ScreenDriver(),
+      timer: Timer(initial.async),
+      application: RxUIApplication(initial: initial.application)
+    )
   }
   func effectsFrom(events: Observable<Model>, drivers: Drivers) -> Observable<Model> {
     

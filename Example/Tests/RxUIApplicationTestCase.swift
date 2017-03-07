@@ -1503,16 +1503,22 @@ class RxUIApplicationTestCase: XCTestCase {
   }
   
   class RxUIApplicationCycle: SinkSourceConverting {
-    struct Drivers: CycleDrivable {
-      let screen = ScreenDriverStub()
-      let application = RxUIApplication(initial: .empty)
-    }
     struct DriverModels: Initializable {
       var application = RxUIApplication.Model.empty
+    }
+    struct Drivers: UIApplicationDelegateProviding, ScreenDrivable {
+      let screen: ScreenDriverStub
+      let application: RxUIApplication
     }
     let filter: (Observable<DriverModels>, RxUIApplication) -> Observable<DriverModels>
     init(filter: @escaping (Observable<DriverModels>, RxUIApplication) -> Observable<DriverModels>) {
       self.filter = filter
+    }
+    func driversFrom(initial: RxUIApplicationTestCase.RxUIApplicationCycle.DriverModels) -> RxUIApplicationTestCase.RxUIApplicationCycle.Drivers {
+      return Drivers(
+        screen: ScreenDriverStub(),
+        application: RxUIApplication(initial: initial.application)
+      )
     }
     func effectsFrom(events: Observable<DriverModels>, drivers: Drivers) -> Observable<DriverModels> { return
       filter(events, drivers.application)

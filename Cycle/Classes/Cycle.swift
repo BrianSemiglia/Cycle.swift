@@ -23,7 +23,7 @@ open class CycledApplicationDelegate<T: SinkSourceConverting>: UIResponder, UIAp
     _ application: UIApplication,
     willFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil
   ) -> Bool {
-    window = UIWindow(frame: UIScreen.main.fixedCoordinateSpace.bounds, root: cycle.root)
+    window = UIWindow(frame: UIScreen.main.bounds, root: cycle.root)
     window?.makeKeyAndVisible()
     return cycle.delegate.application!(
       application,
@@ -48,22 +48,25 @@ extension UIWindow {
 }
 
 public final class Cycle<E: SinkSourceConverting> {
-  fileprivate var events: Observable<E.Source>?
-  fileprivate var eventsProxy: ReplaySubject<E.Source>?
-  fileprivate let cleanup = DisposeBag()
+  private var events: Observable<E.Source>?
+  private var eventsProxy: ReplaySubject<E.Source>?
+  private let cleanup = DisposeBag()
   fileprivate let delegate: UIApplicationDelegate
   fileprivate let root: UIViewController
   public required init(transformer: E) {
     eventsProxy = ReplaySubject.create(
       bufferSize: 1
     )
-    let drivers = E.Drivers()
+    let drivers = transformer.driversFrom(initial: E.Source())
     root = drivers.screen.root
     delegate = drivers.application
     events = transformer.effectsFrom(
       events: eventsProxy!,
       drivers: drivers
     )
+    // `.startWith` is redundant, but necessary to kickoff cycle
+    // Possibly removed if `events` was BehaviorSubject?
+    // Not sure how to `merge` observables to single BehaviorSubject though.
     events?
       .startWith(E.Source())
       .subscribe { [weak self] in
@@ -74,11 +77,10 @@ public final class Cycle<E: SinkSourceConverting> {
 
 public protocol SinkSourceConverting {
   associatedtype Source: Initializable
-  associatedtype Drivers: CycleDrivable
+  associatedtype Drivers: UIApplicationDelegateProviding, ScreenDrivable
+  func driversFrom(initial: Source) -> Drivers
   func effectsFrom(events: Observable<Source>, drivers: Drivers) -> Observable<Source>
 }
-
-public protocol CycleDrivable: Initializable, UIApplicationProviding, ScreenDrivable {}
 
 public protocol Initializable {
   init()
@@ -93,15 +95,7 @@ public protocol UIViewControllerProviding {
   var root: UIViewController { get }
 }
 
-public protocol UIApplicationProviding {
+public protocol UIApplicationDelegateProviding {
   associatedtype Delegate: UIApplicationDelegate
   var application: Delegate { get }
-}
-
-extension UIViewController {
-  public static var empty: UIViewController {
-    let x = UIViewController()
-    x.view.backgroundColor = .white
-    return x
-  }
 }
