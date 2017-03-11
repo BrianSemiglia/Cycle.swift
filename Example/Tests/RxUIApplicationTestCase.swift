@@ -1173,16 +1173,13 @@ class RxUIApplicationTestCase: XCTestCase {
 
     let x = RxUIApplication.Model.empty
     var y = x; y.isIgnoringUserEvents = true
-    var z = y; z.isIgnoringUserEvents = false
     
-    XCTAssert(
-      RxUIApplicationTestCase.statesFrom(stream: Observable.of(x, y, x))
+    XCTAssertEqual(
+      RxUIApplicationTestCase.statesFrom(stream: .just(y))
       .map { $0.isIgnoringUserEvents }
-      ==
+      ,
       [
-        false,
-        true,
-        false
+        true
       ]
     )
   }
@@ -1191,16 +1188,13 @@ class RxUIApplicationTestCase: XCTestCase {
     
     let x = RxUIApplication.Model.empty
     var y = x; y.isIdleTimerDisabled = true
-    var z = y; z.isIdleTimerDisabled = false
     
-    XCTAssert(
-      RxUIApplicationTestCase.statesFrom(stream: Observable.of(x, y, x))
+    XCTAssertEqual(
+      RxUIApplicationTestCase.statesFrom(stream: .just(y))
       .map { $0.isIdleTimerDisabled }
-      ==
+      ,
       [
-        false,
-        true,
-        false
+        true
       ]
     )
   }
@@ -1568,4 +1562,12 @@ extension UIApplicationShortcutItem {
 
 struct ScreenDriverStub: UIViewControllerProviding {
   let root = UIViewController.empty
+}
+
+extension UIViewController {
+  public static var empty: UIViewController {
+    let x = UIViewController()
+    x.view.backgroundColor = .white
+    return x
+  }
 }
