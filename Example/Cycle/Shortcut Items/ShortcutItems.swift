@@ -129,3 +129,11 @@ extension ObservableType where E == (Timer.Model, ShortcutActionsExample.Model) 
     }
   }
 }
+
+extension UIViewController {
+  public static var empty: UIViewController {
+    let x = UIViewController()
+    x.view.backgroundColor = .white
+    return x
+  }
+}

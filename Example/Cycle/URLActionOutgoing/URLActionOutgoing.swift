@@ -70,3 +70,11 @@ extension ObservableType where E == (RxUIApplication.Model, URLActionOutgoing.Mo
     }
   }
 }
+
+extension UIViewController {
+  public static var empty: UIViewController {
+    let x = UIViewController()
+    x.view.backgroundColor = .white
+    return x
+  }
+}
