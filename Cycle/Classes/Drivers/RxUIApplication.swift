@@ -519,10 +519,8 @@ public class RxUIApplication: NSObject, UIApplicationDelegate {
   
   public func rendered(_ input: Observable<Model>) -> Observable<Model> {
     input.distinctUntilChanged().subscribe { [weak self] in
-      if let strong = self {
-        if let new = $0.element {
-          strong.render(new: new, old: strong.model)
-        }
+      if let strong = self, let new = $0.element {
+        strong.render(new: new, old: strong.model)
       }
     }.disposed(by: cleanup)
     return output.distinctUntilChanged()
