@@ -49,47 +49,47 @@ class RxUIApplicationTestCase: XCTestCase {
   
   func testWillTerminate() {
     
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
       .statesFromCall { $0.applicationWillTerminate!(UIApplication.shared) }
       .map { $0.session.state }
-      ==
+      ,
       [.currently(.awaitingLaunch), .pre(.terminated)]
     )
   }
 
   func testDidBecomeActive() {
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
       .statesFromCall { $0.applicationDidBecomeActive!(UIApplication.shared) }
       .map { $0.session.state }
-      ==
+      ,
       [.currently(.awaitingLaunch), .currently(.active(.some))]
     )
   }
   
   func testWillResignActive() {
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
       .statesFromCall { $0.applicationWillResignActive!(UIApplication.shared) }
       .map { $0.session.state }
-      ==
+      ,
       [.currently(.awaitingLaunch), .pre(.resigned)]
     )
   }
   
   func testDidEnterBackground() {
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
       .statesFromCall { $0.applicationDidEnterBackground!(UIApplication.shared) }
       .map { $0.session.state }
-      ==
+      ,
       [.currently(.awaitingLaunch), .currently(.resigned)]
     )
   }
   
   func testWillFinishLaunching() {
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
       .statesFromCall {
         $0.application!(
@@ -98,13 +98,13 @@ class RxUIApplicationTestCase: XCTestCase {
         )
       }
       .map { $0.session.state }
-      ==
+      ,
       [.currently(.awaitingLaunch), .pre(.active(.first(nil)))]
     )
   }
   
   func testDidFinishLaunching() {
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
       .statesFromCall {
         $0.application!(
@@ -113,7 +113,7 @@ class RxUIApplicationTestCase: XCTestCase {
         )
       }
       .map { $0.session.state }
-      ==
+      ,
       [.currently(.awaitingLaunch), .currently(.active(.first(nil)))]
     )
   }
@@ -129,57 +129,57 @@ class RxUIApplicationTestCase: XCTestCase {
   }
   
   func testSignificantTimeChange() {
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
       .statesFromCall { $0.applicationSignificantTimeChange!(UIApplication.shared) }
       .map { $0.isObservingSignificantTimeChange }
-      ==
+      ,
       [false, true]
     )
   }
   
   func testMemoryWarning() {
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
       .statesFromCall { $0.applicationDidReceiveMemoryWarning!(UIApplication.shared) }
       .map { $0.isExperiencingMemoryWarning }
-      ==
+      ,
       [false, true]
     )
   }
   
   func testShouldRequestHealthAuthorization() {
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
       .statesFromCall { $0.applicationShouldRequestHealthAuthorization!(UIApplication.shared) }
       .map { $0.isExperiencingHealthAuthorizationRequest }
-      ==
+      ,
       [false, true]
     )
   }
   
   func testProtectedDataDidBecomeAvailable() {
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
       .statesFromCall { $0.applicationProtectedDataDidBecomeAvailable!(UIApplication.shared) }
       .map { $0.isProtectedDataAvailable }
-      ==
+      ,
       [.currently(false), .currently(true)]
     )
   }
   
   func testProtectedDataWillBecomeUnavailable() {
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
       .statesFromCall { $0.applicationProtectedDataWillBecomeUnavailable!(UIApplication.shared) }
       .map { $0.isProtectedDataAvailable }
-      ==
+      ,
       [.currently(false), .pre(false)]
     )
   }
   
   func testConversionCallbacks() {
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
       .statesFromCall {
         $0.application!(
@@ -188,7 +188,7 @@ class RxUIApplicationTestCase: XCTestCase {
         )
       }
       .map { $0.userNotificationSettings }
-      ==
+      ,
       [
         .idle,
         .registered(UIUserNotificationSettingsStub(id: "x") as UIUserNotificationSettings)
@@ -197,7 +197,7 @@ class RxUIApplicationTestCase: XCTestCase {
   }
   
   func testDidFailToRegisterForRemoteNotifications() {
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
       .statesFromCall {
         $0.application!(
@@ -206,13 +206,13 @@ class RxUIApplicationTestCase: XCTestCase {
         )
       }
       .map { $0.remoteNotificationRegistration }
-      ==
+      ,
       [.idle, .error(ErrorStub(id: "x") as Error)]
     )
   }
   
   func testDidRegisterForRemoteNotifications() {
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
       .statesFromCall {
         $0.application!(
@@ -221,13 +221,13 @@ class RxUIApplicationTestCase: XCTestCase {
         )
       }
       .map { $0.remoteNotificationRegistration }
-      ==
+      ,
       [.idle, .some(token: Data())]
     )
   }
   
   func testDidDecodeRestorableState() {
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
       .statesFromCall {
         $0.application!(
@@ -236,13 +236,13 @@ class RxUIApplicationTestCase: XCTestCase {
         )
       }
       .map { $0.stateRestoration }
-      ==
+      ,
       [.idle, .decoding(CoderStub(id: "x"))]
     )
   }
   
   func testWillEncodeRestorableState() {
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
       .statesFromCall {
         $0.application!(
@@ -251,13 +251,13 @@ class RxUIApplicationTestCase: XCTestCase {
         )
       }
       .map { $0.stateRestoration }
-      ==
+      ,
       [.idle, .encoding(CoderStub(id: "x"))]
     )
   }
   
   func testShouldSaveApplicationStateConsidering() {
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
       .statesFromCall {
         $0.application!(
@@ -266,13 +266,13 @@ class RxUIApplicationTestCase: XCTestCase {
         )
       }
       .map { $0.shouldSaveApplicationState }
-      ==
+      ,
       [.idle, .considering(CoderStub(id: "x") as NSCoder)]
     ) // might want to refactor to bool or change default to .allow(true)
   }
   
   func testShouldRestoreApplicationStateConsidering() {
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
       .statesFromCall {
         $0.application!(
@@ -281,13 +281,13 @@ class RxUIApplicationTestCase: XCTestCase {
         )
       }
       .map { $0.shouldRestoreApplicationState }
-      ==
+      ,
       [.idle, .considering(CoderStub(id: "x") as NSCoder)]
     ) // might want to refactor to bool or change default to .allow(true)
   }
   
   func testWillContinueUserActivityWithType() {
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
       .statesFromCall {
         $0.application!(
@@ -296,13 +296,13 @@ class RxUIApplicationTestCase: XCTestCase {
         )
       }
       .map { $0.userActivityState }
-      ==
+      ,
       [.idle, .willContinue("x")]
     )
   }
   
   func testDidFailToContinueUserActivity() {
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
       .statesFromCall {
         $0.application!(
@@ -312,14 +312,14 @@ class RxUIApplicationTestCase: XCTestCase {
         )
       }
       .map { $0.userActivityState }
-      ==
+      ,
       [.idle, .failing("x", ErrorStub(id: "y"))]
     )
   }
   
   func testDidUpdateUserActivity() {
     let activity = NSUserActivity(activityType: "x")
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
       .statesFromCall {
         $0.application!(
@@ -328,14 +328,14 @@ class RxUIApplicationTestCase: XCTestCase {
         )
       }
       .map { $0.userActivityState }
-      ==
+      ,
       [.idle, .completing(activity)]
     )
   }
   
   func testContinueUserActivity() {
     let activity = NSUserActivity(activityType: "x")
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
       .statesFromCall {
         $0.application!(
@@ -345,13 +345,13 @@ class RxUIApplicationTestCase: XCTestCase {
         )
       }
       .map { $0.userActivityState }
-      ==
+      ,
       [.idle, .isContinuing(activity, restoration: { _ in })]
     )
   }
   
   func testWillChangeStatusBarOrientation() {
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
       .statesFromCall {
         $0.application!(
@@ -361,7 +361,7 @@ class RxUIApplicationTestCase: XCTestCase {
         )
       }
       .map { $0.statusBarOrientation }
-      ==
+      ,
       [.currently(.unknown), .pre(.landscapeLeft)]
     )
   }
@@ -383,7 +383,7 @@ class RxUIApplicationTestCase: XCTestCase {
   }
   
   func testWillChangeStatusBarFrame() {
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
       .statesFromCall {
         $0.application!(
@@ -392,7 +392,7 @@ class RxUIApplicationTestCase: XCTestCase {
         )
       }
       .map { $0.statusBarFrame }
-      ==
+      ,
       [.currently(.zero), .pre(CGRect(x: 1, y: 2, width: 3, height: 4))]
     )
   }
@@ -401,7 +401,7 @@ class RxUIApplicationTestCase: XCTestCase {
     // Consider adding beginState to -willChange enum option .pre(from: to:)
     // Or firing changes for every frame of animation
     
-//    XCTAssert(
+//    XCTAssertEqual(
 //      RxUIApplicationTestCase
 //      .statesFrom {
 //        $0.application(
@@ -410,13 +410,13 @@ class RxUIApplicationTestCase: XCTestCase {
 //        )
 //      }
 //      .map { $0.statusBarFrame }
-//      ==
+//      ,
 //      [.none(.zero), .currently(CGRect(x: 0, y: 0, width: 320, height: 20))]
 //    )
   }
   
   func testHandleActionWithIdentifierLocal() {
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
       .statesFromCall {
         $0.application!(
@@ -427,7 +427,7 @@ class RxUIApplicationTestCase: XCTestCase {
         )
       }
       .map { $0.localAction }
-      ==
+      ,
       [
         .idle,
         .progressing(
@@ -442,7 +442,7 @@ class RxUIApplicationTestCase: XCTestCase {
   }
   
   func testHandleActionWithIdentifierResponseInfoRemote() {
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
       .statesFromCall {
         $0.application!(
@@ -454,7 +454,7 @@ class RxUIApplicationTestCase: XCTestCase {
         )
       }
       .map { $0.remoteAction }
-      ==
+      ,
       [
         .idle,
         .progressing(
@@ -479,11 +479,11 @@ class RxUIApplicationTestCase: XCTestCase {
         completion: {}
       )
     )
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
         .statesFrom(stream: .just(x))
         .map { $0.remoteAction }
-        ==
+        ,
         [.idle]
     )
   }
@@ -497,17 +497,17 @@ class RxUIApplicationTestCase: XCTestCase {
         completion: {}
       )
     )
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
         .statesFrom(stream: .just(x))
         .map { $0.remoteAction }
-        ==
+        ,
         [.idle]
     )
   }
   
   func testHandleActionWithIdentifierRemote() {
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
       .statesFromCall {
         $0.application!(
@@ -518,7 +518,7 @@ class RxUIApplicationTestCase: XCTestCase {
         )
       }
       .map { $0.remoteAction }
-      ==
+      ,
       [
         .idle,
         .progressing(
@@ -533,7 +533,7 @@ class RxUIApplicationTestCase: XCTestCase {
   }
   
   func testHandleActionWithIdentifierResponseInfo() {
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
       .statesFromCall {
         $0.application!(
@@ -545,7 +545,7 @@ class RxUIApplicationTestCase: XCTestCase {
         )
       }
       .map { $0.localAction }
-      ==
+      ,
       [
         .idle,
         .progressing(
@@ -570,11 +570,11 @@ class RxUIApplicationTestCase: XCTestCase {
         completion: {}
       )
     )
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
         .statesFrom(stream: .just(x))
         .map { $0.localAction }
-        ==
+        ,
         [.idle]
     )
   }
@@ -588,17 +588,17 @@ class RxUIApplicationTestCase: XCTestCase {
         completion: {}
       )
     )
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
         .statesFrom(stream: .just(x))
         .map { $0.localAction }
-        ==
+        ,
         [.idle]
     )
   }
   
   func testPerformActionForShortcutAction() {
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase.statesFromCall(
         initial: RxUIApplication.Model.empty.with(
           shortcutItem: RxUIApplication.Model.ShortcutAction(
@@ -616,7 +616,7 @@ class RxUIApplicationTestCase: XCTestCase {
       )
       .map { $0.shortcutActions }
       .flatMap { $0 }
-      ==
+      ,
       [
         RxUIApplication.Model.ShortcutAction(
           item: .stub,
@@ -631,7 +631,7 @@ class RxUIApplicationTestCase: XCTestCase {
   }
   
   func testHandleEventsForBackgroundURLSession() {
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
       .statesFromCall {
         $0.application!(
@@ -642,7 +642,7 @@ class RxUIApplicationTestCase: XCTestCase {
       }
       .map { $0.backgroundURLSessions }
       .flatMap { $0 }
-      ==
+      ,
       [
         RxUIApplication.Model.BackgroundURLSessionAction(
           id: "x",
@@ -654,7 +654,7 @@ class RxUIApplicationTestCase: XCTestCase {
   }
   
   func testDidReceiveRemoteNotification() {
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
       .statesFromCall {
         $0.application!(
@@ -665,7 +665,7 @@ class RxUIApplicationTestCase: XCTestCase {
       }
       .map { $0.remoteNotifications }
       .flatMap { $0 }
-      ==
+      ,
       [
         RxUIApplication.Model.RemoteNofitication(
           notification: ["x":"y"],
@@ -676,7 +676,7 @@ class RxUIApplicationTestCase: XCTestCase {
   }
   
   func testHandlewatchKitExtensionRequestsProgressing() {
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
         .statesFromCall {
           $0.application!(
@@ -687,7 +687,7 @@ class RxUIApplicationTestCase: XCTestCase {
         }
         .map { $0.watchKitExtensionRequests }
         .flatMap { $0 }
-      ==
+      ,
       [
         RxUIApplication.Model.watchKitExtensionRequests(
           completion: { _ in },
@@ -718,7 +718,7 @@ class RxUIApplicationTestCase: XCTestCase {
   }
   
   func testShouldAllowExtensionPointIdentifier() {
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
       .statesFromCall {
         $0.application!(
@@ -727,13 +727,13 @@ class RxUIApplicationTestCase: XCTestCase {
         )
       }
       .map { $0.extensionPointIdentifier }
-      ==
+      ,
       [.idle, .considering(.keyboard)]
     )
   }
   
   func testSupportedInterfaceOrientationsFor() {
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
       .statesFromCall {
         $0.application!(
@@ -743,13 +743,13 @@ class RxUIApplicationTestCase: XCTestCase {
       }
       .map { $0.interfaceOrientations }
       .flatMap { $0 }
-      ==
+      ,
       [.considering(WindowStub(id: "x") as UIWindow)]
     )
   }
   
   func testViewControllerWithRestorationIdentifierPathConsidering() {
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase
       .statesFromCall {
         let x = $0.application!(
@@ -760,7 +760,7 @@ class RxUIApplicationTestCase: XCTestCase {
         return x ?? {}
       }
       .map { $0.viewControllerRestoration }
-      ==
+      ,
       [
         .idle,
         .considering(
@@ -837,14 +837,14 @@ class RxUIApplicationTestCase: XCTestCase {
       willFinishLaunchingWithOptions: [:]
     )
     
-    XCTAssert(
+    XCTAssertEqual(
       delegate.application!(
         UIApplication.shared,
         open: URL(string: "https://www.duckduckgo.com")!,
         sourceApplication: "x",
         annotation: [:]
       )
-      ==
+      ,
       true
     )
   }
@@ -877,13 +877,13 @@ class RxUIApplicationTestCase: XCTestCase {
       willFinishLaunchingWithOptions: [:]
     )
     
-    XCTAssert(
+    XCTAssertEqual(
       delegate.application!(
         UIApplication.shared,
         open: URL(string: "https://www.duckduckgo.com")!,
         options: [:]
       )
-      ==
+      ,
       true
     )
   }
@@ -924,12 +924,12 @@ class RxUIApplicationTestCase: XCTestCase {
       willFinishLaunchingWithOptions: [:]
     )
     
-    XCTAssert(
+    XCTAssertEqual(
       delegate.application!(
         UIApplication.shared,
         supportedInterfaceOrientationsFor: WindowStub(id: "x")
       )
-      ==
+      ,
       .portraitUpsideDown
     )
   }
@@ -960,12 +960,12 @@ class RxUIApplicationTestCase: XCTestCase {
       willFinishLaunchingWithOptions: [:]
     )
     
-    XCTAssert(
+    XCTAssertEqual(
       delegate.application!(
         UIApplication.shared,
         shouldAllowExtensionPointIdentifier: .keyboard
       )
-      ==
+      ,
       true
     )
   }
@@ -1001,13 +1001,13 @@ class RxUIApplicationTestCase: XCTestCase {
       willFinishLaunchingWithOptions: [:]
     )
     
-    XCTAssert(
+    XCTAssertEqual(
       delegate.application!(
         UIApplication.shared,
         viewControllerWithRestorationIdentifierPath: ["y"],
         coder: CoderStub(id: "z")
       )
-      ==
+      ,
       ViewControllerStub(id: "x")
     )
   }
@@ -1038,12 +1038,12 @@ class RxUIApplicationTestCase: XCTestCase {
       willFinishLaunchingWithOptions: [:]
     )
     
-    XCTAssert(
+    XCTAssertEqual(
       delegate.application!(
         UIApplication.shared,
         shouldSaveApplicationState: CoderStub(id: "x")
       )
-      ==
+      ,
       true
     )
   }
@@ -1074,12 +1074,12 @@ class RxUIApplicationTestCase: XCTestCase {
       willFinishLaunchingWithOptions: [:]
     )
     
-    XCTAssert(
+    XCTAssertEqual(
       delegate.application!(
         UIApplication.shared,
         shouldRestoreApplicationState: CoderStub(id: "x")
       )
-      ==
+      ,
       true
     )
   }
@@ -1110,12 +1110,12 @@ class RxUIApplicationTestCase: XCTestCase {
       willFinishLaunchingWithOptions: [:]
     )
     
-    XCTAssert(
+    XCTAssertEqual(
       delegate.application!(
         UIApplication.shared,
         willContinueUserActivityWithType: "x"
       )
-      ==
+      ,
       true
     )
   }
@@ -1146,13 +1146,13 @@ class RxUIApplicationTestCase: XCTestCase {
       willFinishLaunchingWithOptions: [:]
     )
     
-    XCTAssert(
+    XCTAssertEqual(
       delegate.application!(
         UIApplication.shared,
         continue: NSUserActivity(activityType: "x"),
         restorationHandler: { _ in }
       )
-      ==
+      ,
       true
     )
   }
@@ -1263,13 +1263,13 @@ class RxUIApplicationTestCase: XCTestCase {
         state: .pending
       )
     ]
-    XCTAssert(
+    XCTAssertEqual(
       RxUIApplicationTestCase.statesFrom(stream: .just(y))
       .map { $0.backgroundTasks }
       .flatMap { $0 }
       // This test will occasionally fail due to harcoded UIBackgroundTaskIdentifier.
       // Needs better solution
-      ==
+      ,
       [
         RxUIApplication.Model.BackgroundTask(
           name: "x",
@@ -1379,10 +1379,10 @@ class RxUIApplicationTestCase: XCTestCase {
   }
   
   func testDictionaryConcatenation() {
-    XCTAssert(
+    XCTAssertEqual(
       [WindowStub(id: "x"): UIInterfaceOrientationMask.allButUpsideDown] +
       [WindowStub(id: "y"): UIInterfaceOrientationMask.allButUpsideDown]
-      ==
+      ,
       [WindowStub(id: "y"): UIInterfaceOrientationMask.allButUpsideDown,
       WindowStub(id: "x"): UIInterfaceOrientationMask.allButUpsideDown]
     )
@@ -1390,20 +1390,20 @@ class RxUIApplicationTestCase: XCTestCase {
   
   func testDictionaryMerging() {
     let same = WindowStub(id: "x")
-    XCTAssert(
+    XCTAssertEqual(
       [same: UIInterfaceOrientationMask.allButUpsideDown] +
       [same: UIInterfaceOrientationMask.allButUpsideDown]
-      ==
+      ,
       [same: UIInterfaceOrientationMask.allButUpsideDown]
     )
   }
   
   func testDictionaryMergeOverwrite() {
     let same = WindowStub(id: "x")
-    XCTAssert(
+    XCTAssertEqual(
       [same: UIInterfaceOrientationMask.allButUpsideDown] +
       [same: UIInterfaceOrientationMask.portraitUpsideDown]
-      ==
+      ,
       [same: UIInterfaceOrientationMask.allButUpsideDown]
     )
   }
@@ -1412,27 +1412,27 @@ class RxUIApplicationTestCase: XCTestCase {
     let x = ["x"]
     let y: [String] = []
     let z = RxUIApplication.additions(new: x, old: y)
-    XCTAssert(z.count == 1)
+    XCTAssertEqual(z.count, 1)
   }
   
   func testDeletions() {
     let x = ["x"]
     let y: [String] = []
     let z = RxUIApplication.deletions(old: x, new: y)
-    XCTAssert(z.count == 1)
+    XCTAssertEqual(z.count, 1)
   }
   
   func testCompletedBackgroundIDs() {
     let x = [RxUIApplication.Model.BackgroundTask(name: "x", state: .complete(2017))]
     let z = x.flatMap { $0.ID }
-    XCTAssert(z == [2017])
+    XCTAssertEqual(z, [2017])
   }
   
   func testDeletedBackgroundTaskIDs() {
     let x = [RxUIApplication.Model.BackgroundTask(name: "x", state: .progressing(2017))]
     let y: [RxUIApplication.Model.BackgroundTask] = []
     let z = RxUIApplication.deletions(old: x, new: y).flatMap { $0.ID }
-    XCTAssert(z == [2017])
+    XCTAssertEqual(z, [2017])
   }
 
   struct ErrorStub: Error, Equatable {
