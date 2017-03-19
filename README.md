@@ -4,7 +4,7 @@
 [![License](https://img.shields.io/cocoapods/l/Cycle.svg?style=flat)](http://cocoapods.org/pods/Cycle)
 [![Platform](https://img.shields.io/cocoapods/p/Cycle.svg?style=flat)](http://cocoapods.org/pods/Cycle)
 
-##Overview
+## Overview
 Cycle provides a means of writing an app as a filter over a stream of external events.
 
 1. The event stream is fed to a reducer that produces a stream of driver models.
@@ -21,7 +21,7 @@ For example:
                  SessionModel    SessionModel -> Session
 ```
 
-##Filter Design
+## Filter Design
 ```swift
 public protocol SinkSourceConverting {
   /* 
@@ -51,7 +51,7 @@ public protocol SinkSourceConverting {
 }
 ```
 
-##Example
+## Example
 1. Subclass CycledApplicationDelegate and provide a SinkSourceConverting filter.
   ``` swift
   @UIApplicationMain
