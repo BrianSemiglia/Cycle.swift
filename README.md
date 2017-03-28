@@ -199,12 +199,7 @@ public protocol SinkSourceConverting {
       edit.state = .receiving
       output.on(.next(edit))
     }
-    
-    func didReceiveEvent() {
-      var edit = model
-      edit.state = .receiving
-      output.on(.next(edit))
-    }
+
   }
   ```
 
