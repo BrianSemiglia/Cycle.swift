@@ -21,7 +21,7 @@ For example:
                  SessionModel    SessionModel -> Session
 ```
 
-Each branch of your App.Model that can experience an Event-callback provides a Reducer function that can convert that Event into a new App.Model. The declarative side of your application becomes a timeline of App.Models based on the incoming timeline of Events.
+Each branch of your App.Model that can experience an Event-callback is provided a Reducer function that can convert that Event into a new App.Model. The declarative side of your application becomes a timeline of App.Models based on the incoming timeline of Events.
 
 ![alt tag](cycled_model_timeline.png)
 
