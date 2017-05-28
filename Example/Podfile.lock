@@ -1,6 +1,6 @@
 PODS:
   - Changeset (2.1)
-  - Cycle (0.0.4):
+  - Cycle (0.0.6):
     - Changeset (= 2.1)
     - RxSwift (= 3.2.0)
   - RxCocoa (3.2.0):
@@ -17,10 +17,10 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Changeset: 52ae0451caae6d236d8ecee150ab62050c3dc826
-  Cycle: 10dab4653adb1968be054c46f660521b0ca56f94
+  Cycle: 839e936daf2a0e674905608a495554ebf745fb4a
   RxCocoa: ccdf43101a70407097a29082f648ba1676075b30
   RxSwift: 46574f70d416b7923c237195939cc488a7fbf3a0
 
-PODFILE CHECKSUM: fb938d5ffdd6ab340e7bf754b882604c83fb6dbb
+PODFILE CHECKSUM: 97fdb38b0327b3b5d0bdf2583c96676b321c1a4c
 
-COCOAPODS: 1.2.0
+COCOAPODS: 1.2.1

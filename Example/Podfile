@@ -19,3 +19,7 @@ end
 target 'URL Action Outgoing' do
   pod 'Cycle', :path => '../'
 end
+
+target 'Visualizer' do
+    pod 'Cycle', :path => '../'
+end

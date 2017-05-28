@@ -20,17 +20,23 @@ class Example: CycledApplicationDelegate<IntegerMutatingApp> {
 }
 
 struct IntegerMutatingApp: SinkSourceConverting {
-  struct Model: Initializable {
+  struct Model: Initializable, VisualizerStringConvertible {
     var screen = ValueToggler.Model.empty
+    var secondScreen = SecondScreenDriver.Model(
+      nodes: [],
+      description: "No nodes to display"
+    )
     var application = RxUIApplication.Model.empty
   }
   struct Drivers: UIApplicationDelegateProviding, ScreenDrivable {
     let screen: ValueToggler
+    let secondScreen: SecondScreenDriver
     let application: RxUIApplication
   }
   func driversFrom(initial: IntegerMutatingApp.Model) -> IntegerMutatingApp.Drivers { return
     Drivers(
       screen: ValueToggler(),
+      secondScreen: SecondScreenDriver(initial: initial.secondScreen),
       application: RxUIApplication(initial: initial.application)
     )
   }
@@ -45,7 +51,12 @@ struct IntegerMutatingApp: SinkSourceConverting {
       .withLatestFrom(events) { ($0.0, $0.1) }
       .reduced()
     
-    return Observable.of(value, application).merge()
+    let visualizer = drivers.secondScreen
+      .rendered(events.map { $0.secondScreen })
+      .withLatestFrom(events) { ($0.0, $0.1) }
+      .reduced()
+    
+    return Observable.of(value, visualizer, application).merge()
   }
 }
 
@@ -53,6 +64,10 @@ extension IntegerMutatingApp.Model {
   static var empty: IntegerMutatingApp.Model { return
     IntegerMutatingApp.Model(
       screen: .empty,
+      secondScreen: SecondScreenDriver.Model(
+        nodes: [],
+        description: "No nodes to display"
+      ),
       application: .empty
     )
   }
@@ -60,8 +75,8 @@ extension IntegerMutatingApp.Model {
 
 extension ObservableType where E == (ValueToggler.Model, IntegerMutatingApp.Model) {
   func reduced() -> Observable<IntegerMutatingApp.Model> { return
-    map { event, global in
-      var x = global
+    map { event, context in
+      var x = context
       x.screen = event
       if event.increment.state == .highlighted {
         x.screen.total = Int(x.screen.total).map { $0 + 1 }.map(String.init) ?? ""
@@ -71,6 +86,7 @@ extension ObservableType where E == (ValueToggler.Model, IntegerMutatingApp.Mode
         x.screen.total = Int(x.screen.total).map { $0 - 1 }.map(String.init) ?? ""
         x.screen.decrement.state = .enabled
       }
+      x.secondScreen.debug = x.description
       return x
     }
   }
@@ -88,7 +104,16 @@ extension ObservableType where E == (RxUIApplication.Model, IntegerMutatingApp.M
         s.total = "55"
       }
       c.screen = s
+      c.secondScreen.debug = c.description
       return c
     }
   }
+}
+
+extension ObservableType where E == (SecondScreenDriver.Model, IntegerMutatingApp.Model) {
+    func reduced() -> Observable<IntegerMutatingApp.Model> { return
+        map { event, context in
+          return context
+        }
+    }
 }
