@@ -41,24 +41,97 @@ struct IntegerMutatingApp: SinkSourceConverting {
     )
   }
   func effectsFrom(events: Observable<Model>, drivers: Drivers) -> Observable<Model> {
-    let value = drivers.screen
+    let valueActions = drivers
+      .screen
       .rendered(events.map { $0.screen })
-      .withLatestFrom(events) { ($0.0, $0.1) }
-      .reduced()
     
-    let application = drivers.application
+    let applicationActions = drivers
+      .application
       .rendered(events.map { $0.application })
+    
+    let valueEffects = valueActions
       .withLatestFrom(events) { ($0.0, $0.1) }
       .reduced()
     
-    let visualizer = drivers.secondScreen
-      .rendered(events.map { $0.secondScreen })
+    let applicationEffects = applicationActions
       .withLatestFrom(events) { ($0.0, $0.1) }
       .reduced()
     
-    return Observable.of(value, visualizer, application).merge()
+    let visualizer = drivers
+      .secondScreen
+      .rendered(
+        Observable.of(
+          valueActions.toModels(),
+          valueEffects.toModels()
+        )
+        .merge()
+        .pacedBy(delay: 1)
+      )
+      .withLatestFrom(events) { ($0.0, $0.1) }
+      .reduced()
+    
+    return Observable.of(
+      valueEffects,
+      visualizer,
+      applicationEffects
+    ).merge()
   }
 }
+
+extension ObservableType {
+  func pacedBy(delay: Double) -> Observable<E> { return
+    map {
+      Observable<E>
+        .empty()
+        .delay(delay, scheduler: MainScheduler.instance)
+        .startWith($0)
+    }
+    .concat()
+  }
+}
+
+extension ObservableType where E == (ValueToggler.Model) {
+  func toModels() -> Observable<SecondScreenDriver.Model> { return
+    map {
+      SecondScreenDriver.Model(
+        nodes: [
+          SecondScreenDriver.Model.Node(
+            state: $0.increment.state == .highlighted ? .sending : .none,
+            color: $0.increment.state == .highlighted ? .red : .black
+          )
+        ],
+        description: ""
+      )
+    }
+  }
+}
+
+extension ObservableType where E == (IntegerMutatingApp.Model) {
+  func toModels() -> Observable<SecondScreenDriver.Model> { return
+    map {
+      SecondScreenDriver.Model(
+        nodes: [
+          SecondScreenDriver.Model.Node(
+            state: $0.screen.increment.state == .highlighted ? .sending : .none,
+            color: $0.screen.increment.state == .highlighted ? .red : .black
+          )
+        ],
+        description: ""
+      )
+    }
+  }
+}
+
+//extension ObservableType where E == (RxUIApplication.Model) {
+//  func toModels() -> Observable<SecondScreenDriver.Model> { return
+//    map { _ in
+//      SecondScreenDriver.Model(
+//        nodes: [],
+//        description: ""
+//      )
+//    }
+//  }
+//}
 
 extension IntegerMutatingApp.Model {
   static var empty: IntegerMutatingApp.Model { return

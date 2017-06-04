@@ -13,11 +13,17 @@ public class SecondScreenDriver {
   public struct Model {
     public struct Node {
       public enum State {
+        case none
         case sending
         case receiving
       }
       public var state: State
       public var color: UIColor
+      
+      public init(state: State, color: UIColor) {
+        self.state = state
+        self.color = color
+      }
       
       //        public static func ==(left: Node, right: Node) -> Bool { return
       //          left.state == right.state &&
@@ -113,6 +119,19 @@ public class SecondScreenDriver {
         size: $0.view.bounds.size
       )
     } ?? .zero
+    new.nodes.forEach {
+        let x = UIView(
+            frame: CGRect(
+                origin: .zero,
+                size: CGSize(
+                    width: 50.0,
+                    height: 50.0
+                )
+            )
+        )
+        x.backgroundColor = $0.color
+        self.window?.rootViewController?.view.addSubview(x)
+    }
   }
 }
 
