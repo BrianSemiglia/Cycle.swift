@@ -19,10 +19,12 @@ public class SecondScreenDriver {
       }
       public var state: State
       public var color: UIColor
+      public var frame: CGRect
       
-      public init(state: State, color: UIColor) {
+      public init(state: State, color: UIColor, frame: CGRect) {
         self.state = state
         self.color = color
+        self.frame = frame
       }
       
       //        public static func ==(left: Node, right: Node) -> Bool { return
@@ -55,7 +57,6 @@ public class SecondScreenDriver {
   
   public required init(initial: Model) {
     model = initial
-    print(initial.debug)
     output = BehaviorSubject<Model>(value: initial)
     NotificationCenter.default.addObserver(
       self,
@@ -72,7 +73,7 @@ public class SecondScreenDriver {
     DispatchQueue.main.async {
       self.window = self.windowFrom(screens: UIScreen.screens)
       self.window?.rootViewController?.view.addSubview(self.label)
-      //            self.render(new: self.model, old: self.model)
+      self.render(new: self.model, old: self.model)
     }
   }
   
@@ -81,7 +82,7 @@ public class SecondScreenDriver {
       let second = UIScreen.screens[1]
       let x = UIWindow(frame: second.bounds)
       x.screen = second
-      x.rootViewController = UIViewController().with(background: .red)
+      x.rootViewController = UIViewController().with(background: .white)
       x.makeKeyAndVisible()
       return x
     } else {
@@ -111,27 +112,37 @@ public class SecondScreenDriver {
     label.text = new.debug
     label.font = UIFont.systemFont(ofSize: 10)
     label.numberOfLines = 0
-//    label.sizeToFit()
-    label.backgroundColor = .yellow
+    label.backgroundColor = .white
     label.frame = window?.rootViewController.map {
       CGRect(
         origin: .zero,
         size: $0.view.bounds.size
       )
     } ?? .zero
+    
+    self.window?.rootViewController?.view.subviews.forEach {
+      if $0 is UILabel == false {
+        $0.removeFromSuperview()
+      }
+    }
+    
     new.nodes.forEach {
-        let x = UIView(
-            frame: CGRect(
-                origin: .zero,
-                size: CGSize(
-                    width: 50.0,
-                    height: 50.0
-                )
-            )
-        )
+        let x = UIView(frame: $0.frame)
         x.backgroundColor = $0.color
         self.window?.rootViewController?.view.addSubview(x)
     }
+    
+    let lastNode = new.nodes.last.map { $0.frame } ?? .zero
+    
+    label.frame = CGRect(
+      origin: CGPoint(x: 0, y: lastNode.origin.y + lastNode.height),
+      size: window?.rootViewController.map {
+        CGSize(
+          width: $0.view.bounds.width,
+          height: $0.view.bounds.height - lastNode.height
+        )
+      } ?? .zero
+    )
   }
 }
 

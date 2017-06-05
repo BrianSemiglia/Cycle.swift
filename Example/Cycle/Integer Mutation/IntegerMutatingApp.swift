@@ -9,6 +9,7 @@
 import Foundation
 import Cycle
 import RxSwift
+import Curry
 
 @UIApplicationMain
 class Example: CycledApplicationDelegate<IntegerMutatingApp> {
@@ -22,10 +23,7 @@ class Example: CycledApplicationDelegate<IntegerMutatingApp> {
 struct IntegerMutatingApp: SinkSourceConverting {
   struct Model: Initializable, VisualizerStringConvertible {
     var screen = ValueToggler.Model.empty
-    var secondScreen = SecondScreenDriver.Model(
-      nodes: [],
-      description: "No nodes to display"
-    )
+    var secondScreen = SecondScreenDriver.Model(nodes: [], description: "No nodes to display")
     var application = RxUIApplication.Model.empty
   }
   struct Drivers: UIApplicationDelegateProviding, ScreenDrivable {
@@ -36,7 +34,20 @@ struct IntegerMutatingApp: SinkSourceConverting {
   func driversFrom(initial: IntegerMutatingApp.Model) -> IntegerMutatingApp.Drivers { return
     Drivers(
       screen: ValueToggler(),
-      secondScreen: SecondScreenDriver(initial: initial.secondScreen),
+      secondScreen: SecondScreenDriver(
+        initial: {
+          let x = [
+            SecondScreenDriver.Model.Node.incrementNodeFrom(model: initial.screen),
+            SecondScreenDriver.Model.Node.decrementNodeFrom(model: initial.screen),
+            SecondScreenDriver.Model.Node.applicationNodeFrom(model: initial.application)
+          ]
+          let y = x.gridLayout()
+          return SecondScreenDriver.Model(
+            nodes: zip(x, y).map { $0.0($0.1) },
+            description: initial.description
+          )
+        }()
+      ),
       application: RxUIApplication(initial: initial.application)
     )
   }
@@ -50,24 +61,26 @@ struct IntegerMutatingApp: SinkSourceConverting {
       .rendered(events.map { $0.application })
     
     let valueEffects = valueActions
-      .withLatestFrom(events) { ($0.0, $0.1) }
+      .tupledWithLatestFrom(events)
       .reduced()
     
     let applicationEffects = applicationActions
-      .withLatestFrom(events) { ($0.0, $0.1) }
+      .tupledWithLatestFrom(events)
       .reduced()
     
     let visualizer = drivers
       .secondScreen
       .rendered(
         Observable.of(
-          valueActions.toModels(),
-          valueEffects.toModels()
+          valueActions.tupledWithLatestFrom(valueEffects).toModels(),
+          valueEffects.toModels(),
+          applicationActions.tupledWithLatestFrom(applicationEffects).toModels(),
+          applicationEffects.toModels()
         )
         .merge()
-        .pacedBy(delay: 1)
+        .pacedBy(delay: 0.5)
       )
-      .withLatestFrom(events) { ($0.0, $0.1) }
+      .tupledWithLatestFrom(events)
       .reduced()
     
     return Observable.of(
@@ -90,17 +103,63 @@ extension ObservableType {
   }
 }
 
-extension ObservableType where E == (ValueToggler.Model) {
+extension ObservableType {
+  func tupledWithLatestFrom<T>(_ input: Observable<T>) -> Observable<(E, T)> {
+    return withLatestFrom(input) { ($0.0, $0.1 ) }
+  }
+}
+
+extension ObservableType where E == (ValueToggler.Model, IntegerMutatingApp.Model) {
   func toModels() -> Observable<SecondScreenDriver.Model> { return
-    map {
-      SecondScreenDriver.Model(
-        nodes: [
-          SecondScreenDriver.Model.Node(
-            state: $0.increment.state == .highlighted ? .sending : .none,
-            color: $0.increment.state == .highlighted ? .red : .black
-          )
-        ],
-        description: ""
+    map { event, context in
+      let x = [
+        curry(SecondScreenDriver.Model.Node.incrementNodeFrom)(event),
+        curry(SecondScreenDriver.Model.Node.decrementNodeFrom)(event),
+        curry(SecondScreenDriver.Model.Node.applicationNodeFrom)(context.application)
+      ]
+      let y = x.gridLayout()
+      return SecondScreenDriver.Model(
+        nodes: zip(x, y).map { $0.0($0.1) },
+        description: context.description
+      )
+    }
+  }
+}
+
+extension ObservableType where E == (RxUIApplication.Model, IntegerMutatingApp.Model) {
+  func toModels() -> Observable<SecondScreenDriver.Model> { return
+    map { event, context in
+      let x = [
+        curry(SecondScreenDriver.Model.Node.incrementNodeFrom)(context.screen),
+        curry(SecondScreenDriver.Model.Node.decrementNodeFrom)(context.screen),
+        curry(SecondScreenDriver.Model.Node.applicationNodeFrom)(event)
+      ]
+      let y = x.gridLayout()
+      return SecondScreenDriver.Model(
+        nodes: zip(x, y).map { $0.0($0.1) },
+        description: context.description
+      )
+    }
+  }
+}
+
+extension CGRect {
+  static func gridWith(count: Int) -> [CGRect] {
+    return Array (0..<count).map {
+      CGRect(
+        origin: CGPoint(x: $0 * 70, y: 0),
+        size: CGSize(width: 50.0, height: 50.0)
+      )
+    }
+  }
+}
+
+extension Collection {
+  func gridLayout() -> [CGRect] {
+    return enumerated().map {
+      CGRect(
+        origin: CGPoint(x: $0.offset * 70, y: 0),
+        size: CGSize(width: 50.0, height: 50.0)
       )
     }
   }
@@ -108,30 +167,104 @@ extension ObservableType where E == (ValueToggler.Model) {
 
 extension ObservableType where E == (IntegerMutatingApp.Model) {
   func toModels() -> Observable<SecondScreenDriver.Model> { return
-    map {
-      SecondScreenDriver.Model(
-        nodes: [
-          SecondScreenDriver.Model.Node(
-            state: $0.screen.increment.state == .highlighted ? .sending : .none,
-            color: $0.screen.increment.state == .highlighted ? .red : .black
-          )
-        ],
-        description: ""
+    map { context in
+      let x = [
+        SecondScreenDriver.Model.Node.incrementNodeFrom(model: context.screen),
+        SecondScreenDriver.Model.Node.decrementNodeFrom(model: context.screen),
+        SecondScreenDriver.Model.Node.applicationNodeFrom(model: context.application)
+      ]
+      let y = x.gridLayout()
+      return SecondScreenDriver.Model(
+        nodes: zip(x, y).map { $0.0($0.1) },
+        description: context.description
       )
     }
   }
 }
 
-//extension ObservableType where E == (RxUIApplication.Model) {
-//  func toModels() -> Observable<SecondScreenDriver.Model> { return
-//    map { _ in
-//      SecondScreenDriver.Model(
-//        nodes: [],
-//        description: ""
-//      )
-//    }
-//  }
-//}
+extension SecondScreenDriver.Model.Node {
+
+  static func incrementNodeFrom(model: ValueToggler.Model) -> (CGRect) -> SecondScreenDriver.Model.Node { return
+    { frame in
+      SecondScreenDriver.Model.Node(
+        state: model.increment.state == .highlighted ? .sending : .none,
+        color: model.increment.state == .highlighted ? .redDark : .redLight,
+        frame: frame
+      )
+    }
+  }
+  
+  static func decrementNodeFrom(model: ValueToggler.Model) -> (CGRect) -> SecondScreenDriver.Model.Node { return
+    { frame in
+      SecondScreenDriver.Model.Node(
+        state: model.decrement.state == .highlighted ? .sending : .none,
+        color: model.decrement.state == .highlighted ? .redDark : .redLight,
+        frame: frame
+      )
+    }
+  }
+  
+  static func applicationNodeFrom(model: RxUIApplication.Model) -> (CGRect) -> SecondScreenDriver.Model.Node { return
+    { frame in
+      SecondScreenDriver.Model.Node(
+        state: model.session.state != .currently(.active(.some)) ? .sending : .none,
+        color: model.session.state != .currently(.active(.some)) ? .blueDark : .blueLight,
+        frame: frame
+      )
+    }
+  }
+}
+
+extension UIColor {
+  static var orangeLight: UIColor {
+    return UIColor(
+      red: 248.0/255.0,
+      green: 159.0/255.0,
+      blue: 53.0/255.0,
+      alpha: 0.5
+    )
+  }
+  static var orangeDark: UIColor {
+    return UIColor(
+      red: 248.0/255.0,
+      green: 159.0/255.0,
+      blue: 53.0/255.0,
+      alpha: 1.0
+    )
+  }
+  static var redLight: UIColor {
+    return UIColor(
+      red: 244.0/255.0,
+      green: 129.0/255.0,
+      blue: 134.0/255.0,
+      alpha: 1.0
+    )
+  }
+  static var redDark: UIColor {
+    return UIColor(
+      red: 232.0/255.0,
+      green: 30.0/255.0,
+      blue: 38.0/255.0,
+      alpha: 1.0
+    )
+  }
+  static var blueLight: UIColor {
+    return UIColor(
+      red: 114.0/255.0,
+      green: 206.0/255.0,
+      blue: 227.0/255.0,
+      alpha: 1.0
+    )
+  }
+  static var blueDark: UIColor {
+    return UIColor(
+      red: 23.0/255.0,
+      green: 145.0/255.0,
+      blue: 178.0/255.0,
+      alpha: 1.0
+    )
+  }
+}
 
 extension IntegerMutatingApp.Model {
   static var empty: IntegerMutatingApp.Model { return
@@ -159,7 +292,6 @@ extension ObservableType where E == (ValueToggler.Model, IntegerMutatingApp.Mode
         x.screen.total = Int(x.screen.total).map { $0 - 1 }.map(String.init) ?? ""
         x.screen.decrement.state = .enabled
       }
-      x.secondScreen.debug = x.description
       return x
     }
   }
@@ -177,7 +309,6 @@ extension ObservableType where E == (RxUIApplication.Model, IntegerMutatingApp.M
         s.total = "55"
       }
       c.screen = s
-      c.secondScreen.debug = c.description
       return c
     }
   }
