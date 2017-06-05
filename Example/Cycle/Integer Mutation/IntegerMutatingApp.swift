@@ -112,6 +112,8 @@ extension ObservableType {
 extension ObservableType where E == (ValueToggler.Model, IntegerMutatingApp.Model) {
   func toModels() -> Observable<SecondScreenDriver.Model> { return
     map { event, context in
+      var new = context
+      new.screen = event
       let x = [
         curry(SecondScreenDriver.Model.Node.incrementNodeFrom)(event),
         curry(SecondScreenDriver.Model.Node.decrementNodeFrom)(event),
@@ -120,7 +122,7 @@ extension ObservableType where E == (ValueToggler.Model, IntegerMutatingApp.Mode
       let y = x.gridLayout()
       return SecondScreenDriver.Model(
         nodes: zip(x, y).map { $0.0($0.1) },
-        description: context.description
+        description: new.description
       )
     }
   }
@@ -129,6 +131,8 @@ extension ObservableType where E == (ValueToggler.Model, IntegerMutatingApp.Mode
 extension ObservableType where E == (RxUIApplication.Model, IntegerMutatingApp.Model) {
   func toModels() -> Observable<SecondScreenDriver.Model> { return
     map { event, context in
+      var new = context
+      new.application = event
       let x = [
         curry(SecondScreenDriver.Model.Node.incrementNodeFrom)(context.screen),
         curry(SecondScreenDriver.Model.Node.decrementNodeFrom)(context.screen),
@@ -137,7 +141,7 @@ extension ObservableType where E == (RxUIApplication.Model, IntegerMutatingApp.M
       let y = x.gridLayout()
       return SecondScreenDriver.Model(
         nodes: zip(x, y).map { $0.0($0.1) },
-        description: context.description
+        description: new.description
       )
     }
   }
