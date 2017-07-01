@@ -235,6 +235,19 @@ public protocol SinkSourceConverting {
 
 A sample project of the infamous 'Counter' app is included.
 
+## Potential for Development Tools
+
+![alt tag](xcode_cut_pro.png)
+
+- Monitor/record events and states as they occur
+- Change monitor/playback speed
+- Splice event/state timeline to evalute different orders
+- Playback only events against new code to evaluate resulting state 
+- Playback only states against new code to evaluate results renderings
+- Export tests for valid event/state input/output.
+- Receive warnings for event/state received that conflicts with tests.
+- Import timelines submitted with crash reports.
+
 ## Related Material
 - [Boundaries by Gary Bernhardt](https://www.youtube.com/watch?v=yTkzNHF6rMs)
 - [Cycle.js](https://cycle.js.org)
