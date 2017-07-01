@@ -5,7 +5,7 @@
 [![Platform](https://img.shields.io/cocoapods/p/Cycle.svg?style=flat)](http://cocoapods.org/pods/Cycle)
 
 ## Overview
-Cycle provides a means of writing an app as a filter over a stream of external events.
+Cycle provides a means of writing an app as a function that filters over a stream of external events.
 
 1. The event stream is fed to a reducer that produces a stream of driver models.
 2. The driver model stream is fed to drivers that render the side-effects of those models.
@@ -21,7 +21,7 @@ For example:
                  SessionModel    SessionModel -> Session
 ```
 
-Each branch of your App.Model that can experience a callback provides a Reducer function that can convert an that Event into a new App.Model. The declarative side of your application becomes a timeline of App.Models based on the incoming timeline of Events.
+Each branch of your App.Model that can experience an Event-callback is provided a Reducer function that can convert that Event into a new App.Model. The declarative side of your application becomes a timeline of App.Models based on the incoming timeline of Events.
 
 ![alt tag](cycled_model_timeline.png)
 
@@ -30,6 +30,26 @@ The procedural side of your application is composed of isolated drivers that ren
 ![alt tag](cycled_drivers_reduced.gif)
 
 [View as higher-res SVG](https://briansemiglia.github.io/cycled_drivers_reduced.svg)
+
+## Reasoning
+
+### Change without Change
+Applications are functions that transform events and values into effects and new values. However, functional programming discourages mutability. How can something change without changing? Cycle attempts to answer that question with a flip-book like model. Just as every frame of a movie is unchanging, so are view-models. Change is only produced once the frame is fed past light or rendered rather. Cycle provides the scaffolding necessary to feed an infinite list of view-models into drivers to be procedurally rendered.
+
+### Truth and Perspective
+More complex animations include the use of sound. Light and sound are rendered in unison to form a cohesive presentation. Those renderings are based on the same abstract truth. In the Cycle architecture, drivers render effects from their own perspective of the App State. A single source of truth provides consistency for all. Drivers also deliver events from the outside world but the metaphor doesn't work quite as well in explaining that.
+
+### Parallel Perspectives
+Another point of interest to note is the drivers’ parallel relationship to each other. Drivers don’t require an exclusive relationship with a specific medium/hardware but can instead have an exclusive relationship with a smaller perspective of that medium/hardware. For example, a screen implemented as a tree of drivers could be instead be implemented as an array of independent drivers backed by a nested view-model. This would prevent changes to child-view-interfaces from rippling up to their parents' while still allowing for coordinated renderings.
+
+### Self-Centered Perspectives
+Just as paper and celluloid aren't exclusive to the purpose of stories, drivers are independent of an application’s intentions. Drivers set the terms of their contract (view-model) and the events they produce. Changes to an application's model don’t break its drivers' design. Changes to its drivers' design do break the application's design.
+
+### Values as Commands
+Frames in an animation are easy to understand as values, but they can also be understood as commands for the projector at a given moment. By storing driver-commands as values, commands can be used just as frames (verified, reversed, throttled, filtered, spliced, and replayed); all of which make for useful development tools.
+
+### Live Broadcast
+The flip-book model breaks a bit when it comes to the uncertain future of an application’s timeline. Each frame of an animation is usually known before playback but because drivers provide a finite set of possible events, that uncertainty can be constrained and given the means to produce the next frame for every action.
 
 ## Filter Design
 ```swift
@@ -214,6 +234,14 @@ public protocol SinkSourceConverting {
   ```
 
 A sample project of the infamous 'Counter' app is included.
+
+## Related Material
+- [Boundaries by Gary Bernhardt](https://www.youtube.com/watch?v=yTkzNHF6rMs)
+- [Cycle.js](https://cycle.js.org)
+- [Unidirectional data flow architectures, Andre Staltz - AtTheFrontend 2016](https://www.youtube.com/watch?v=1c6XiQsnh_U)
+- [Unidirectional User Interface Architectures - Andre Staltz](https://staltz.com/unidirectional-user-interface-architectures.html)
+- [Redux](http://redux.js.org), [ReSwift](https://github.com/ReSwift/ReSwift)
+- [Elm Architecture](https://guide.elm-lang.org/architecture/)
 
 ## Requirements
 iOS 9+
