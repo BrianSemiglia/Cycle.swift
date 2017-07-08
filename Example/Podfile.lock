@@ -3,15 +3,15 @@ PODS:
   - Curry (3.0.0)
   - Cycle (0.0.6):
     - Changeset (= 2.1)
-    - RxSwift (= 3.2.0)
-  - RxCocoa (3.2.0):
-    - RxSwift (~> 3.1)
-  - RxSwift (3.2.0)
+    - RxSwift (= 3.5.0)
+  - RxCocoa (3.5.0):
+    - RxSwift (~> 3.4)
+  - RxSwift (3.5.0)
 
 DEPENDENCIES:
   - Curry (= 3.0)
   - Cycle (from `../`)
-  - RxCocoa (= 3.2.0)
+  - RxCocoa (= 3.5.0)
 
 EXTERNAL SOURCES:
   Cycle:
@@ -20,10 +20,10 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Changeset: 52ae0451caae6d236d8ecee150ab62050c3dc826
   Curry: eb3d2c75aec678b3cc7fb2729d2ad6dd121531d1
-  Cycle: 839e936daf2a0e674905608a495554ebf745fb4a
-  RxCocoa: ccdf43101a70407097a29082f648ba1676075b30
-  RxSwift: 46574f70d416b7923c237195939cc488a7fbf3a0
+  Cycle: 2d465e7540c1994276b067980766057255fc2534
+  RxCocoa: a0a09f45d0e5b48ecb6a4a7b4b4c89c88d3f633f
+  RxSwift: 18ee9d78b45edb3b0b7e79916b47a116e6dbc842
 
-PODFILE CHECKSUM: 1e3b6e00ec2c2115004174e049f3a6a8750268b9
+PODFILE CHECKSUM: 3cb03155d8023448150923e2583c9ff4ea4cdd92
 
 COCOAPODS: 1.2.1
