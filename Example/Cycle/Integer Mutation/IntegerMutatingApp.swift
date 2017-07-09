@@ -30,6 +30,7 @@ struct IntegerMutatingApp: SinkSourceConverting {
     let screen: ValueToggler
     let secondScreen: SecondScreenDriver
     let application: RxUIApplication
+    let jsonExport: MultipeerJSON
   }
   func driversFrom(initial: IntegerMutatingApp.Model) -> IntegerMutatingApp.Drivers { return
     Drivers(
@@ -48,7 +49,8 @@ struct IntegerMutatingApp: SinkSourceConverting {
           )
         }()
       ),
-      application: RxUIApplication(initial: initial.application)
+      application: RxUIApplication(initial: initial.application),
+      jsonExport: MultipeerJSON()
     )
   }
   func effectsFrom(events: Observable<Model>, drivers: Drivers) -> Observable<Model> {
@@ -83,10 +85,33 @@ struct IntegerMutatingApp: SinkSourceConverting {
       .tupledWithLatestFrom(events)
       .reduced()
     
+    let json = drivers.jsonExport.rendered(
+      Observable.of(
+            valueActions
+                .map { $0.total }
+                .tupledWithLatestFrom(valueEffects.map { $0.description })
+                .map { ["action": $0.0, "effect": $0.1] },
+            applicationActions
+                .map {
+                    switch $0.session.state {
+                    case .currently(.active(_)): return "active"
+                    case .currently(.resigned): return "resigned"
+                    default: return "none"
+                    }
+                }
+                .tupledWithLatestFrom(applicationEffects.map { $0.description })
+                .map { ["action": $0.0, "effect": $0.1] }
+        )
+        .merge()
+    )
+    .tupledWithLatestFrom(events)
+    .map { $0.1 }
+    
     return Observable.of(
       valueEffects,
       visualizer,
-      applicationEffects
+      applicationEffects,
+      json
     ).merge()
   }
 }
