@@ -87,7 +87,7 @@ public class MultipeerJSON:
     _ browser: MCNearbyServiceBrowser,
     lostPeer peerID: MCPeerID
   ) {
-      
+    
   }
   
   public func session(
@@ -97,7 +97,6 @@ public class MultipeerJSON:
   ) {
     switch state {
     case .connected:
-      print("--- connected")
       DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
         self.input.subscribe { [weak self] in
           if let element = $0.element {
@@ -106,9 +105,10 @@ public class MultipeerJSON:
         }.disposed(by: self.cleanup)
       }
     case .connecting:
-      print("--- connecting")
+      break
     case .notConnected:
-      print("--- not connected")
+      self.session = nil
+      browser.startBrowsingForPeers()
     }
   }
   
@@ -148,7 +148,4 @@ public class MultipeerJSON:
 
   }
   
-  deinit {
-    print("bye!")
-  }
 }
