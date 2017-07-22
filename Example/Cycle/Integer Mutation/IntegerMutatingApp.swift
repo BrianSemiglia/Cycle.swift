@@ -469,16 +469,12 @@ extension ObservableType where E == (ValueToggler.Model, IntegerMutatingApp.Mode
 extension ObservableType where E == (RxUIApplication.Model, IntegerMutatingApp.Model) {
   func reduced() -> Observable<IntegerMutatingApp.Model> { return
     map { event, global in
-      var c = global
-      var model = event
-      model.shouldLaunch = true
-      c.application = model
-      var s = c.screen
+      var new = global
+      new.application.shouldLaunch = true
       if case .pre(.active(.some)) = event.session.state {
-        s.total = "55"
+        new.screen.total = "55"
       }
-      c.screen = s
-      return c
+      return new
     }
   }
 }
