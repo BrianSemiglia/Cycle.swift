@@ -15,6 +15,7 @@
 		61C96F24B086642849478808 /* Pods_Integer_Mutation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AB3EC56074E54409661B9B4 /* Pods_Integer_Mutation.framework */; };
 		6B1C14F2BF7558AA0B5001DE /* Pods_Visualizer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D1279AD119318EC3E010ECB /* Pods_Visualizer.framework */; };
 		B84ACAA946FD4DCD6390E833 /* Pods_Shortcut_Items.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 75F28F672F62AF841428AAE8 /* Pods_Shortcut_Items.framework */; };
+		D302FDC51F206B6000A8080F /* BugReporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3E56EC91F206840008E5711 /* BugReporter.swift */; };
 		D30604EB1E5E5247007BE6F0 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D30604E31E5E5247007BE6F0 /* LaunchScreen.xib */; };
 		D30604ED1E5E5247007BE6F0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D30604E71E5E5247007BE6F0 /* Images.xcassets */; };
 		D30604F11E5E5433007BE6F0 /* PushNotificationRegistration.swift in Sources */ = {isa = PBXBuildFile; fileRef = D30604F01E5E5433007BE6F0 /* PushNotificationRegistration.swift */; };
@@ -34,6 +35,7 @@
 		D365C54E1ED9F393005F0AA9 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D30604E71E5E5247007BE6F0 /* Images.xcassets */; };
 		D365C54F1ED9F393005F0AA9 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D30604E31E5E5247007BE6F0 /* LaunchScreen.xib */; };
 		D365C55B1ED9F49B005F0AA9 /* VisualizerDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D365C5591ED9F49B005F0AA9 /* VisualizerDemo.swift */; };
+		D3CCD0BF1F22D109008C2DC9 /* ShakeDetectionDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3CCD0BE1F22D109008C2DC9 /* ShakeDetectionDriver.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,6 +86,8 @@
 		D365C5551ED9F393005F0AA9 /* Visualizer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Visualizer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D365C5581ED9F49B005F0AA9 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D365C5591ED9F49B005F0AA9 /* VisualizerDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VisualizerDemo.swift; sourceTree = "<group>"; };
+		D3CCD0BE1F22D109008C2DC9 /* ShakeDetectionDriver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShakeDetectionDriver.swift; sourceTree = "<group>"; };
+		D3E56EC91F206840008E5711 /* BugReporter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BugReporter.swift; sourceTree = "<group>"; };
 		E7642C66690A3E83DA25F858 /* Pods-Cycle_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Cycle_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Cycle_Tests/Pods-Cycle_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		EC211370C6C0D3412E7DD7CF /* Pods-Shortcut Items.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Shortcut Items.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Shortcut Items/Pods-Shortcut Items.debug.xcconfig"; sourceTree = "<group>"; };
 		EFFE61F5B3D0191C0B3FACD9 /* Pods-Integer Mutation.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Integer Mutation.release.xcconfig"; path = "Pods/Target Support Files/Pods-Integer Mutation/Pods-Integer Mutation.release.xcconfig"; sourceTree = "<group>"; };
@@ -251,6 +255,8 @@
 			children = (
 				D306051D1E5E9D46007BE6F0 /* IntegerMutatingApp.swift */,
 				D306051E1E5E9D46007BE6F0 /* ValueToggler.swift */,
+				D3E56EC91F206840008E5711 /* BugReporter.swift */,
+				D3CCD0BE1F22D109008C2DC9 /* ShakeDetectionDriver.swift */,
 				D30605211E5EA2ED007BE6F0 /* Info.plist */,
 			);
 			path = "Integer Mutation";
@@ -435,6 +441,10 @@
 						CreatedOnToolsVersion = 6.3.1;
 						LastSwiftMigration = 0820;
 						TestTargetID = 607FACCF1AFB9204008FA782;
+					};
+					D306050A1E5E9CD5007BE6F0 = {
+						DevelopmentTeam = 9R3LQ2Q36B;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -820,7 +830,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				D306051F1E5E9D46007BE6F0 /* IntegerMutatingApp.swift in Sources */,
+				D302FDC51F206B6000A8080F /* BugReporter.swift in Sources */,
 				D30605201E5E9D46007BE6F0 /* ValueToggler.swift in Sources */,
+				D3CCD0BF1F22D109008C2DC9 /* ShakeDetectionDriver.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1050,11 +1062,14 @@
 			baseConfigurationReference = 124EBB9706B4D6B114847114 /* Pods-Integer Mutation.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = 9R3LQ2Q36B;
 				INFOPLIST_FILE = "Cycle/Integer Mutation/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -1064,11 +1079,14 @@
 			baseConfigurationReference = EFFE61F5B3D0191C0B3FACD9 /* Pods-Integer Mutation.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = 9R3LQ2Q36B;
 				INFOPLIST_FILE = "Cycle/Integer Mutation/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;

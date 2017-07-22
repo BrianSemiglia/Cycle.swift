@@ -25,12 +25,16 @@ struct IntegerMutatingApp: SinkSourceConverting {
     var screen = ValueToggler.Model.empty
     var secondScreen = SecondScreenDriver.Model(nodes: [], description: "No nodes to display")
     var application = RxUIApplication.Model.empty
+    var bugReporter = BugReporter.Model(state: .idle)
+    var motionReporter = ShakeDetection.Model(state: .listening)
   }
   struct Drivers: UIApplicationDelegateProviding, ScreenDrivable {
     let screen: ValueToggler
     let secondScreen: SecondScreenDriver
     let application: RxUIApplication
     let jsonExport: MultipeerJSON
+    let bugReporter: BugReporter
+    let motionReporter: ShakeDetection
   }
   func driversFrom(initial: IntegerMutatingApp.Model) -> IntegerMutatingApp.Drivers { return
     Drivers(
@@ -50,7 +54,9 @@ struct IntegerMutatingApp: SinkSourceConverting {
         }()
       ),
       application: RxUIApplication(initial: initial.application),
-      jsonExport: MultipeerJSON()
+      jsonExport: MultipeerJSON(),
+      bugReporter: BugReporter(initial: initial.bugReporter),
+      motionReporter: ShakeDetection(initial: initial.motionReporter)
     )
   }
   func effectsFrom(events: Observable<Model>, drivers: Drivers) -> Observable<Model> {
@@ -69,7 +75,16 @@ struct IntegerMutatingApp: SinkSourceConverting {
     let applicationEffects = applicationActions
       .tupledWithLatestFrom(events)
       .reduced()
+
+    let shakeActions = drivers.motionReporter
+      .rendered(events.map { $0.motionReporter })
+    .share()
     
+    let shakeEffects = shakeActions
+      .tupledWithLatestFrom(events)
+      .reduced()
+      .share()
+
     let visualizer = drivers
       .secondScreen
       .rendered(
@@ -84,35 +99,126 @@ struct IntegerMutatingApp: SinkSourceConverting {
       )
       .tupledWithLatestFrom(events)
       .reduced()
+      .share()
     
-    let json = drivers.jsonExport.rendered(
-      Observable.of(
-            valueActions
-                .map { $0.total }
-                .tupledWithLatestFrom(valueEffects.map { $0.description })
-                .map { ["action": $0.0, "effect": $0.1] },
-            applicationActions
-                .map {
-                    switch $0.session.state {
-                    case .currently(.active(_)): return "active"
-                    case .currently(.resigned): return "resigned"
-                    default: return "none"
-                    }
-                }
-                .tupledWithLatestFrom(applicationEffects.map { $0.description })
-                .map { ["action": $0.0, "effect": $0.1] }
-        )
-        .merge()
+    let dictionaryStateStream: Observable<[AnyHashable: Any]> = Observable.of(
+      valueActions
+        .map {
+          if $0.increment.state == .highlighted {
+            return ".highlighted"
+          } else if $0.decrement.state == .highlighted {
+            return ".highlighted"
+          } else {
+            return ""
+          }
+        }
+        .tupledWithLatestFrom(valueEffects)
+        .map {
+          [
+            "drivers": [
+              ["label": "value", "action": $0.0],
+              ["label": "session", "action": ""] //Optional<String>.none]
+            ],
+            "cause": ["label": "value", "action": $0.0],
+            "effect": $0.1.description
+          ]
+      },
+      applicationActions
+        .map {
+          switch $0.session.state {
+          case .currently(.active(_)): return "active"
+          case .currently(.resigned): return "resigned"
+          default: return "none"
+          }
+        }
+        .tupledWithLatestFrom(applicationEffects.map { $0.description })
+        .map {
+          [
+            "drivers": [
+              ["label": "value", "action": ""], // Optional<String>.none],
+              ["label": "session", "action": $0.0]
+            ],
+            "cause": ["label": "session", "action": $0.0],
+            "effect": $0.1
+          ]
+        },
+        shakeActions
+          .map { x -> String in
+            switch x {
+            case .detecting: return "detecting"
+            case .none: return ""
+            }
+          }
+          .tupledWithLatestFrom(shakeEffects.map { $0.description })
+          .map { _ in
+            ["": ""] as [AnyHashable: Any]
+          }
+      )
+      .merge()
+      .share()
+
+    let json = drivers.jsonExport
+      .rendered(dictionaryStateStream)
+      .tupledWithLatestFrom(events)
+      .map { $0.1 }
+      .share()
+
+    let reporter = drivers.bugReporter
+      .rendered(
+        events
+          .map { $0.bugReporter }
+          .tupledWithLatestFrom(
+            dictionaryStateStream
+              .scan([[AnyHashable: Any]]()) { $0 + [$1] }
+              .map { $0.suffix(25) }
+              .map (Array.init)
+              .map { ["events": $0] as [AnyHashable: Any] }
+          )
+          .map {
+            switch $0.0.state {
+            case .shouldSend:
+              var new = $0.0
+              if let data = $0.1.binaryPropertyList() {
+                new.state = .sending(data)
+              } else {
+                new.state = .idle
+              }
+              return new
+            default:
+              return $0.0
+            }
+        }
     )
     .tupledWithLatestFrom(events)
-    .map { $0.1 }
-    
-    return Observable.of(
-      valueEffects,
-      visualizer,
-      applicationEffects,
-      json
-    ).merge()
+    .reduced()
+    .share()
+
+    return Observable
+      .of(
+        valueEffects,
+        visualizer,
+        applicationEffects,
+        json,
+        reporter,
+        shakeEffects
+      )
+      .merge()
+  }
+}
+
+extension Collection where Iterator.Element == (key: AnyHashable, value: Any) {
+  func JSON() -> Data? { return
+    try? JSONSerialization.data(
+      withJSONObject: self,
+      options: JSONSerialization.WritingOptions(rawValue: 0)
+    )
+  }
+  func binaryPropertyList() -> Data? { return
+    try? PropertyListSerialization.data(
+      fromPropertyList: self,
+      format: .binary,
+      options: 0
+    )
   }
 }
 
@@ -303,8 +409,42 @@ extension IntegerMutatingApp.Model {
         nodes: [],
         description: "No nodes to display"
       ),
-      application: .empty
+      application: .empty,
+      bugReporter: BugReporter.Model(
+        state: .idle
+      ),
+      motionReporter: ShakeDetection.Model(state: .listening)
     )
+  }
+}
+
+extension ObservableType where E == (ShakeDetection.Action, IntegerMutatingApp.Model) {
+  func reduced() -> Observable<IntegerMutatingApp.Model> { return
+    map { event, context in
+      switch event {
+      case .detecting:
+        var new = context
+        new.bugReporter.state = .shouldSend
+        return new
+      default:
+        return context
+      }
+    }
+  }
+}
+
+extension ObservableType where E == (BugReporter.Action, IntegerMutatingApp.Model) {
+  func reduced() -> Observable<IntegerMutatingApp.Model> { return
+    map { event, context in
+      switch event {
+      case .didSuccessfullySend:
+        var new = context
+        new.bugReporter.state = .idle
+        return new
+      default:
+        return context
+      }
+    }
   }
 }
 

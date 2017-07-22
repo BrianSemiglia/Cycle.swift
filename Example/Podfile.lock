@@ -6,12 +6,15 @@ PODS:
     - RxSwift (= 3.5.0)
   - RxCocoa (3.5.0):
     - RxSwift (~> 3.4)
+  - RxMotionKit (0.7.0):
+    - RxSwift (~> 3.0)
   - RxSwift (3.5.0)
 
 DEPENDENCIES:
   - Curry (= 3.0)
   - Cycle (from `../`)
   - RxCocoa (= 3.5.0)
+  - RxMotionKit (~> 0.7.0)
 
 EXTERNAL SOURCES:
   Cycle:
@@ -22,8 +25,9 @@ SPEC CHECKSUMS:
   Curry: eb3d2c75aec678b3cc7fb2729d2ad6dd121531d1
   Cycle: 2d465e7540c1994276b067980766057255fc2534
   RxCocoa: a0a09f45d0e5b48ecb6a4a7b4b4c89c88d3f633f
+  RxMotionKit: 4acae490090097be832b2655e181b99bebcc6dd4
   RxSwift: 18ee9d78b45edb3b0b7e79916b47a116e6dbc842
 
-PODFILE CHECKSUM: 3cb03155d8023448150923e2583c9ff4ea4cdd92
+PODFILE CHECKSUM: 8ce77f12f7fb300b5a0f4bc9c264c2aed0829e3c
 
 COCOAPODS: 1.2.1
