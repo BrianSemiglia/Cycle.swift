@@ -63,22 +63,26 @@ struct IntegerMutatingApp: SinkSourceConverting {
     let valueActions = drivers
       .screen
       .rendered(events.map { $0.screen })
+      .share()
     
     let applicationActions = drivers
       .application
       .rendered(events.map { $0.application })
-    
+      .share()
+
     let valueEffects = valueActions
       .tupledWithLatestFrom(events)
       .reduced()
-    
+      .share()
+
     let applicationEffects = applicationActions
       .tupledWithLatestFrom(events)
       .reduced()
+      .share()
 
     let shakeActions = drivers.motionReporter
       .rendered(events.map { $0.motionReporter })
-    .share()
+      .share()
     
     let shakeEffects = shakeActions
       .tupledWithLatestFrom(events)
