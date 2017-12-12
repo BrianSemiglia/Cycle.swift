@@ -34,16 +34,20 @@ The procedural side of your application is composed of isolated drivers that ren
 ## Reasoning
 
 ### Change without Change
-Applications are functions that transform events and values into effects and new values. However, functional programming discourages mutability. How can something change without changing? Cycle attempts to answer that question with a flip-book like model. Just as every frame of a movie is unchanging, so are view-models. Change is only produced once the frame is fed past light or rendered rather. Cycle provides the scaffolding necessary to feed an infinite list of view-models into drivers to be procedurally rendered.
+Applications are functions that transform events into effects. However, functional programming discourages mutability. How can something change without changing? Cycle attempts to answer that question with a flip-book like model. Just as every frame of a movie is unchanging, so can be view-models. Change is only produced once a frame is fed into a projector and run past light, or rendered rather. In the same way, Cycle provides the scaffolding necessary to feed an infinite list of view-models into drivers to be procedurally rendered.
 
-### Truth and Perspective
-More complex animations include the use of sound. Light and sound are rendered in unison to form a cohesive presentation. Those renderings are based on the same abstract truth. In the Cycle architecture, drivers render effects from their own perspective of the App State. A single source of truth provides consistency for all. Drivers also deliver events from the outside world but the metaphor doesn't work quite as well in explaining that.
+### Truth
+Objects typically maintain their own version of the truth. This has the potential to lead to many truths, sometimes conflicting. These conflicts can cause stale/incorrect data to persist. A single source of truth provides consistency for all. 
 
-### Parallel Perspectives
-Another point of interest to note is the drivers’ parallel relationship to each other. Drivers don’t require an exclusive relationship with a specific medium/hardware but can instead have an exclusive relationship with a smaller perspective of that medium/hardware. For example, a screen implemented as a tree of drivers could be instead be implemented as an array of independent drivers backed by a nested view-model. This would prevent changes to child-view-interfaces from rippling up to their parents' while still allowing for coordinated renderings.
+At the same time, moving state out of objects removes their identity and makes them much reusable/disposable. For example, a view that is not visible can be freed/reused without losing the data that it was hosting.
 
-### Self-Centered Perspectives
-Just as paper and celluloid aren't exclusive to the purpose of stories, drivers are independent of an application’s intentions. Drivers set the terms of their contract (view-model) and the events they produce. Changes to an application's model don’t break its drivers' design. Changes to its drivers' design do break the application's design.
+### Perspective
+Going back to the flip-book philosphy, more complex animations also include the use of sound. Light and sound are two perspectives rendered in unison to create the illusion of physical cohesion. The illusion is due to the mediums having no physical dependence on one another. In the Cycle architecture, drivers are the perspectives of the application's state.
+
+Further, perspectives don't have to be specific to a single medium. For example, a screen implemented as a nested-tree of views could be instead be implemented as an array of independent views backed by a nested-model. This would prevent changes to a child-view's interface from rippling up to its parents, grandparents, etc. while still allowing for a coordinated rendering. Scaled up, this has the potential to produce an application where there is only ever one degree of delegation.
+
+### Self-Centered Perspective
+Just as paper and celluloid aren't exclusive to the purpose of movies, drivers are independent of an application’s intentions. Drivers set the terms of their contract (view-model) and the events they produce. Changes to an application's model don’t break its drivers' design. Changes to its drivers' design do break the application's design. This produces modularity amongst drivers.
 
 ### Values as Commands
 Frames in an animation are easy to understand as values, but they can also be understood as commands for the projector at a given moment. By storing driver-commands as values, commands can be used just as frames (verified, reversed, throttled, filtered, spliced, and replayed); all of which make for useful [development tools](https://github.com/BrianSemiglia/CycleMonitor).
