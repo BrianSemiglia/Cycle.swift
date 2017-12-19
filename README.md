@@ -5,7 +5,7 @@
 [![Platform](https://img.shields.io/cocoapods/p/Cycle.svg?style=flat)](http://cocoapods.org/pods/Cycle)
 
 ## Overview
-Cycle provides a means of writing an app as a function that filters over a stream of external events.
+Cycle provides a means of writing an app as a function that filters over a stream of external events to produce a stream of effects.
 
 1. The event stream is fed to a reducer that produces a stream of driver models.
 2. The driver model stream is fed to drivers that render the side-effects of those models.
