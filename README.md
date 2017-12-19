@@ -52,6 +52,8 @@ Just as paper and celluloid aren't exclusive to the purpose of movies, drivers a
 ### Values as Commands
 Frames in an animation are easy to understand as values, but they can also be understood as commands for the projector at a given moment. By storing driver-commands as values, commands can be used just as frames (verified, reversed, throttled, filtered, spliced, and replayed); all of which make for useful [development tools](https://github.com/BrianSemiglia/CycleMonitor).
 
+![alt tag](https://github.com/BrianSemiglia/CycleMonitor/raw/master/readme_images/overview.gif)
+
 ### Live Broadcast
 The flip-book model breaks a bit when it comes to the uncertain future of an application’s timeline. Each frame of an animation is usually known before playback but because drivers provide a finite set of possible events, that uncertainty can be constrained and given the means to produce the next frame for every action.
 
