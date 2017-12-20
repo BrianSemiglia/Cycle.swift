@@ -16,7 +16,7 @@ Cycle provides a means of writing an application as a function that reduces a st
 ### Composition
 1. `Effects` arrive as inputs to the main function and are fed to `Drivers` to be rendered to hardware.
 2. `Drivers` deliver `Events` as they arrive.
-3. The `Event` along with latest `Effect` are fed to `Reducers` to produce a new `Effect`.
+3. The `Event` along with latest `Effect` is fed to `Reducers` to produce a new `Effect`.
 4. The new `Effect` is input to another execution of the main function and a cycle is produced.
 
 ```
