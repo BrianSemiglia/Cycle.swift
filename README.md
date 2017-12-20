@@ -19,13 +19,14 @@ Cycle provides a means of writing an application as a function that reduces a st
 3. The `Event` along with latest `Effect` are fed to `Reducer`s to produce a new `Effect`.
 4. The new `Effect` is input to another execution of the main function and a cycle is produced.
 
-### Example
 ```
-effect --------> render --> event + previous effect ------> new effect
+// Pseudo Example
+
+effect --------> render ----------> event + previous effect -> new effect
          
-Network.Model -> Network                    Network.Model   Network.Model
-Screen.Model  -> Screen  -> Network.Event + Screen.Model -> Screen.Model
-Session.Model -> Session                    Session.Model   Session.Model
+Network.Model -> Network                    Network.Model      Network.Model
+Screen.Model  -> Screen  -> Network.Event + Screen.Model ----> Screen.Model
+Session.Model -> Session                    Session.Model      Session.Model
 ```
 
 ### Concept
