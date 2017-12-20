@@ -5,27 +5,35 @@
 [![Platform](https://img.shields.io/cocoapods/p/Cycle.svg?style=flat)](http://cocoapods.org/pods/Cycle)
 
 ## Overview
-Cycle provides a means of writing an app as a function that filters over a stream of external events to produce a stream of effects.
+Cycle provides a means of writing an application as a function that reduces a stream of events to a stream of effects.
 
-1. The event stream is fed to a reducer that produces a stream of driver models.
-2. The driver model stream is fed to drivers that render the side-effects of those models.
-3. The drivers produce a stream of suggested driver models in response to events.
-4. The cycle repeats.
+### Anatomy
+1. Effects - The state of the entire application at a given moment.
+2. Drivers - Stateless objects that render effects to hardware and deliver events.
+3. Events - Enum values expressing events experienced by hardware.
+3. Reducers - Functions that produce Effects based on input events.
 
-For example:
+### Composition
+1. `Effect`s arrive as inputs to the main function and are fed to drivers to be rendered to hardware.
+2. Drivers deliver `Event`s as they arrive.
+3. The `Event` along with latest `Effect` are fed to `Reducer`s to produce a new `Effect`.
+4. The new `Effect` is input to another execution of the main function and a cycle is produced.
+
+### Example
 ```
--------> event + context ------> effect -------> render --> event -------->
+effect --------> render --> event + previous effect ------> new effect
          
-                 NetworkModel    NetworkModel -> Network
--> ScreenModel + ScreenModel  -> ScreenModel  -> Screen  -> NetworkModel ->
-                 SessionModel    SessionModel -> Session
+Network.Model -> Network                    Network.Model   Network.Model
+Screen.Model  -> Screen  -> Network.Event + Screen.Model -> Screen.Model
+Session.Model -> Session                    Session.Model   Session.Model
 ```
 
-Each branch of your App.Model that can experience an Event-callback is provided a Reducer function that can convert that Event into a new App.Model. The declarative side of your application becomes a timeline of App.Models based on the incoming timeline of Events.
+### Concept
+The goal is to produce an application that has clear and uniform boundaries between the declarative and procedural. The declarative side can be understood as a timeline of `Effects` based on the incoming timeline of `Event`s which when intertwined can be visualized as such:
 
 ![alt tag](cycled_model_timeline.png)
 
-The procedural side of your application is composed of isolated drivers that render Models specific to their needs. Those drivers also execute callback functions that provide Events.
+The procedural rendering of those timelines can be visualized like so:
 
 ![alt tag](cycled_drivers_reduced.gif)
 
@@ -42,7 +50,7 @@ Objects typically maintain their own version of the truth. This has the potentia
 At the same time, moving state out of objects removes their identity and makes them much reusable/disposable. For example, a view that is not visible can be freed/reused without losing the data that it was hosting.
 
 ### Perspective
-Going back to the flip-book philosphy, more complex animations also include the use of sound. Light and sound are two perspectives rendered in unison to create the illusion of physical cohesion. The illusion is due to the mediums having no physical dependence on one another. In the Cycle architecture, drivers are the perspectives of the application's state.
+Going back to the flip-book philosophy, more complex animations also include the use of sound. Light and sound are two perspectives rendered in unison to create the illusion of physical cohesion. The illusion is due to the mediums having no physical dependence on one another. In the Cycle architecture, drivers are the perspectives of the application's state.
 
 Further, perspectives don't have to be specific to a single medium. For example, a screen implemented as a nested-tree of views could be instead be implemented as an array of independent views backed by a nested-model. This would prevent changes to a child-view's interface from rippling up to its parents, grandparents, etc. while still allowing for a coordinated rendering. Scaled up, this has the potential to produce an application where there is only ever one degree of delegation.
 
@@ -57,11 +65,11 @@ Frames in an animation are easy to understand as values, but they can also be un
 ### Live Broadcast
 The flip-book model breaks a bit when it comes to the uncertain future of an application’s timeline. Each frame of an animation is usually known before playback but because drivers provide a finite set of possible events, that uncertainty can be constrained and given the means to produce the next frame for every action.
 
-## Filter Design
+## Implementation
 ```swift
 public protocol SinkSourceConverting {
   /* 
-    Defines schema and initial values of Driver Models.
+    Defines schema and initial values of application model.
   */
   associatedtype Source: Initializable
   
