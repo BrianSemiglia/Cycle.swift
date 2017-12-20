@@ -8,29 +8,27 @@
 Cycle provides a means of writing an application as a function that reduces a stream of events to a stream of effects.
 
 ### Anatomy
-1. Effects - The state of the entire application at a given moment.
-2. Drivers - Stateless objects that render effects to hardware and deliver events.
+1. Effects - A struct representing the state of the entire application at a given moment.
+2. Drivers - Isolated, stateless objects that render effects to hardware and deliver events.
 3. Events - Enum values expressing events experienced by hardware.
 3. Reducers - Functions that produce Effects based on input events.
 
 ### Composition
-1. `Effect`s arrive as inputs to the main function and are fed to `Driver`s to be rendered to hardware.
-2. `Driver`s deliver `Event`s as they arrive.
-3. The `Event` along with latest `Effect` are fed to `Reducer`s to produce a new `Effect`.
+1. `Effects` arrive as inputs to the main function and are fed to `Drivers` to be rendered to hardware.
+2. `Drivers` deliver `Events` as they arrive.
+3. The `Event` along with latest `Effect` are fed to `Reducers` to produce a new `Effect`.
 4. The new `Effect` is input to another execution of the main function and a cycle is produced.
 
 ```
-// Pseudo Example
-
 effect --------> driver ----------> event + previous effect -> new effect
          
 Network.Model -> Network                    Network.Model      Network.Model
-Screen.Model  -> Screen  -> Network.Event + Screen.Model ----> Screen.Model
+Screen.Model  -> Screen  -> Network.Event + Screen.Model  ---> Screen.Model
 Session.Model -> Session                    Session.Model      Session.Model
 ```
 
 ### Concept
-The goal is to produce an application that has clear and uniform boundaries between the declarative and procedural. The declarative side can be understood as a timeline of `Effects` based on the incoming timeline of `Event`s which when intertwined can be visualized as such:
+The goal is to produce an application that has clear and uniform boundaries between the declarative and procedural. The declarative side can be understood as a timeline of `Effects` based on the incoming timeline of `Events` which when intertwined can be visualized as such:
 
 ![alt tag](cycled_model_timeline.png)
 
@@ -99,8 +97,7 @@ public protocol SinkSourceConverting {
 ## Example
 1. Subclass CycledApplicationDelegate and provide a SinkSourceConverting filter.
   ``` swift
-  @UIApplicationMain
-  class Example: CycledApplicationDelegate<MyFilter> {
+  @UIApplicationMain class Example: CycledApplicationDelegate<MyFilter> {
     init() {
       super.init(handler: MyFilter())
     }
@@ -128,7 +125,7 @@ public protocol SinkSourceConverting {
       )
     }
 
-    func effectsFrom(events: Observable<AppModel>, drivers: Drivers) -> Observable<AppModel> {
+    func effectsFrom(previous: Observable<AppModel>, drivers: Drivers) -> Observable<AppModel> {
 
       let network = drivers.network
         .rendered(events.map { $0.network })
