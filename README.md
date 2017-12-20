@@ -14,15 +14,15 @@ Cycle provides a means of writing an application as a function that reduces a st
 3. Reducers - Functions that produce Effects based on input events.
 
 ### Composition
-1. `Effect`s arrive as inputs to the main function and are fed to drivers to be rendered to hardware.
-2. Drivers deliver `Event`s as they arrive.
+1. `Effect`s arrive as inputs to the main function and are fed to `Driver`s to be rendered to hardware.
+2. `Driver`s deliver `Event`s as they arrive.
 3. The `Event` along with latest `Effect` are fed to `Reducer`s to produce a new `Effect`.
 4. The new `Effect` is input to another execution of the main function and a cycle is produced.
 
 ```
 // Pseudo Example
 
-effect --------> render ----------> event + previous effect -> new effect
+effect --------> driver ----------> event + previous effect -> new effect
          
 Network.Model -> Network                    Network.Model      Network.Model
 Screen.Model  -> Screen  -> Network.Event + Screen.Model ----> Screen.Model
