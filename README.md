@@ -16,15 +16,15 @@ Cycle provides a means of writing an application as a function that reduces a st
 ### Composition
 1. `Effects` arrive as inputs to the main function and are fed to `Drivers` to be rendered to hardware.
 2. `Drivers` deliver `Events` as they arrive.
-3. The `Event` along with latest `Effect` is fed to `Reducers` to produce a new `Effect`.
+3. The `Event` along with previous _n_ `Effects` is fed to a `Reducer` to produce a new `Effect`.
 4. The new `Effect` is input to another execution of the main function and a cycle is produced.
 
 ```
-effect --------> driver ----------> event + previous effect -> new effect
+effect --------> driver ----------> event + previous n effects -> new effect
          
-Network.Model -> Network                    Network.Model      Network.Model
-Screen.Model  -> Screen  -> Network.Event + Screen.Model  ---> Screen.Model
-Session.Model -> Session                    Session.Model      Session.Model
+Network.Model -> Network                    Network.Model         Network.Model
+Screen.Model  -> Screen  -> Network.Event + Screen.Model     ---> Screen.Model
+Session.Model -> Session                    Session.Model         Session.Model
 ```
 
 ### Concept
