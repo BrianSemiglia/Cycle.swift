@@ -8,23 +8,26 @@
 Cycle provides a means of writing an application as a function that reduces a stream of events to a stream of effects.
 
 ### Anatomy
-1. Effects - A struct representing the state of the entire application at a given moment.
-2. Drivers - Isolated, stateless objects that render effects to hardware and deliver events.
-3. Events - Enum values expressing events experienced by hardware.
-3. Reducers - Functions that produce Effects based on input events.
+Effect - A struct representing the state of the entire application at a given moment  
+Pre-Filter - A function that converts effects to driver-models that are stripped of redundancies  
+Driver - An isolated, stateless object that renders effects to hardware and deliver events  
+Event - An enum expressing events experienced by hardware  
+Post-Filter - A function that produces Effects based on input Events  
 
 ### Composition
-1. `Effects` arrive as inputs to the main function and are fed to `Drivers` to be rendered to hardware.
-2. `Drivers` deliver `Events` as they arrive.
-3. The `Event` along with previous _n_ `Effects` is fed to a `Reducer` to produce a new `Effect`.
-4. The new `Effect` is input to another execution of the main function and a cycle is produced.
+1. `Effects` arrive as inputs to the main function.
+2. `Effects` are routed to pre-filter functions that produce models specific to `Drivers`.
+3. `Models` are fed to each `Driver` to be rendered to hardware.
+4. `Drivers` deliver `Events` as they arrive.
+5. The `Event` along with the previous _n_ `Effects` are fed to a post-filter to produce a new `Effect`.
+6. The new `Effect` is input to another execution of the main function and a cycle is produced.
 
 ```
-effect --------> driver ----------> event + previous n effects -> new effect
+effect --------> driver ----------> event + previous effects -> new effect
          
-Network.Model -> Network                    Network.Model         Network.Model
-Screen.Model  -> Screen  -> Network.Event + Screen.Model     ---> Screen.Model
-Session.Model -> Session                    Session.Model         Session.Model
+Network.Model -> Network                    Network.Model       Network.Model
+Screen.Model  -> Screen  -> Network.Event + Screen.Model   ---> Screen.Model
+Session.Model -> Session                    Session.Model       Session.Model
 ```
 
 ### Concept
@@ -37,6 +40,27 @@ The procedural rendering of those timelines can be visualized like so:
 ![alt tag](cycled_drivers_reduced.gif)
 
 [View as higher-res SVG](https://briansemiglia.github.io/cycled_drivers_reduced.svg)
+
+## In-Depth
+### Anatomy
+#### Effect
+The `Effect` is simply a struct representing the state of application at a given moment. Its value can store anything that you might expect objects to normally maintain such as view-frames/colors, navigation-traversal, item-selections, etc. Ideally, the storage of values that can be derived from other values should be avoided. If performance is a concern there is the potential for the caching/memoization of values due to the mostly-referentially-transparent nature of pre/post-filters.  
+  
+#### Pre-Filter
+A pre-filter function allows for applying changes to a received Effect before being rendered. There are two common filters:
+  
+- A conversion from your application-specific model to a driver-specific one. This design prevents a dependency of any particular driver to any particular global domain and is basically an application of the Dependency Inversion Priciple.  
+
+- An equality check to prevent unnecessary renderings. If a desired effect has been rendered, a model can be created with some sort of no-op value instead. In order to access the previous _n_ effects for this equality check, the `scan` Rx operator can be used. It would also make sense that `Drivers` be the providers of this sort of filter as the implementation of the filter would depend of the `private` implementation of the `Driver`. Either way, this sort of filter would provide a deterministic function for `Driver` state management.
+
+#### Driver
+Drivers are stateless objects that simply receive a value, render it to hardware in some way and output `Event` values as they are experienced by hardware. They ideally have one input function (`render(model: RxSwift.Observable<Driver.Model>)`) and one output property (`RxSwift.Observable<Driver.Event>`). They also ideally have no concept of what is beyond their interface, avoiding references to global singletons/types and having a model that they have autonomy over; this would be another application of the Dependency Inversion Principle.
+
+#### Event
+Events are simple enum values that may also contain associated values received by hardware. Events are ideally defined and owned by a `Driver` as opposed to being defined at the application level (Dependency Inversion Principle).
+
+#### Post-Filter
+A post-filter function allows for the creation of a new `Effect` based on an incoming `Event` and the current `Effect`. The `Effect` created here becomes available to the incoming `Effect` stream of the main function and is also how a previous `Effect` is accessed using the Rx `scan` operator. The `scan` operator is not limited to just the immediately preceding `Effect` in the timeline; any previous `Effect` can be accessed. This is useful for determinations that require a larger context. For example, a touch-gesture could be recognized by looking at the last _n_ number of touch-coordinates. 
 
 ## Reasoning
 
@@ -54,7 +78,7 @@ Going back to the flip-book philosophy, more complex animations also include the
 Further, perspectives don't have to be specific to a single medium. For example, a screen implemented as a nested-tree of views could be instead be implemented as an array of independent views backed by a nested-model. This would prevent changes to a child-view's interface from rippling up to its parents, grandparents, etc. while still allowing for a coordinated rendering. Scaled up, this has the potential to produce an application where there is only ever one degree of delegation.
 
 ### Self-Centered Perspective
-Just as paper and celluloid aren't exclusive to the purpose of movies, drivers are independent of an application’s intentions. Drivers set the terms of their contract (view-model) and the events they produce. Changes to an application's model don’t break its drivers' design. Changes to its drivers' design do break the application's design. This produces modularity amongst drivers.
+Just as paper and celluloid aren't exclusive to the purpose of movies, drivers are independent of an application’s intentions. Drivers set the terms of their contract (view-model) and the events they output. Changes to an application's model don’t break its drivers' design. Changes to its drivers' design do break the application's design. This produces modularity amongst drivers.
 
 ### Values as Commands
 Frames in an animation are easy to understand as values, but they can also be understood as commands for the projector at a given moment. By storing driver-commands as values, commands can be used just as frames (verified, reversed, throttled, filtered, spliced, and replayed); all of which make for useful [development tools](https://github.com/BrianSemiglia/CycleMonitor).
