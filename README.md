@@ -278,6 +278,7 @@ A sample project of the infamous 'Counter' app is included.
 - [Unidirectional User Interface Architectures - Andre Staltz](https://staltz.com/unidirectional-user-interface-architectures.html)
 - [Redux](http://redux.js.org), [ReSwift](https://github.com/ReSwift/ReSwift)
 - [Elm Architecture](https://guide.elm-lang.org/architecture/)
+- [Turing Machine](https://en.wikipedia.org/wiki/Turing_machine)
 
 ## Requirements
 iOS 9+
