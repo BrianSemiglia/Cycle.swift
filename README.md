@@ -60,7 +60,7 @@ Drivers are stateless objects that simply receive a value, render it to hardware
 Events are simple enum values that may also contain associated values received by hardware. Events are ideally defined and owned by a `Driver` as opposed to being defined at the application level (Dependency Inversion Principle).
 
 #### Post-Filter
-A post-filter function allows for the creation of a new `Effect` based on an incoming `Event` and the current `Effect`. The `Effect` created here becomes available to the incoming `Effect` stream of the main function and is also how a previous `Effect` is accessed using the Rx `scan` operator. The `scan` operator is not limited to just the immediately preceding `Effect` in the timeline; any previous `Effect` can be accessed. This is useful for determinations that require a larger context. For example, a touch-gesture could be recognized by looking at the last _n_ number of touch-coordinates. 
+A post-filter function allows for the creation of a new `Effect` based on an incoming `Event` and the current `Effect`. The `Effect` created here becomes available to the incoming `Effect` stream of the main function and is also how a previous `Effect` is accessed using the Rx `scan` operator. The `scan` operator is not limited to just the immediately preceding `Effect` in the timeline; any previous `Effect` can be accessed. This is useful for determinations that require a larger context. For example, a touch-gesture could be recognized by examining the last _n_ number of touch-coordinates. 
 
 ## Reasoning
 
@@ -68,9 +68,7 @@ A post-filter function allows for the creation of a new `Effect` based on an inc
 Applications are functions that transform values based on events. However, functional programming discourages mutability. How can something change without changing? Cycle attempts to answer that question with a flip-book like model. Just as every frame of a movie is unchanging, so can be view-models. Change is only produced once a frame is fed into a projector and run past light, or rendered rather. In the same way, Cycle provides the scaffolding necessary to feed an infinite list of view-models into drivers to be procedurally rendered.
 
 ### Truth
-Objects typically maintain their own version of the truth. This has the potential to lead to many truths, sometimes conflicting. These conflicts can cause stale/incorrect data to persist. A single source of truth provides consistency for all. 
-
-At the same time, moving state out of objects removes their identity and makes them much reusable/disposable. For example, a view that is not visible can be freed/reused without losing the data that it was hosting.
+Objects typically maintain their own version of the truth. This has the potential to lead to many truths, sometimes conflicting. These conflicts can cause stale/incorrect data to persist. A single source of truth provides consistency for all. At the same time, moving state out of objects removes their identity and makes them much reusable/disposable. For example, a view that is not visible can be freed/reused without losing the data that it was hosting.
 
 ### Perspective
 Going back to the flip-book philosophy, more complex animations also include the use of sound. Light and sound are two perspectives rendered in unison to create the illusion of physical cohesion. The illusion is due to the mediums having no physical dependence on one another. In the Cycle architecture, drivers are the perspectives of the application's state.
