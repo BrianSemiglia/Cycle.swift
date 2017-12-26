@@ -49,15 +49,15 @@ The `Effect` is simply a struct representing the state of application at a given
 #### Pre-Filter
 A pre-filter function allows for applying changes to a received Effect before being rendered. There are two common filters:
   
-- A conversion from your application-specific model to a driver-specific one. This design prevents a dependency of any particular driver to any particular global domain and is basically an application of the Dependency Inversion Priciple.  
+- A conversion from your application-specific model to a driver-specific one. This design prevents a dependency of any particular driver to any particular global domain and is basically an application of the [Dependency Inversion Principle](https://en.wikipedia.org/wiki/Dependency_inversion_principle).  
 
 - An equality check to prevent unnecessary renderings. If a desired effect has been rendered, a model can be created with some sort of no-op value instead. In order to access the previous _n_ effects for this equality check, the `scan` Rx operator can be used. It would also make sense that `Drivers` be the providers of this sort of filter as the implementation of the filter would depend of the `private` implementation of the `Driver`. Either way, this sort of filter would provide a deterministic function for `Driver` state management.
 
 #### Driver
-Drivers are stateless objects that simply receive a value, render it to hardware in some way and output `Event` values as they are experienced by hardware. They ideally have one input function (`render(model: RxSwift.Observable<Driver.Model>)`) and one output property (`RxSwift.Observable<Driver.Event>`). They also ideally have no concept of what is beyond their interface, avoiding references to global singletons/types and having a model that they have autonomy over; this would be another application of the Dependency Inversion Principle.
+Drivers are stateless objects that simply receive a value, render it to hardware and output `Event` values as they are experienced by hardware. They ideally have one input function `render(model: RxSwift.Observable<Driver.Model>)` and one output property `RxSwift.Observable<Driver.Event>`. They also ideally have no concept of what is beyond their interface, avoiding references to global singletons/types and having a model that they have autonomy over; this would be another application of the [Dependency Inversion Principle](https://en.wikipedia.org/wiki/Dependency_inversion_principle).
 
 #### Event
-Events are simple enum values that may also contain associated values received by hardware. Events are ideally defined and owned by a `Driver` as opposed to being defined at the application level (Dependency Inversion Principle).
+Events are simple enum values that may also contain associated values received by hardware. Events are ideally defined and owned by a `Driver` as opposed to being defined at the application level ([Dependency Inversion](https://en.wikipedia.org/wiki/Dependency_inversion_principle)).
 
 #### Post-Filter
 A post-filter function allows for the creation of a new `Effect` based on an incoming `Event` and the current `Effect`. The `Effect` created here becomes available to the incoming `Effect` stream of the main function and is also how a previous `Effect` is accessed using the Rx `scan` operator. The `scan` operator is not limited to just the immediately preceding `Effect` in the timeline; any previous `Effect` can be accessed. This is useful for determinations that require a larger context. For example, a touch-gesture could be recognized by examining the last _n_ number of touch-coordinates. 
