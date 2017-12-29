@@ -252,7 +252,7 @@ public protocol SinkSourceConverting {
 
     public func rendered(_ input: Observable<Model>) -> Observable<Event> { 
       input
-        .bind(to: self.render)
+        .subscribe(next: self.render)
         .disposed(by: cleanup)
       return self.output
     }
