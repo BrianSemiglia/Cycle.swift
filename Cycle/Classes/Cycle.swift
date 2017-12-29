@@ -48,30 +48,30 @@ extension UIWindow {
 }
 
 public final class Cycle<E: SinkSourceConverting> {
-  private var events: Observable<E.Source>?
-  private var eventsProxy: ReplaySubject<E.Source>?
+  private var output: Observable<E.Source>?
+  private var inputProxy: ReplaySubject<E.Source>?
   private let cleanup = DisposeBag()
   private let drivers: E.Drivers
   fileprivate let delegate: UIApplicationDelegate
   fileprivate let root: UIViewController
   public required init(transformer: E) {
-    eventsProxy = ReplaySubject.create(
+    inputProxy = ReplaySubject.create(
       bufferSize: 1
     )
     drivers = transformer.driversFrom(initial: E.Source())
     root = drivers.screen.root
     delegate = drivers.application
-    events = transformer.effectsFrom(
-      events: eventsProxy!,
+    output = transformer.effectsFrom(
+      events: inputProxy!,
       drivers: drivers
     )
     // `.startWith` is redundant, but necessary to kickoff cycle
-    // Possibly removed if `events` was BehaviorSubject?
+    // Possibly removed if `output` was BehaviorSubject?
     // Not sure how to `merge` observables to single BehaviorSubject though.
-    events?
+    output?
       .startWith(E.Source())
       .subscribe { [weak self] in
-        self?.eventsProxy?.on($0)
+        self?.inputProxy?.on($0)
     }.disposed(by: cleanup)
   }
 }
