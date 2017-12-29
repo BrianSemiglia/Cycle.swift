@@ -172,7 +172,7 @@ public protocol SinkSourceConverting {
   }
   ```
   
-2. Define reducers.
+2. Define post-filters.
   ```swift
   extension ObservableType where E == (Network.Model, AppModel) {
     func reducingFuctionOfYourChoice() -> Observable<AppModel> { return
@@ -222,7 +222,7 @@ public protocol SinkSourceConverting {
   }
   ```
   
-3. Define drivers that, given a stream of event-models, can produce streams of effect-models
+3. Define drivers that, given a stream of effect-models, can produce a stream of event-models.
   ```swift
   class MyDriver {
 
@@ -233,8 +233,16 @@ public protocol SinkSourceConverting {
         case receiving
       }
     }
+    
+    enum Event {
+      case sending
+      case receiving
+    }
 
     fileprivate let output: BehaviorSubject<Model>
+    
+    // Pull-based interfaces (e.g. UITableViews) require retaining state.
+    // State retention should be made as minimum as possible and well-guarded.
     fileprivate let model: Model
 
     public init(initial: Model) {
@@ -242,13 +250,10 @@ public protocol SinkSourceConverting {
       output = BehaviorSubject<Model>(value: initial)
     }
 
-    public func rendered(_ input: Observable<Model>) -> Observable<Model> { 
-      input.subscribe { [weak self] in
-        if let strong = self, let new = $0.element {
-          strong.model = new // Retain for async callback (-didReceiveEvent)
-          strong.render(model: new)
-        }
-      }.disposed(by: cleanup)
+    public func rendered(_ input: Observable<Model>) -> Observable<Event> { 
+      input
+        .bind(to: self.render)
+        .disposed(by: cleanup)
       return self.output
     }
 
@@ -259,9 +264,7 @@ public protocol SinkSourceConverting {
     }
 
     func didReceiveEvent() {
-      var edit = model
-      edit.state = .receiving
-      output.on(.next(edit))
+      output.on(.next(.receiving))
     }
 
   }
