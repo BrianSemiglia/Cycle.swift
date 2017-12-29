@@ -229,13 +229,12 @@ public protocol SinkSourceConverting {
     struct Model {
       var state: State
       enum State {
+        case idle
         case sending
-        case receiving
       }
     }
     
     enum Event {
-      case sending
       case receiving
     }
 
