@@ -70,9 +70,8 @@ public final class Cycle<E: SinkSourceConverting> {
     // Not sure how to `merge` observables to single BehaviorSubject though.
     output?
       .startWith(E.Source())
-      .subscribe { [weak self] in
-        self?.inputProxy?.on($0)
-    }.disposed(by: cleanup)
+      .subscribe(self.inputProxy!.on)
+      .disposed(by: cleanup)
   }
 }
 
