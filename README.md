@@ -92,7 +92,7 @@ public protocol IORouter {
   /* 
     Defines schema and initial values of application model.
   */
-  associatedtype Source: Initializable
+  associatedtype Model: Initializable
   
   /* 
     Defines drivers that handle effects, produce events. Requires two default drivers: 
@@ -107,15 +107,15 @@ public protocol IORouter {
   /*
     Instantiates drivers with initial model. Necessary to for drivers that require initial values.
   */
-  func driversFrom(initial: Source) -> Drivers
+  func driversFrom(initial: Model) -> Drivers
 
   /*
-    Returns a stream of Source created by rendering the incoming stream of effects to drivers and then capturing and transforming their events into the Source type. See example for intended implementation.
+    Returns a stream of Model created by rendering the incoming stream of effects to drivers and then capturing and transforming their events into the Model type. See example for intended implementation.
   */
   func effectsOfEventsCapturedAfterRendering(
-    incoming: Observable<Source>,
+    incoming: Observable<Model>,
     to drivers: Drivers
-  ) -> Observable<Source>
+  ) -> Observable<Model>
 }
 ```
 
