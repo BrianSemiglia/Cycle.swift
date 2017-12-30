@@ -37,10 +37,14 @@ struct URLActionOutgoing: SinkSourceConverting {
       application: RxUIApplication(initial: initial.application)
     )
   }
-  func effectsFrom(events: Observable<Model>, drivers: Drivers) -> Observable<Model> { return
-    drivers.application
-      .rendered(events.map { $0.application })
-      .withLatestFrom(events) { ($0.0, $0.1) }
+  func effectsOfEventsCapturedAfterRendering(
+    incoming: Observable<Model>,
+    to drivers: Drivers
+  ) -> Observable<Model> { return
+    drivers
+      .application
+      .rendered(incoming.map { $0.application })
+      .withLatestFrom(incoming) { ($0.0, $0.1) }
       .reduced()
   }
 }

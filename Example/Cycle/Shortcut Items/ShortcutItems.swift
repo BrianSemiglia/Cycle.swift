@@ -40,19 +40,23 @@ struct ShortcutActionsExample: SinkSourceConverting {
       application: RxUIApplication(initial: initial.application)
     )
   }
-  func effectsFrom(events: Observable<Model>, drivers: Drivers) -> Observable<Model> {
-    
-    let application = drivers.application
-    .rendered(events.map { $0.application })
-    .withLatestFrom(events) { ($0.0, $0.1) }
-    .reduced()
-    
-    let timer = drivers.timer
-    .rendered(events.map { $0.async })
-    .withLatestFrom(events) { ($0.0, $0.1) }
-    .reduced()
-    
-    return Observable.of(application, timer).merge()
+  func effectsOfEventsCapturedAfterRendering(
+    incoming: Observable<Model>,
+    to drivers: Drivers
+  ) -> Observable<Model> { return
+    Observable.merge([
+      drivers
+        .application
+        .rendered(incoming.map { $0.application })
+        .withLatestFrom(incoming) { ($0.0, $0.1) }
+        .reduced()
+      ,
+      drivers
+        .timer
+        .rendered(incoming.map { $0.async })
+        .withLatestFrom(incoming) { ($0.0, $0.1) }
+        .reduced()
+    ])
   }
 }
 

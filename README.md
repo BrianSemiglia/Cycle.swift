@@ -110,9 +110,12 @@ public protocol SinkSourceConverting {
   func driversFrom(initial: Source) -> Drivers
 
   /*
-    Returns an effect stream of Driver Model, given an event stream of Driver Model. See example for intended implementation.
+    Returns a stream of Source created by rendering the incoming stream of effects to drivers and then capturing and transforming their events into the Source type. See example for intended implementation.
   */
-  func effectsFrom(events: Observable<Source>, drivers: Drivers) -> Observable<Source>
+  func effectsOfEventsCapturedAfterRendering(
+    incoming: Observable<Source>,
+    to drivers: Drivers
+  ) -> Observable<Source>
 }
 ```
 
@@ -147,26 +150,34 @@ public protocol SinkSourceConverting {
       )
     }
 
-    func effectsFrom(previous: Observable<AppModel>, drivers: Drivers) -> Observable<AppModel> {
+    func effectsOfEventsCapturedAfterRendering(
+      incoming: Observable<AppModel>,
+      to drivers: Drivers
+    ) -> Observable<AppModel> {
 
-      let network = drivers.network
-        .rendered(events.map { $0.network })
-        .withLatestFrom(events) { ($0.0, $0.1) }
+      let network = drivers
+        .network
+        .rendered(incoming.map { $0.network })
+        .withLatestFrom(incoming) { ($0.0, $0.1) }
         .reducingFuctionOfYourChoice()
 
-      let screen = drivers.screen
-        .rendered(events.map { $0.screen })
-        .withLatestFrom(events) { ($0.0, $0.1) }
+      let screen = drivers
+        .screen
+        .rendered(incoming.map { $0.screen })
+        .withLatestFrom(incoming) { ($0.0, $0.1) }
         .reduced()
 
-      let application = drivers.application
-        .rendered(events.map { $0.application })
-        .withLatestFrom(events) { ($0.0, $0.1) }
+      let application = drivers
+        .application
+        .rendered(incoming.map { $0.application })
+        .withLatestFrom(incoming) { ($0.0, $0.1) }
         .reduced()
 
-      return Observable
-        .of(network, screen, application)
-        .merge()
+      return Observable.merge([
+        network,
+        screen,
+        application
+      ])
     }
 
   }

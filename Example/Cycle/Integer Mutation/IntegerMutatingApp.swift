@@ -34,18 +34,23 @@ struct IntegerMutatingApp: SinkSourceConverting {
       application: RxUIApplication(initial: initial.application)
     )
   }
-  func effectsFrom(events: Observable<Model>, drivers: Drivers) -> Observable<Model> {
-    let value = drivers.screen
-      .rendered(events.map { $0.screen })
-      .withLatestFrom(events) { ($0.0, $0.1) }
-      .reduced()
-    
-    let application = drivers.application
-      .rendered(events.map { $0.application })
-      .withLatestFrom(events) { ($0.0, $0.1) }
-      .reduced()
-    
-    return Observable.of(value, application).merge()
+  func effectsOfEventsCapturedAfterRendering(
+    incoming: Observable<Model>,
+    to drivers: Drivers
+  ) -> Observable<Model> { return
+    Observable.merge([
+      drivers
+        .screen
+        .rendered(incoming.map { $0.screen })
+        .withLatestFrom(incoming) { ($0.0, $0.1) }
+        .reduced()
+      ,
+      drivers
+        .application
+        .rendered(incoming.map { $0.application })
+        .withLatestFrom(incoming) { ($0.0, $0.1) }
+        .reduced()
+    ])
   }
 }
 

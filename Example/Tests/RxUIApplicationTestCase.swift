@@ -1514,8 +1514,14 @@ class RxUIApplicationTestCase: XCTestCase {
         application: RxUIApplication(initial: initial.application)
       )
     }
-    func effectsFrom(events: Observable<DriverModels>, drivers: Drivers) -> Observable<DriverModels> { return
-      filter(events, drivers.application)
+    func effectsOfEventsCapturedAfterRendering(
+      incoming: Observable<DriverModels>,
+      to drivers: Drivers
+    ) -> Observable<DriverModels> { return
+      filter(
+        incoming,
+        drivers.application
+      )
     }
   }
   

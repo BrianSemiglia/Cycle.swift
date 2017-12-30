@@ -61,9 +61,9 @@ public final class Cycle<E: SinkSourceConverting> {
     drivers = transformer.driversFrom(initial: E.Source())
     root = drivers.screen.root
     delegate = drivers.application
-    output = transformer.effectsFrom(
-      events: inputProxy!,
-      drivers: drivers
+    output = transformer.effectsOfEventsCapturedAfterRendering(
+      incoming: inputProxy!,
+      to: drivers
     )
     // `.startWith` is redundant, but necessary to kickoff cycle
     // Possibly removed if `output` was BehaviorSubject?
@@ -79,7 +79,10 @@ public protocol SinkSourceConverting {
   associatedtype Source: Initializable
   associatedtype Drivers: UIApplicationDelegateProviding, ScreenDrivable
   func driversFrom(initial: Source) -> Drivers
-  func effectsFrom(events: Observable<Source>, drivers: Drivers) -> Observable<Source>
+  func effectsOfEventsCapturedAfterRendering(
+    incoming: Observable<Source>,
+    to drivers: Drivers
+  ) -> Observable<Source>
 }
 
 public protocol Initializable {
