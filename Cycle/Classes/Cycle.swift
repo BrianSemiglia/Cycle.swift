@@ -76,9 +76,30 @@ public final class Cycle<E: SinkSourceConverting> {
 }
 
 public protocol SinkSourceConverting {
+  
+  /*
+   Defines schema and initial values of application model.
+   */
   associatedtype Source: Initializable
+  
+  /*
+   Defines drivers that handle effects, produce events. Requires two default drivers:
+   
+   1. let application: UIApplicationDelegateProviding - can serve as UIApplicationDelegate
+   2. let screen: ScreenDrivable - can provide a root UIViewController
+   
+   A default UIApplicationDelegateProviding driver, RxUIApplication, is included with Cycle.
+   */
   associatedtype Drivers: UIApplicationDelegateProviding, ScreenDrivable
+  
+  /*
+   Instantiates drivers with initial model. Necessary to for drivers that require initial values.
+   */
   func driversFrom(initial: Source) -> Drivers
+  
+  /*
+   Returns a stream of Source created by rendering the incoming stream of effects to Drivers and then capturing and transforming Driver events into the Source type.
+   */
   func effectsOfEventsCapturedAfterRendering(
     incoming: Observable<Source>,
     to drivers: Drivers
