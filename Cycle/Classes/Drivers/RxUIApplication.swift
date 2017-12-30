@@ -518,11 +518,17 @@ public class RxUIApplication: NSObject, UIApplicationDelegate {
   }
   
   public func eventsCapturedAfterRendering(_ input: Observable<Model>) -> Observable<Model> {
-    input.distinctUntilChanged().subscribe { [weak self] in
-      if let strong = self, let new = $0.element {
-        strong.render(new: new, old: strong.model)
-      }
-    }.disposed(by: cleanup)
+    input
+      .distinctUntilChanged()
+      .subscribe(onNext: { [weak self] new in
+        if let strong = self {
+          strong.render(
+            new: new,
+            old: strong.model
+          )
+        }
+      })
+      .disposed(by: cleanup)
     return output.distinctUntilChanged()
   }
 

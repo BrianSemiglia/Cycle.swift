@@ -21,11 +21,9 @@ class RxUIApplicationTestCase: XCTestCase {
     let application = RxUIApplication(initial: initial)
     _ = application
       .eventsCapturedAfterRendering(.just(initial))
-      .subscribe {
-        if let new = $0.element {
-          output += [new]
-        }
-      }
+      .subscribe(onNext: { new in
+        output += [new]
+      })
     _ = call(application as UIApplicationDelegate)
     return output
   }
@@ -39,11 +37,9 @@ class RxUIApplicationTestCase: XCTestCase {
     let application = RxUIApplication(initial: model)
     _ = application
       .eventsCapturedAfterRendering(stream)
-      .subscribe {
-        if let new = $0.element {
-          output += [new]
-        }
-    }
+      .subscribe(onNext: { new in
+        output += [new]
+      })
     return output
   }
   

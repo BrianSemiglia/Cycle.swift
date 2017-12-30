@@ -57,11 +57,11 @@ class Timer {
   }
   
   func eventsCapturedAfterRendering(_ input: Observable<Model>) -> Observable<Model> {
-    input.subscribe {
-      if let model = $0.element {
+    input
+      .subscribe(onNext: { model in
         self.model = model
-      }
-    }.disposed(by: cleanup)
+      })
+      .disposed(by: cleanup)
     return output
   }
 }

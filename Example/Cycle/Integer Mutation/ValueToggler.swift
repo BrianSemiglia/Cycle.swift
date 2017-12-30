@@ -66,8 +66,8 @@ class ValueToggler: UIViewControllerProviding {
   }
   
   func eventsCapturedAfterRendering(_ input: Observable<ValueToggler.Model>) -> Observable<ValueToggler.Model> {
-    input.subscribe { possible in
-      if let latest = possible.element {
+    input
+      .subscribe(onNext: { latest in
         self.increment.setTitle(
           latest.increment.title,
           for: .normal
@@ -77,8 +77,8 @@ class ValueToggler: UIViewControllerProviding {
           for: .normal
         )
         self.label.text = latest.total
-      }
-    }.disposed(by:cleanup)
+      })
+      .disposed(by:cleanup)
 
     let inc = self.increment.rx.tap.asObservable()
       .withLatestFrom(input) { _, model -> ValueToggler.Model in
