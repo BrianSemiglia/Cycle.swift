@@ -240,13 +240,12 @@ public protocol IORouter {
     struct Model {
       var state: State
       enum State {
+        case idle
         case sending
-        case receiving
       }
     }
     
     enum Event {
-      case sending
       case receiving
     }
 
@@ -263,7 +262,7 @@ public protocol IORouter {
 
     public func rendered(_ input: Observable<Model>) -> Observable<Event> { 
       input
-        .bind(to: self.render)
+        .subscribe(next: self.render)
         .disposed(by: cleanup)
       return self.output
     }
