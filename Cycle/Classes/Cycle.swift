@@ -9,13 +9,13 @@
 import UIKit
 import RxSwift
 
-open class CycledApplicationDelegate<T: SinkSourceConverting>: UIResponder, UIApplicationDelegate {
+open class CycledApplicationDelegate<T: IORouter>: UIResponder, UIApplicationDelegate {
   
   private var cycle: Cycle<T>
   public var window: UIWindow?
   
-  public init(filter: T) {
-    cycle = Cycle(transformer: filter)
+  public init(router: T) {
+    cycle = Cycle(router: router)
     super.init()
   }
   
@@ -47,21 +47,21 @@ extension UIWindow {
   }
 }
 
-public final class Cycle<E: SinkSourceConverting> {
-  private var output: Observable<E.Source>?
-  private var inputProxy: ReplaySubject<E.Source>?
+public final class Cycle<E: IORouter> {
+  private var output: Observable<E.Model>?
+  private var inputProxy: ReplaySubject<E.Model>?
   private let cleanup = DisposeBag()
   private let drivers: E.Drivers
   fileprivate let delegate: UIApplicationDelegate
   fileprivate let root: UIViewController
-  public required init(transformer: E) {
+  public required init(router: E) {
     inputProxy = ReplaySubject.create(
       bufferSize: 1
     )
-    drivers = transformer.driversFrom(initial: E.Source())
+    drivers = router.driversFrom(initial: E.Model())
     root = drivers.screen.root
     delegate = drivers.application
-    output = transformer.effectsOfEventsCapturedAfterRendering(
+    output = router.effectsOfEventsCapturedAfterRendering(
       incoming: inputProxy!,
       to: drivers
     )
@@ -69,18 +69,18 @@ public final class Cycle<E: SinkSourceConverting> {
     // Possibly removed if `output` was BehaviorSubject?
     // Not sure how to `merge` observables to single BehaviorSubject though.
     output?
-      .startWith(E.Source())
+      .startWith(E.Model())
       .subscribe(self.inputProxy!.on)
       .disposed(by: cleanup)
   }
 }
 
-public protocol SinkSourceConverting {
+public protocol IORouter {
   
   /*
    Defines schema and initial values of application model.
    */
-  associatedtype Source: Initializable
+  associatedtype Model: Initializable
   
   /*
    Defines drivers that handle effects, produce events. Requires two default drivers:
@@ -95,15 +95,15 @@ public protocol SinkSourceConverting {
   /*
    Instantiates drivers with initial model. Necessary to for drivers that require initial values.
    */
-  func driversFrom(initial: Source) -> Drivers
+  func driversFrom(initial: Model) -> Drivers
   
   /*
-   Returns a stream of Source created by rendering the incoming stream of effects to Drivers and then capturing and transforming Driver events into the Source type.
+   Returns a stream of Models created by rendering the incoming stream of effects to Drivers and then capturing and transforming Driver events into the Model type.
    */
   func effectsOfEventsCapturedAfterRendering(
-    incoming: Observable<Source>,
+    incoming: Observable<Model>,
     to drivers: Drivers
-  ) -> Observable<Source>
+  ) -> Observable<Model>
 }
 
 public protocol Initializable {

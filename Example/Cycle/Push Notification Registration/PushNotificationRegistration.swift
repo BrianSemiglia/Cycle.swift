@@ -14,7 +14,7 @@ import RxSwift
 class PushNotificationRegistrationDelegate: CycledApplicationDelegate<PushNotificationRegistration> {
   init() {
     super.init(
-      filter: PushNotificationRegistration()
+      router: PushNotificationRegistration()
     )
   }
 }
@@ -23,7 +23,7 @@ struct ScreenDriver: UIViewControllerProviding {
   let root = UIViewController.empty
 }
 
-struct PushNotificationRegistration: SinkSourceConverting {
+struct PushNotificationRegistration: IORouter {
   struct Model: Initializable {
     var application = RxUIApplication.Model.empty
   }

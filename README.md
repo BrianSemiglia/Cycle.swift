@@ -88,7 +88,7 @@ The flip-book model breaks a bit when it comes to the uncertain future of an app
 
 ## Implementation
 ```swift
-public protocol SinkSourceConverting {
+public protocol IORouter {
   /* 
     Defines schema and initial values of application model.
   */
@@ -120,15 +120,15 @@ public protocol SinkSourceConverting {
 ```
 
 ## Example
-1. Subclass CycledApplicationDelegate and provide a SinkSourceConverting filter.
+1. Subclass CycledApplicationDelegate and provide an IORouter.
   ``` swift
-  @UIApplicationMain class Example: CycledApplicationDelegate<MyFilter> {
+  @UIApplicationMain class Example: CycledApplicationDelegate<MyRouter> {
     init() {
-      super.init(handler: MyFilter())
+      super.init(router: MyRouter())
     }
   }
 
-  struct MyFilter: SinkSourceConverting {
+  struct MyRouter: IORouter {
 
     struct AppModel: Initializable {
       let network = Network.Model()

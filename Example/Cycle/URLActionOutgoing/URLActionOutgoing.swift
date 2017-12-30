@@ -14,7 +14,7 @@ import RxSwift
 class URLActionOutgoingDelegate: CycledApplicationDelegate<URLActionOutgoing> {
   init() {
     super.init(
-      filter: URLActionOutgoing()
+      router: URLActionOutgoing()
     )
   }
 }
@@ -23,7 +23,7 @@ struct ScreenDriver: UIViewControllerProviding {
   let root = UIViewController.empty
 }
 
-struct URLActionOutgoing: SinkSourceConverting {
+struct URLActionOutgoing: IORouter {
   struct Model: Initializable {
     var application = RxUIApplication.Model.empty
   }

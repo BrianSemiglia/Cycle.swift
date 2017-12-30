@@ -14,12 +14,12 @@ import RxSwift
 class Example: CycledApplicationDelegate<IntegerMutatingApp> {
   init() {
     super.init(
-      filter: IntegerMutatingApp()
+      router: IntegerMutatingApp()
     )
   }
 }
 
-struct IntegerMutatingApp: SinkSourceConverting {
+struct IntegerMutatingApp: IORouter {
   struct Model: Initializable {
     var screen = ValueToggler.Model.empty
     var application = RxUIApplication.Model.empty

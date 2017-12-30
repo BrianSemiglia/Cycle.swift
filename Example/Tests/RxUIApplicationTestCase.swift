@@ -799,7 +799,7 @@ class RxUIApplicationTestCase: XCTestCase {
       }
     }
     let delegate = CycledApplicationDelegate(
-      filter: cycle
+      router: cycle
     ) as UIApplicationDelegate
     XCTAssertFalse(
       delegate.application!(
@@ -829,7 +829,7 @@ class RxUIApplicationTestCase: XCTestCase {
       }
     }
     let delegate = CycledApplicationDelegate(
-      filter: cycle
+      router: cycle
     ) as UIApplicationDelegate
     
     delegate.application!(
@@ -869,7 +869,7 @@ class RxUIApplicationTestCase: XCTestCase {
       }
     }
     let delegate = CycledApplicationDelegate(
-      filter: cycle
+      router: cycle
     ) as UIApplicationDelegate
     
     delegate.application!(
@@ -916,7 +916,7 @@ class RxUIApplicationTestCase: XCTestCase {
       }
     }
     let delegate = CycledApplicationDelegate(
-      filter: cycle
+      router: cycle
     ) as UIApplicationDelegate
     
     delegate.application!(
@@ -952,7 +952,7 @@ class RxUIApplicationTestCase: XCTestCase {
       }
     }
     let delegate = CycledApplicationDelegate(
-      filter: cycle
+      router: cycle
     ) as UIApplicationDelegate
     
     delegate.application!(
@@ -993,7 +993,7 @@ class RxUIApplicationTestCase: XCTestCase {
       }
     }
     let delegate = CycledApplicationDelegate(
-      filter: cycle
+      router: cycle
     ) as UIApplicationDelegate
     
     delegate.application!(
@@ -1030,7 +1030,7 @@ class RxUIApplicationTestCase: XCTestCase {
       }
     }
     let delegate = CycledApplicationDelegate(
-      filter: cycle
+      router: cycle
     ) as UIApplicationDelegate
     
     delegate.application!(
@@ -1066,7 +1066,7 @@ class RxUIApplicationTestCase: XCTestCase {
       }
     }
     let delegate = CycledApplicationDelegate(
-      filter: cycle
+      router: cycle
     ) as UIApplicationDelegate
     
     delegate.application!(
@@ -1102,7 +1102,7 @@ class RxUIApplicationTestCase: XCTestCase {
       }
     }
     let delegate = CycledApplicationDelegate(
-      filter: cycle
+      router: cycle
     ) as UIApplicationDelegate
     
     delegate.application!(
@@ -1138,7 +1138,7 @@ class RxUIApplicationTestCase: XCTestCase {
       }
     }
     let delegate = CycledApplicationDelegate(
-      filter: cycle
+      router: cycle
     ) as UIApplicationDelegate
     
     delegate.application!(
@@ -1496,7 +1496,7 @@ class RxUIApplicationTestCase: XCTestCase {
     }
   }
   
-  class RxUIApplicationCycle: SinkSourceConverting {
+  class RxUIApplicationCycle: IORouter {
     struct DriverModels: Initializable {
       var application = RxUIApplication.Model.empty
     }
@@ -1504,9 +1504,9 @@ class RxUIApplicationTestCase: XCTestCase {
       let screen: ScreenDriverStub
       let application: RxUIApplication
     }
-    let filter: (Observable<DriverModels>, RxUIApplication) -> Observable<DriverModels>
-    init(filter: @escaping (Observable<DriverModels>, RxUIApplication) -> Observable<DriverModels>) {
-      self.filter = filter
+    let router: (Observable<DriverModels>, RxUIApplication) -> Observable<DriverModels>
+    init(router: @escaping (Observable<DriverModels>, RxUIApplication) -> Observable<DriverModels>) {
+      self.router = router
     }
     func driversFrom(initial: RxUIApplicationTestCase.RxUIApplicationCycle.DriverModels) -> RxUIApplicationTestCase.RxUIApplicationCycle.Drivers {
       return Drivers(
@@ -1518,7 +1518,7 @@ class RxUIApplicationTestCase: XCTestCase {
       incoming: Observable<DriverModels>,
       to drivers: Drivers
     ) -> Observable<DriverModels> { return
-      filter(
+      router(
         incoming,
         drivers.application
       )

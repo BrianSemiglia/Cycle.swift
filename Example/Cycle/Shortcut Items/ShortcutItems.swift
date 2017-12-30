@@ -14,7 +14,7 @@ import RxSwift
 class ShortcutActionsExampleDelegate: CycledApplicationDelegate<ShortcutActionsExample> {
   init() {
     super.init(
-      filter: ShortcutActionsExample()
+      router: ShortcutActionsExample()
     )
   }
 }
@@ -23,7 +23,7 @@ struct ScreenDriver: UIViewControllerProviding {
   let root = UIViewController.empty
 }
 
-struct ShortcutActionsExample: SinkSourceConverting {
+struct ShortcutActionsExample: IORouter {
   struct Model: Initializable {
     var application = RxUIApplication.Model.empty
     var async = Timer.Model.empty
