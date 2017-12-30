@@ -47,13 +47,13 @@ struct ShortcutActionsExample: IORouter {
     Observable.merge([
       drivers
         .application
-        .rendered(incoming.map { $0.application })
+        .eventsCapturedAfterRendering(incoming.map { $0.application })
         .withLatestFrom(incoming) { ($0.0, $0.1) }
         .reduced()
       ,
       drivers
         .timer
-        .rendered(incoming.map { $0.async })
+        .eventsCapturedAfterRendering(incoming.map { $0.async })
         .withLatestFrom(incoming) { ($0.0, $0.1) }
         .reduced()
     ])

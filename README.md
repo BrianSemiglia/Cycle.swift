@@ -54,7 +54,7 @@ A pre-filter function allows for applying changes to a received Effect before be
 - An equality check to prevent unnecessary renderings. If a desired effect has been rendered, a model can be created with some sort of no-op value instead. In order to access the previous _n_ effects for this equality check, the `scan` Rx operator can be used. It would also make sense that `Drivers` be the providers of this sort of filter as the implementation of the filter would depend of the `private` implementation of the `Driver`. Either way, this sort of filter would provide a deterministic function for `Driver` state management.
 
 #### Driver
-Drivers are stateless objects that simply receive a value, render it to hardware and output `Event` values as they are experienced by hardware. They ideally have one input function `render(model: RxSwift.Observable<Driver.Model>)` and one output property `RxSwift.Observable<Driver.Event>`. They also ideally have no concept of what is beyond their interface, avoiding references to global singletons/types and having a model that they have autonomy over; this would be another application of the [Dependency Inversion Principle](https://en.wikipedia.org/wiki/Dependency_inversion_principle).
+Drivers are stateless objects that simply receive a value, render it to hardware and output `Event` values as they are experienced by hardware. They ideally have one public function `eventsCapturedAfterRendering(model: RxSwift.Observable<Driver.Model>) -> RxSwift.Observable<Driver.Event>` (aside from an `init` function). They also ideally have no concept of what is beyond their interface, avoiding references to global singletons/types and having a model that they have autonomy over; this would be another application of the [Dependency Inversion Principle](https://en.wikipedia.org/wiki/Dependency_inversion_principle).
 
 #### Event
 Events are simple enum values that may also contain associated values received by hardware. Events are ideally defined and owned by a `Driver` as opposed to being defined at the application level ([Dependency Inversion](https://en.wikipedia.org/wiki/Dependency_inversion_principle)).
@@ -157,19 +157,19 @@ public protocol IORouter {
 
       let network = drivers
         .network
-        .rendered(incoming.map { $0.network })
+        .eventsCapturedAfterRendering(incoming.map { $0.network })
         .withLatestFrom(incoming) { ($0.0, $0.1) }
         .reducingFuctionOfYourChoice()
 
       let screen = drivers
         .screen
-        .rendered(incoming.map { $0.screen })
+        .eventsCapturedAfterRendering(incoming.map { $0.screen })
         .withLatestFrom(incoming) { ($0.0, $0.1) }
         .reduced()
 
       let application = drivers
         .application
-        .rendered(incoming.map { $0.application })
+        .eventsCapturedAfterRendering(incoming.map { $0.application })
         .withLatestFrom(incoming) { ($0.0, $0.1) }
         .reduced()
 
@@ -260,7 +260,7 @@ public protocol IORouter {
       output = BehaviorSubject<Model>(value: initial)
     }
 
-    public func rendered(_ input: Observable<Model>) -> Observable<Event> { 
+    public func eventsCapturedAfterRendering(_ input: Observable<Model>) -> Observable<Event> { 
       input
         .subscribe(next: self.render)
         .disposed(by: cleanup)

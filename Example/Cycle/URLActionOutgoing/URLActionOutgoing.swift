@@ -43,7 +43,7 @@ struct URLActionOutgoing: IORouter {
   ) -> Observable<Model> { return
     drivers
       .application
-      .rendered(incoming.map { $0.application })
+      .eventsCapturedAfterRendering(incoming.map { $0.application })
       .withLatestFrom(incoming) { ($0.0, $0.1) }
       .reduced()
   }

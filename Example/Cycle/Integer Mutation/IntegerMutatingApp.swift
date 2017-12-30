@@ -41,13 +41,13 @@ struct IntegerMutatingApp: IORouter {
     Observable.merge([
       drivers
         .screen
-        .rendered(incoming.map { $0.screen })
+        .eventsCapturedAfterRendering(incoming.map { $0.screen })
         .withLatestFrom(incoming) { ($0.0, $0.1) }
         .reduced()
       ,
       drivers
         .application
-        .rendered(incoming.map { $0.application })
+        .eventsCapturedAfterRendering(incoming.map { $0.application })
         .withLatestFrom(incoming) { ($0.0, $0.1) }
         .reduced()
     ])

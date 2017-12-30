@@ -20,7 +20,7 @@ class RxUIApplicationTestCase: XCTestCase {
     var output: [RxUIApplication.Model] = []
     let application = RxUIApplication(initial: initial)
     _ = application
-      .rendered(.just(initial))
+      .eventsCapturedAfterRendering(.just(initial))
       .subscribe {
         if let new = $0.element {
           output += [new]
@@ -38,7 +38,7 @@ class RxUIApplicationTestCase: XCTestCase {
     var output: [RxUIApplication.Model] = []
     let application = RxUIApplication(initial: model)
     _ = application
-      .rendered(stream)
+      .eventsCapturedAfterRendering(stream)
       .subscribe {
         if let new = $0.element {
           output += [new]
@@ -776,7 +776,7 @@ class RxUIApplicationTestCase: XCTestCase {
   func testWillFinishLaunchingWithOptionsFalse() {
     let cycle = RxUIApplicationCycle { events, application -> Observable<RxUIApplicationTestCase.RxUIApplicationCycle.DriverModels> in
       application
-      .rendered(events.map { $0.application })
+      .eventsCapturedAfterRendering(events.map { $0.application })
       .map { model -> RxUIApplication.Model in
         switch model.session.state {
         case .pre(let a):
@@ -812,7 +812,7 @@ class RxUIApplicationTestCase: XCTestCase {
   func testShouldOpenURLs4() {
     let cycle = RxUIApplicationCycle { events, application -> Observable<RxUIApplicationTestCase.RxUIApplicationCycle.DriverModels> in
       application
-      .rendered(events.map { $0.application })
+      .eventsCapturedAfterRendering(events.map { $0.application })
       .map { model -> RxUIApplication.Model in
         var new = model
         if
@@ -852,7 +852,7 @@ class RxUIApplicationTestCase: XCTestCase {
   func testShouldOpenURLs9() {
     let cycle = RxUIApplicationCycle { events, application -> Observable<RxUIApplicationTestCase.RxUIApplicationCycle.DriverModels> in
       application
-      .rendered(events.map { $0.application })
+      .eventsCapturedAfterRendering(events.map { $0.application })
       .map { model -> RxUIApplication.Model in
         var new = model
         if
@@ -891,7 +891,7 @@ class RxUIApplicationTestCase: XCTestCase {
   func testSupportedInterfaceOrientations() {
     let cycle = RxUIApplicationCycle { events, application -> Observable<RxUIApplicationTestCase.RxUIApplicationCycle.DriverModels> in
       application
-      .rendered(events.map { $0.application })
+      .eventsCapturedAfterRendering(events.map { $0.application })
       .map { model -> RxUIApplication.Model in
         var new = model
         new.interfaceOrientations = model.interfaceOrientations.map {
@@ -937,7 +937,7 @@ class RxUIApplicationTestCase: XCTestCase {
   func testextensionPointIdentifier() {
     let cycle = RxUIApplicationCycle { events, application -> Observable<RxUIApplicationTestCase.RxUIApplicationCycle.DriverModels> in
       application
-      .rendered(events.map { $0.application })
+      .eventsCapturedAfterRendering(events.map { $0.application })
       .map { model -> RxUIApplication.Model in
         var new = model
         if case .considering(let ID) = model.extensionPointIdentifier {
@@ -973,7 +973,7 @@ class RxUIApplicationTestCase: XCTestCase {
   func testViewControllerWithRestorationIdentifierPathAllowing() {
     let cycle = RxUIApplicationCycle { events, application -> Observable<RxUIApplicationTestCase.RxUIApplicationCycle.DriverModels> in
       application
-      .rendered(events.map { $0.application })
+      .eventsCapturedAfterRendering(events.map { $0.application })
       .map { model -> RxUIApplication.Model in
         var new = model
         if case .considering(let query) = new.viewControllerRestoration {
@@ -1015,7 +1015,7 @@ class RxUIApplicationTestCase: XCTestCase {
   func testShouldSaveApplicationStateAllowing() {
     let cycle = RxUIApplicationCycle { events, application -> Observable<RxUIApplicationTestCase.RxUIApplicationCycle.DriverModels> in
       application
-      .rendered(events.map { $0.application })
+      .eventsCapturedAfterRendering(events.map { $0.application })
       .map { model -> RxUIApplication.Model in
         var new = model
         if case .considering(_) = model.shouldSaveApplicationState {
@@ -1051,7 +1051,7 @@ class RxUIApplicationTestCase: XCTestCase {
   func testShouldRestoreApplicationStateAllowing() {
     let cycle = RxUIApplicationCycle { events, application -> Observable<RxUIApplicationTestCase.RxUIApplicationCycle.DriverModels> in
       application
-      .rendered(events.map { $0.application })
+      .eventsCapturedAfterRendering(events.map { $0.application })
       .map { model -> RxUIApplication.Model in
         var new = model
         if case .considering(_) = model.shouldRestoreApplicationState {
@@ -1087,7 +1087,7 @@ class RxUIApplicationTestCase: XCTestCase {
   func testShouldNotifyUserActivitiesWithTypes() {
     let cycle = RxUIApplicationCycle { events, application -> Observable<RxUIApplicationTestCase.RxUIApplicationCycle.DriverModels> in
       application
-      .rendered(events.map { $0.application })
+      .eventsCapturedAfterRendering(events.map { $0.application })
       .map { model -> RxUIApplication.Model in
         var new = model
         if case .willContinue(let type) = model.userActivityState {
@@ -1123,7 +1123,7 @@ class RxUIApplicationTestCase: XCTestCase {
   func testActivitiesWithAvaliableData() {
     let cycle = RxUIApplicationCycle { events, application -> Observable<RxUIApplicationTestCase.RxUIApplicationCycle.DriverModels> in
       application
-      .rendered(events.map { $0.application })
+      .eventsCapturedAfterRendering(events.map { $0.application })
       .map { model -> RxUIApplication.Model in
         var new = model
         if case .isContinuing(let activity) = model.userActivityState {

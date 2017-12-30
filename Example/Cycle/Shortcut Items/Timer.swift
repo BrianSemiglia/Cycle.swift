@@ -56,7 +56,7 @@ class Timer {
     var operations: [Operation]
   }
   
-  func rendered(_ input: Observable<Model>) -> Observable<Model> {
+  func eventsCapturedAfterRendering(_ input: Observable<Model>) -> Observable<Model> {
     input.subscribe {
       if let model = $0.element {
         self.model = model

@@ -65,7 +65,7 @@ class ValueToggler: UIViewControllerProviding {
     root.view.addSubview(decrement)
   }
   
-  func rendered(_ input: Observable<ValueToggler.Model>) -> Observable<ValueToggler.Model> {
+  func eventsCapturedAfterRendering(_ input: Observable<ValueToggler.Model>) -> Observable<ValueToggler.Model> {
     input.subscribe { possible in
       if let latest = possible.element {
         self.increment.setTitle(

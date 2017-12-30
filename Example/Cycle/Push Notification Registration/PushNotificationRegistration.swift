@@ -41,8 +41,9 @@ struct PushNotificationRegistration: IORouter {
     incoming: Observable<Model>,
     to drivers: Drivers
   ) -> Observable<Model> { return
-    drivers.application
-      .rendered(incoming.map { $0.application })
+    drivers
+      .application
+      .eventsCapturedAfterRendering(incoming.map { $0.application })
       .withLatestFrom(incoming) { ($0.0, $0.1) }
       .reduced()
   }
