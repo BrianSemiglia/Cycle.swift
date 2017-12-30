@@ -86,7 +86,7 @@ Frames in an animation are easy to understand as values, but they can also be un
 ### Live Broadcast
 The flip-book model breaks a bit when it comes to the uncertain future of an application’s timeline. Each frame of an animation is usually known before playback but because drivers provide a finite set of possible events, that uncertainty can be constrained and given the means to produce the next frame for every action.
 
-## Implementation
+## Interface
 ```swift
 public protocol IORouter {
   /* 
