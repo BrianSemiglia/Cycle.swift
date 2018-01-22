@@ -1493,7 +1493,8 @@ class RxUIApplicationTestCase: XCTestCase {
   }
   
   class RxUIApplicationCycle: IORouter {
-    struct DriverModels: Initializable {
+    static let seed = DriverModels()
+    struct DriverModels {
       var application = RxUIApplication.Model.empty
     }
     struct Drivers: UIApplicationDelegateProviding, ScreenDrivable {
@@ -1504,10 +1505,10 @@ class RxUIApplicationTestCase: XCTestCase {
     init(router: @escaping (Observable<DriverModels>, RxUIApplication) -> Observable<DriverModels>) {
       self.router = router
     }
-    func driversFrom(initial: RxUIApplicationTestCase.RxUIApplicationCycle.DriverModels) -> RxUIApplicationTestCase.RxUIApplicationCycle.Drivers {
+    func driversFrom(seed: RxUIApplicationTestCase.RxUIApplicationCycle.DriverModels) -> RxUIApplicationTestCase.RxUIApplicationCycle.Drivers {
       return Drivers(
         screen: ScreenDriverStub(),
-        application: RxUIApplication(initial: initial.application)
+        application: RxUIApplication(initial: seed.application)
       )
     }
     func effectsOfEventsCapturedAfterRendering(

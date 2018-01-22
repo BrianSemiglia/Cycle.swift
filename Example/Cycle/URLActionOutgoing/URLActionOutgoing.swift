@@ -24,17 +24,18 @@ struct ScreenDriver: UIViewControllerProviding {
 }
 
 struct URLActionOutgoing: IORouter {
-  struct Model: Initializable {
+  static let seed = Model()
+  struct Model {
     var application = RxUIApplication.Model.empty
   }
   struct Drivers: UIApplicationDelegateProviding, ScreenDrivable {
     let screen: ScreenDriver
     let application: RxUIApplication
   }
-  func driversFrom(initial: URLActionOutgoing.Model) -> URLActionOutgoing.Drivers {
+  func driversFrom(seed: URLActionOutgoing.Model) -> URLActionOutgoing.Drivers {
     return Drivers(
       screen: ScreenDriver(),
-      application: RxUIApplication(initial: initial.application)
+      application: RxUIApplication(initial: seed.application)
     )
   }
   func effectsOfEventsCapturedAfterRendering(

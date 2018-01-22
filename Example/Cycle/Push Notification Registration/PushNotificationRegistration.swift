@@ -24,17 +24,18 @@ struct ScreenDriver: UIViewControllerProviding {
 }
 
 struct PushNotificationRegistration: IORouter {
-  struct Model: Initializable {
+  static let seed = Model()
+  struct Model {
     var application = RxUIApplication.Model.empty
   }
   struct Drivers: UIApplicationDelegateProviding, ScreenDrivable {
     let screen: ScreenDriver
     let application: RxUIApplication
   }
-  func driversFrom(initial: PushNotificationRegistration.Model) -> PushNotificationRegistration.Drivers { return
+  func driversFrom(seed: PushNotificationRegistration.Model) -> PushNotificationRegistration.Drivers { return
     Drivers(
       screen: ScreenDriver(),
-      application: RxUIApplication(initial: initial.application)
+      application: RxUIApplication(initial: seed.application)
     )
   }
   func effectsOfEventsCapturedAfterRendering(

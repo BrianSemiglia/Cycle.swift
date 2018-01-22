@@ -48,8 +48,8 @@ extension UIWindow {
 }
 
 public final class Cycle<E: IORouter> {
-  private var output: Observable<E.Model>?
-  private var inputProxy: ReplaySubject<E.Model>?
+  private var output: Observable<E.Frame>?
+  private var inputProxy: ReplaySubject<E.Frame>?
   private let cleanup = DisposeBag()
   private let drivers: E.Drivers
   fileprivate let delegate: UIApplicationDelegate
@@ -58,7 +58,7 @@ public final class Cycle<E: IORouter> {
     inputProxy = ReplaySubject.create(
       bufferSize: 1
     )
-    drivers = router.driversFrom(initial: E.Model())
+    drivers = router.driversFrom(seed: E.seed)
     root = drivers.screen.root
     delegate = drivers.application
     output = router.effectsOfEventsCapturedAfterRendering(
@@ -69,7 +69,7 @@ public final class Cycle<E: IORouter> {
     // Possibly removed if `output` was BehaviorSubject?
     // Not sure how to `merge` observables to single BehaviorSubject though.
     output?
-      .startWith(E.Model())
+      .startWith(E.seed)
       .subscribe(self.inputProxy!.on)
       .disposed(by: cleanup)
   }
@@ -80,7 +80,8 @@ public protocol IORouter {
   /*
    Defines schema and initial values of application model.
    */
-  associatedtype Model: Initializable
+  associatedtype Frame
+  static var seed: Frame { get }
   
   /*
    Defines drivers that handle effects, produce events. Requires two default drivers:
@@ -95,19 +96,16 @@ public protocol IORouter {
   /*
    Instantiates drivers with initial model. Necessary to for drivers that require initial values.
    */
-  func driversFrom(initial: Model) -> Drivers
+  func driversFrom(seed: Frame) -> Drivers
   
   /*
    Returns a stream of Models created by rendering the incoming stream of effects to Drivers and then capturing and transforming Driver events into the Model type.
    */
   func effectsOfEventsCapturedAfterRendering(
-    incoming: Observable<Model>,
+    incoming: Observable<Frame>,
     to drivers: Drivers
-  ) -> Observable<Model>
-}
+  ) -> Observable<Frame>
 
-public protocol Initializable {
-  init()
 }
 
 public protocol ScreenDrivable {

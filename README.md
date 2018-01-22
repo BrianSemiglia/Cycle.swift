@@ -90,10 +90,15 @@ The flip-book model breaks a bit when it comes to the uncertain future of an app
 ```swift
 public protocol IORouter {
   /* 
-    Defines schema and initial values of application model.
+    Defines type of application model.
   */
-  associatedtype Model: Initializable
+  associatedtype Model
   
+  /*
+    Defines initial values of application model.
+  */
+  static let seed = AppModel()
+
   /* 
     Defines drivers that handle effects, produce events. Requires two default drivers: 
 
@@ -130,7 +135,9 @@ public protocol IORouter {
 
   struct MyRouter: IORouter {
 
-    struct AppModel: Initializable {
+    static let seed = AppModel()
+
+    struct AppModel {
       let network = Network.Model()
       let screen = Screen.Model()
       let application = RxUIApplication.Model()

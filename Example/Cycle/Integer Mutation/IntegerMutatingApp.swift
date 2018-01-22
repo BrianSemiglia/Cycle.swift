@@ -20,7 +20,8 @@ class Example: CycledApplicationDelegate<IntegerMutatingApp> {
 }
 
 struct IntegerMutatingApp: IORouter {
-  struct Model: Initializable {
+  static let seed = Model()
+  struct Model {
     var screen = ValueToggler.Model.empty
     var application = RxUIApplication.Model.empty
   }
@@ -28,10 +29,10 @@ struct IntegerMutatingApp: IORouter {
     let screen: ValueToggler
     let application: RxUIApplication
   }
-  func driversFrom(initial: IntegerMutatingApp.Model) -> IntegerMutatingApp.Drivers { return
+  func driversFrom(seed: IntegerMutatingApp.Model) -> IntegerMutatingApp.Drivers { return
     Drivers(
       screen: ValueToggler(),
-      application: RxUIApplication(initial: initial.application)
+      application: RxUIApplication(initial: seed.application)
     )
   }
   func effectsOfEventsCapturedAfterRendering(

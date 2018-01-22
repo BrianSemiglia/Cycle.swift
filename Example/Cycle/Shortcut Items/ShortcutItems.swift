@@ -24,7 +24,8 @@ struct ScreenDriver: UIViewControllerProviding {
 }
 
 struct ShortcutActionsExample: IORouter {
-  struct Model: Initializable {
+  static let seed = Model()
+  struct Model {
     var application = RxUIApplication.Model.empty
     var async = Timer.Model.empty
   }
@@ -33,11 +34,11 @@ struct ShortcutActionsExample: IORouter {
     let timer: Timer
     let application: RxUIApplication
   }
-  func driversFrom(initial: ShortcutActionsExample.Model) -> ShortcutActionsExample.Drivers {
+  func driversFrom(seed: ShortcutActionsExample.Model) -> ShortcutActionsExample.Drivers {
     return Drivers(
       screen: ScreenDriver(),
-      timer: Timer(initial.async),
-      application: RxUIApplication(initial: initial.application)
+      timer: Timer(seed.async),
+      application: RxUIApplication(initial: seed.application)
     )
   }
   func effectsOfEventsCapturedAfterRendering(
