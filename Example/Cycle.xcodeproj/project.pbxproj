@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		116BAEF0A276C537C2030BAA /* Pods_Push_Notification_Registration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 42736C56E7E7C9DD3182C80A /* Pods_Push_Notification_Registration.framework */; };
+		1203B012752B90495253878C /* Pods_Integer_Mutation_Animated.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 317E148C399785E3FB17DF26 /* Pods_Integer_Mutation_Animated.framework */; };
 		32A283687262EF38B424F3B8 /* Pods_URL_Action_Outgoing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA7BC5246F97C93631F0B54F /* Pods_URL_Action_Outgoing.framework */; };
 		4435AF1D8F701EF66E80633F /* Pods_Cycle_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB865E51D770F4486561A9BB /* Pods_Cycle_Tests.framework */; };
 		6193D45BC042E84E20128B03 /* Pods_Integer_Mutation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AB3EC56074E54409661B9B4 /* Pods_Integer_Mutation.framework */; };
@@ -28,6 +29,14 @@
 		D30605311E5EA484007BE6F0 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D30604E31E5E5247007BE6F0 /* LaunchScreen.xib */; };
 		D306053C1E5EA54A007BE6F0 /* URLActionOutgoing.swift in Sources */ = {isa = PBXBuildFile; fileRef = D30605261E5EA45D007BE6F0 /* URLActionOutgoing.swift */; };
 		D306053E1E5EAC4D007BE6F0 /* RxUIApplicationTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = D306053D1E5EAC4D007BE6F0 /* RxUIApplicationTestCase.swift */; };
+		D31FAC74201691A20015FD22 /* Timer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D30605051E5E6656007BE6F0 /* Timer.swift */; };
+		D31FAC78201691A20015FD22 /* Pods_Integer_Mutation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AB3EC56074E54409661B9B4 /* Pods_Integer_Mutation.framework */; };
+		D31FAC7A201691A20015FD22 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D30604E71E5E5247007BE6F0 /* Images.xcassets */; };
+		D31FAC7B201691A20015FD22 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D30604E31E5E5247007BE6F0 /* LaunchScreen.xib */; };
+		D31FAC87201691CB0015FD22 /* IntegerMutatingApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D31FAC84201691CB0015FD22 /* IntegerMutatingApp.swift */; };
+		D31FAC88201691CB0015FD22 /* ValueToggler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D31FAC85201691CB0015FD22 /* ValueToggler.swift */; };
+		D31FAC89201691CB0015FD22 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D31FAC86201691CB0015FD22 /* Info.plist */; };
+		D38E6187200F35D600E94387 /* Timer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D30605051E5E6656007BE6F0 /* Timer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,6 +52,8 @@
 /* Begin PBXFileReference section */
 		08ACA2DE327DC288C4F20C4E /* Pods-URL Action Outgoing.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-URL Action Outgoing.release.xcconfig"; path = "Pods/Target Support Files/Pods-URL Action Outgoing/Pods-URL Action Outgoing.release.xcconfig"; sourceTree = "<group>"; };
 		124EBB9706B4D6B114847114 /* Pods-Integer Mutation.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Integer Mutation.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Integer Mutation/Pods-Integer Mutation.debug.xcconfig"; sourceTree = "<group>"; };
+		20983B48B2B20294687C61B1 /* Pods-Integer Mutation Animated.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Integer Mutation Animated.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Integer Mutation Animated/Pods-Integer Mutation Animated.debug.xcconfig"; sourceTree = "<group>"; };
+		317E148C399785E3FB17DF26 /* Pods_Integer_Mutation_Animated.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Integer_Mutation_Animated.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AA4A99649B249812102922E /* Pods-Cycle_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Cycle_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Cycle_Tests/Pods-Cycle_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		42736C56E7E7C9DD3182C80A /* Pods_Push_Notification_Registration.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Push_Notification_Registration.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4AB3EC56074E54409661B9B4 /* Pods_Integer_Mutation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Integer_Mutation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -71,6 +82,11 @@
 		D30605381E5EA484007BE6F0 /* URL Action Outgoing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "URL Action Outgoing.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D306053A1E5EA4F0007BE6F0 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D306053D1E5EAC4D007BE6F0 /* RxUIApplicationTestCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RxUIApplicationTestCase.swift; sourceTree = "<group>"; };
+		D31FAC81201691A20015FD22 /* Integer Mutation Animated.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Integer Mutation Animated.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D31FAC82201691A30015FD22 /* Integer Mutation copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Integer Mutation copy-Info.plist"; path = "/Users/brian/Downloads/Cycle.swift/Example/Integer Mutation copy-Info.plist"; sourceTree = "<absolute>"; };
+		D31FAC84201691CB0015FD22 /* IntegerMutatingApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntegerMutatingApp.swift; sourceTree = "<group>"; };
+		D31FAC85201691CB0015FD22 /* ValueToggler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ValueToggler.swift; sourceTree = "<group>"; };
+		D31FAC86201691CB0015FD22 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E1B19028411EE9E028DA971D /* Pods-URL Action Outgoing.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-URL Action Outgoing.debug.xcconfig"; path = "Pods/Target Support Files/Pods-URL Action Outgoing/Pods-URL Action Outgoing.debug.xcconfig"; sourceTree = "<group>"; };
 		E7642C66690A3E83DA25F858 /* Pods-Cycle_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Cycle_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Cycle_Tests/Pods-Cycle_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		EC211370C6C0D3412E7DD7CF /* Pods-Shortcut Items.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Shortcut Items.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Shortcut Items/Pods-Shortcut Items.debug.xcconfig"; sourceTree = "<group>"; };
@@ -78,6 +94,7 @@
 		F430C48707BD4E2C0108D079 /* Cycle.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Cycle.podspec; path = ../Cycle.podspec; sourceTree = "<group>"; };
 		F577E03DC31E3AAF72698535 /* Pods-Push Notification Registration.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Push Notification Registration.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Push Notification Registration/Pods-Push Notification Registration.debug.xcconfig"; sourceTree = "<group>"; };
 		FB865E51D770F4486561A9BB /* Pods_Cycle_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Cycle_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		FFF0458912A447A5D0B4BA2F /* Pods-Integer Mutation Animated.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Integer Mutation Animated.release.xcconfig"; path = "Pods/Target Support Files/Pods-Integer Mutation Animated/Pods-Integer Mutation Animated.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,6 +139,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D31FAC77201691A20015FD22 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D31FAC78201691A20015FD22 /* Pods_Integer_Mutation.framework in Frameworks */,
+				1203B012752B90495253878C /* Pods_Integer_Mutation_Animated.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -133,6 +159,7 @@
 				75F28F672F62AF841428AAE8 /* Pods_Shortcut_Items.framework */,
 				4AB3EC56074E54409661B9B4 /* Pods_Integer_Mutation.framework */,
 				AA7BC5246F97C93631F0B54F /* Pods_URL_Action_Outgoing.framework */,
+				317E148C399785E3FB17DF26 /* Pods_Integer_Mutation_Animated.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -146,6 +173,7 @@
 				607FACD11AFB9204008FA782 /* Products */,
 				F9A6C6FB5832BFCE3FED7321 /* Pods */,
 				420949623F63038D9B3C3651 /* Frameworks */,
+				D31FAC82201691A30015FD22 /* Integer Mutation copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -157,6 +185,7 @@
 				D30605011E5E65FD007BE6F0 /* Shortcut Items.app */,
 				D306051A1E5E9CD5007BE6F0 /* Integer Mutation.app */,
 				D30605381E5EA484007BE6F0 /* URL Action Outgoing.app */,
+				D31FAC81201691A20015FD22 /* Integer Mutation Animated.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -165,6 +194,7 @@
 			isa = PBXGroup;
 			children = (
 				D306051C1E5E9D46007BE6F0 /* Integer Mutation */,
+				D31FAC83201691CB0015FD22 /* Integer Mutation Animated */,
 				D30605031E5E6656007BE6F0 /* Shortcut Items */,
 				D30604E11E5E5247007BE6F0 /* Push Notification Registration */,
 				D30605251E5EA45D007BE6F0 /* URLActionOutgoing */,
@@ -240,6 +270,16 @@
 			path = URLActionOutgoing;
 			sourceTree = "<group>";
 		};
+		D31FAC83201691CB0015FD22 /* Integer Mutation Animated */ = {
+			isa = PBXGroup;
+			children = (
+				D31FAC84201691CB0015FD22 /* IntegerMutatingApp.swift */,
+				D31FAC85201691CB0015FD22 /* ValueToggler.swift */,
+				D31FAC86201691CB0015FD22 /* Info.plist */,
+			);
+			path = "Integer Mutation Animated";
+			sourceTree = "<group>";
+		};
 		F9A6C6FB5832BFCE3FED7321 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -253,6 +293,8 @@
 				EFFE61F5B3D0191C0B3FACD9 /* Pods-Integer Mutation.release.xcconfig */,
 				E1B19028411EE9E028DA971D /* Pods-URL Action Outgoing.debug.xcconfig */,
 				08ACA2DE327DC288C4F20C4E /* Pods-URL Action Outgoing.release.xcconfig */,
+				20983B48B2B20294687C61B1 /* Pods-Integer Mutation Animated.debug.xcconfig */,
+				FFF0458912A447A5D0B4BA2F /* Pods-Integer Mutation Animated.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -361,6 +403,26 @@
 			productReference = D30605381E5EA484007BE6F0 /* URL Action Outgoing.app */;
 			productType = "com.apple.product-type.application";
 		};
+		D31FAC71201691A20015FD22 /* Integer Mutation Animated */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D31FAC7E201691A20015FD22 /* Build configuration list for PBXNativeTarget "Integer Mutation Animated" */;
+			buildPhases = (
+				D31FAC72201691A20015FD22 /* [CP] Check Pods Manifest.lock */,
+				D31FAC73201691A20015FD22 /* Sources */,
+				D31FAC77201691A20015FD22 /* Frameworks */,
+				D31FAC79201691A20015FD22 /* Resources */,
+				D31FAC7C201691A20015FD22 /* [CP] Embed Pods Frameworks */,
+				D31FAC7D201691A20015FD22 /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Integer Mutation Animated";
+			productName = Cycle;
+			productReference = D31FAC81201691A20015FD22 /* Integer Mutation Animated.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -398,6 +460,7 @@
 				607FACCF1AFB9204008FA782 /* Push Notification Registration */,
 				D30604F21E5E65FD007BE6F0 /* Shortcut Items */,
 				D306050A1E5E9CD5007BE6F0 /* Integer Mutation */,
+				D31FAC71201691A20015FD22 /* Integer Mutation Animated */,
 				D30605281E5EA484007BE6F0 /* URL Action Outgoing */,
 				607FACE41AFB9204008FA782 /* Cycle_Tests */,
 			);
@@ -445,6 +508,16 @@
 			files = (
 				D30605301E5EA484007BE6F0 /* Images.xcassets in Resources */,
 				D30605311E5EA484007BE6F0 /* LaunchScreen.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D31FAC79201691A20015FD22 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D31FAC7A201691A20015FD22 /* Images.xcassets in Resources */,
+				D31FAC7B201691A20015FD22 /* LaunchScreen.xib in Resources */,
+				D31FAC89201691CB0015FD22 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -675,6 +748,63 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-URL Action Outgoing/Pods-URL Action Outgoing-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		D31FAC72201691A20015FD22 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Integer Mutation Animated-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D31FAC7C201691A20015FD22 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-Integer Mutation Animated/Pods-Integer Mutation Animated-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/Changeset/Changeset.framework",
+				"${BUILT_PRODUCTS_DIR}/Cycle/Cycle.framework",
+				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/RxCocoa/RxCocoa.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Changeset.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Cycle.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxCocoa.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Integer Mutation Animated/Pods-Integer Mutation Animated-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D31FAC7D201691A20015FD22 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Integer Mutation Animated/Pods-Integer Mutation Animated-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		E2D9D9C9C700B8534D582081 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -753,6 +883,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D38E6187200F35D600E94387 /* Timer.swift in Sources */,
 				D306051F1E5E9D46007BE6F0 /* IntegerMutatingApp.swift in Sources */,
 				D30605201E5E9D46007BE6F0 /* ValueToggler.swift in Sources */,
 			);
@@ -763,6 +894,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				D306053C1E5EA54A007BE6F0 /* URLActionOutgoing.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D31FAC73201691A20015FD22 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D31FAC74201691A20015FD22 /* Timer.swift in Sources */,
+				D31FAC87201691CB0015FD22 /* IntegerMutatingApp.swift in Sources */,
+				D31FAC88201691CB0015FD22 /* ValueToggler.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1027,6 +1168,34 @@
 			};
 			name = Release;
 		};
+		D31FAC7F201691A20015FD22 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 20983B48B2B20294687C61B1 /* Pods-Integer Mutation Animated.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = "Integer Mutation copy-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MODULE_NAME = ExampleApp;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Debug;
+		};
+		D31FAC80201691A20015FD22 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = FFF0458912A447A5D0B4BA2F /* Pods-Integer Mutation Animated.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = "Integer Mutation copy-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MODULE_NAME = ExampleApp;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1080,6 +1249,15 @@
 			buildConfigurations = (
 				D30605361E5EA484007BE6F0 /* Debug */,
 				D30605371E5EA484007BE6F0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D31FAC7E201691A20015FD22 /* Build configuration list for PBXNativeTarget "Integer Mutation Animated" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D31FAC7F201691A20015FD22 /* Debug */,
+				D31FAC80201691A20015FD22 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

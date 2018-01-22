@@ -289,6 +289,79 @@ public protocol IORouter {
 
 A sample project of the infamous 'Counter' app is included.
 
+## Animated Effects
+
+In most scenarios, an event will produce a single effect  `Event -> Effect`. However, animated responses have a transformation signature of `Event -> [Effect]`. This can be handled by feeding the `[Effect]` into a sampled stream which then outputs an `[Effect]` every _n_ seconds based on the desired frame-rate. That `Effect` array can then be fed to a pre-filter which strips out all but the first frame before being deliver to the drivers. The remaining frames are sent back into the stream to be rendered on the next pass. The following code provides an implementation of this:
+
+  ```swift
+  func effectsOfEventsCapturedAfterRendering(
+    incoming: Observable<[Model]>,
+    to drivers: Drivers
+  ) -> Observable<[Model]> {
+
+    // Incoming models are rated-limited to 1/60th of a second
+    let screenSynced = incoming.sample(
+      Observable<Int>.interval(
+        1.0 / 60.0,
+        scheduler: MainScheduler.instance
+      )
+    )
+
+    return Observable
+      .merge([
+        drivers
+          .screen
+          .eventsCapturedAfterRendering(screenSynced.map { $0.first! })
+          // The state provided to the reducer comes from the original,
+          // non-rate-limited, incoming stream to handle cases where multiple
+          // events are received in the window between renderings.
+          .withLatestFrom(incoming) { ($0.0, $0.1) }
+          .animatedReducer()
+        ,
+        // The rest of the models are sent back into the stream and the cycle repeats.
+        screenSynced
+          .withLatestFrom(incoming)
+          .filter { $0.count > 1 }
+          .map { $0.tail }
+    ])
+  }
+  ```
+
+By sending the rest of the anticipated `Effects` back into the stream, your application has the option of re-evaluating animations based on new events during playback. Animations can thus be removed, suspended, or edited in mid-flight. The following pseudo `Event -> [Model]` timelines are examples of ways that animations can be altered as they progress:
+
+  ```
+  // Intercepted
+  .animateTo(5) -> [1, 2, 3, 4, 5]
+  .tick         -> [2, 3, 4, 5]
+  .animateTo(0) -> [2, 1, 0]
+  .tick         -> [1, 0]
+  .animateTo(4) -> [1, 2, 3, 4]
+  .tick         -> [2, 3, 4]
+  .tick         -> [3, 4]
+  .tick         -> [4]
+
+  // Appended
+  .animateTo(3) -> [0, 1, 2, 3]
+  .tick         -> [1, 2, 3]
+  .animateTo(0) -> [1, 2, 3, 2, 1, 0]
+  .tick         -> [2, 3, 2, 1, 0]
+  .animateTo(3) -> [2, 3, 2, 1, 0, 1, 2, 3]
+  .tick         -> [3, 2, 1, 0, 1, 2, 3]
+  .tick         -> [2, 1, 0, 1, 2, 3]
+  .tick         -> [1, 0, 1, 2, 3]
+  .tick         -> [0, 1, 2, 3]
+  .tick         -> [1, 2, 3]
+  .tick         -> [2, 3]
+  .tick         -> [3]
+
+  // Removed
+  .animateTo(4) -> [0, 1, 2, 3, 4]
+  .tick         -> [1, 2, 3, 4]
+  .cancel       -> [1]
+  ```
+
+The included sample application `Integer Mutation Animated` provides a working demonstration of this.
+
 ## Related Material
 - [Boundaries by Gary Bernhardt](https://www.youtube.com/watch?v=yTkzNHF6rMs)
 - [Cycle.js](https://cycle.js.org)

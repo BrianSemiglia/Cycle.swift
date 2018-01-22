@@ -17,6 +17,11 @@ target 'Integer Mutation' do
   pod 'RxCocoa', '~> 3.5.0'
 end
 
+target 'Integer Mutation Animated' do
+  pod 'Cycle', :path => '../'
+  pod 'RxCocoa', '~> 3.5.0'
+end
+
 target 'URL Action Outgoing' do
   pod 'Cycle', :path => '../'
 end
