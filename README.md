@@ -92,12 +92,12 @@ public protocol IORouter {
   /* 
     Defines type of application model.
   */
-  associatedtype Model
+  associatedtype Frame
   
   /*
     Defines initial values of application model.
   */
-  static let seed = AppModel()
+  static var seed: Frame { get }
 
   /* 
     Defines drivers that handle effects, produce events. Requires two default drivers: 
@@ -112,15 +112,15 @@ public protocol IORouter {
   /*
     Instantiates drivers with initial model. Necessary to for drivers that require initial values.
   */
-  func driversFrom(initial: Model) -> Drivers
+  func driversFrom(seed: Frame) -> Drivers
 
   /*
     Returns a stream of Model created by rendering the incoming stream of effects to drivers and then capturing and transforming their events into the Model type. See example for intended implementation.
   */
   func effectsOfEventsCapturedAfterRendering(
-    incoming: Observable<Model>,
+    incoming: Observable<Frame>,
     to drivers: Drivers
-  ) -> Observable<Model>
+  ) -> Observable<Frame>
 }
 ```
 
@@ -149,7 +149,7 @@ public protocol IORouter {
       let application: RxUIApplication // Anything that conforms to UIApplicationDelegate
     }
 
-    func driversFrom(initial: AppModel) -> Drivers { return
+    func driversFrom(seed: AppModel) -> Drivers { return
       Drivers(
         network = Network(model: intitial.network),
         screen = Screen(model: intitial.screen),
