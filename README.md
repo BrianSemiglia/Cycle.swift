@@ -8,22 +8,24 @@
 Cycle provides a means of writing an application as a function that reduces a stream of events to a stream of effects.
 
 ### Anatomy
-Effect - A struct representing the state of the entire application at a given moment  
-Pre-Filter - A function that converts effects to driver-models that are stripped of redundancies  
-Driver - An isolated, stateless object that renders effects to hardware and deliver events  
-Event - An enum expressing events experienced by hardware  
-Post-Filter - A function that produces Effects based on input Events  
+Label | Purpose
+----- | -------
+Frame | A struct representing the state of the entire application at a given moment  
+Frame Filter | A function that converts frames to driver-specific models that have been stripped of redundancies  
+Driver | An isolated, stateless object that renders frames to hardware and deliver events  
+Event | A driver-specific enum expressing events experienced by drivers  
+Event Filter | A function that produces frames based on an input event
 
 ### Composition
-1. `Effects` arrive as inputs to the main function.
-2. `Effects` are routed to pre-filter functions that produce models specific to `Drivers`.
+1. `Frames` arrive as inputs to the main function.
+2. `Frames` are routed to frame-filter functions that produce models specific to `Drivers`.
 3. `Models` are fed to each `Driver` to be rendered to hardware.
 4. `Drivers` deliver `Events` as they arrive.
-5. The `Event` along with the previous _n_ `Effects` are fed to a post-filter to produce a new `Effect`.
-6. The new `Effect` is input to another execution of the main function and a cycle is produced.
+5. The `Event` along with the previous _n_ `Frames` are fed to a event-filter to produce a new `Frame`.
+6. The new `Frame` is input to another execution of the main function and a cycle is produced.
 
 ```
-effect --------> driver ----------> event + previous effects -> new effect
+frame ---------> driver ----------> event + previous frames --> new frame
          
 Network.Model -> Network                    Network.Model       Network.Model
 Screen.Model  -> Screen  -> Network.Event + Screen.Model   ---> Screen.Model
@@ -31,7 +33,7 @@ Session.Model -> Session                    Session.Model       Session.Model
 ```
 
 ### Concept
-The goal is to produce an application that has clear and uniform boundaries between the declarative and procedural. The declarative side can be understood as a timeline of `Effects` based on the incoming timeline of `Events` which when intertwined can be visualized as such:
+The goal is to produce an application that has clear and uniform boundaries between the declarative and procedural. The declarative side can be understood as a timeline of `Frames` based on the incoming timeline of `Events` which when intertwined can be visualized as such:
 
 ![alt tag](cycled_model_timeline.png)
 
@@ -43,15 +45,15 @@ The procedural rendering of those timelines can be visualized like so:
 
 ## In-Depth
 ### Anatomy
-#### Effect
-The `Effect` is simply a struct representing the state of application at a given moment. Its value can store anything that you might expect objects to normally maintain such as view-frames/colors, navigation-traversal, item-selections, etc. Ideally, the storage of values that can be derived from other values should be avoided. If performance is a concern there is the potential for the caching/memoization of values due to the mostly-referentially-transparent nature of pre/post-filters.  
+#### Frame
+The `Frame` is simply a struct representing the state of application at a given moment. Its value can store anything that you might expect objects to normally maintain such as view-sizes/positions/colors, navigation-traversal, item-selections, etc. Ideally, the storage of values that can be derived from other values should be avoided. If performance is a concern there is the potential for the caching/memoization of values due to the mostly-referentially-transparent nature of event/frame-filters.  
   
-#### Pre-Filter
-A pre-filter function allows for applying changes to a received Effect before being rendered. There are two common filters:
+#### Frame-Filter
+A frame-filter function allows for applying changes to a received Frame before being rendered. There are two common filters:
   
 - A conversion from your application-specific model to a driver-specific one. This design prevents a dependency of any particular driver to any particular global domain and is basically an application of the [Dependency Inversion Principle](https://en.wikipedia.org/wiki/Dependency_inversion_principle).  
 
-- An equality check to prevent unnecessary renderings. If a desired effect has been rendered, a model can be created with some sort of no-op value instead. In order to access the previous _n_ effects for this equality check, the `scan` Rx operator can be used. It would also make sense that `Drivers` be the providers of this sort of filter as the implementation of the filter would depend of the `private` implementation of the `Driver`. Either way, this sort of filter would provide a deterministic function for `Driver` state management.
+- An equality check to prevent unnecessary renderings. If a desired frame has already been rendered, a model can be created with some sort of no-op value instead. In order to access the previous _n_ frames for this equality check, the `scan` Rx operator can be used. It would also make sense that `Drivers` be the providers of this sort of filter as the implementation of the filter would depend of the `private` implementation of the `Driver`. Either way, this sort of filter would provide a deterministic function for `Driver` state management.
 
 #### Driver
 Drivers are stateless objects that simply receive a value, render it to hardware and output `Event` values as they are experienced by hardware. They ideally have one public function `eventsCapturedAfterRendering(model: RxSwift.Observable<Driver.Model>) -> RxSwift.Observable<Driver.Event>` (aside from an `init` function). They also ideally have no concept of what is beyond their interface, avoiding references to global singletons/types and having a model that they have autonomy over; this would be another application of the [Dependency Inversion Principle](https://en.wikipedia.org/wiki/Dependency_inversion_principle).
@@ -59,8 +61,8 @@ Drivers are stateless objects that simply receive a value, render it to hardware
 #### Event
 Events are simple enum values that may also contain associated values received by hardware. Events are ideally defined and owned by a `Driver` as opposed to being defined at the application level ([Dependency Inversion](https://en.wikipedia.org/wiki/Dependency_inversion_principle)).
 
-#### Post-Filter
-A post-filter function allows for the creation of a new `Effect` based on an incoming `Event` and the current `Effect`. The `Effect` created here becomes available to the incoming `Effect` stream of the main function and is also how a previous `Effect` is accessed using the Rx `scan` operator. The `scan` operator is not limited to just the immediately preceding `Effect` in the timeline; any previous `Effect` can be accessed. This is useful for determinations that require a larger context. For example, a touch-gesture could be recognized by examining the last _n_ number of touch-coordinates. 
+#### Event-Filter
+An event-filter function allows for the creation of a new `Frame` based on an incoming `Event` and the current `Frame`. The `Frame` created here becomes available to the incoming `Frame` stream of the main function and is also how a previous `Frame` is accessed using the Rx `scan` operator. The `scan` operator is not limited to just the immediately preceding `Frame` in the timeline; any previous `Frame` can be accessed. This is useful for determinations that require a larger context. For example, a touch-gesture could be recognized by examining the last _n_ number of touch-coordinates. 
 
 ## Reasoning
 
@@ -79,7 +81,7 @@ Further, perspectives don't have to be specific to a single medium. For example,
 Just as paper and celluloid aren't exclusive to the purpose of movies, drivers are independent of an application’s intentions. Drivers set the terms of their contract (view-model) and the events they output. Changes to an application's model don’t break its drivers' design. Changes to its drivers' design do break the application's design. This produces modularity amongst drivers.
 
 ### Values as Commands
-Frames in an animation are easy to understand as values, but they can also be understood as commands for the projector at a given moment. By storing driver-commands as values, commands can be used just as frames (verified, reversed, throttled, filtered, spliced, and replayed); all of which make for useful [development tools](https://github.com/BrianSemiglia/CycleMonitor).
+Frames in an animation are easy to understand as values, but they can also be understood as commands for the projector at a given moment. By storing commands as values, they can be used as you might frames (verified, reversed, throttled, filtered, spliced, and replayed); all of which make for useful [development tools](https://github.com/BrianSemiglia/CycleMonitor).
 
 ![alt tag](https://github.com/BrianSemiglia/CycleMonitor/raw/master/readme_images/overview.gif)
 
@@ -100,7 +102,7 @@ public protocol IORouter {
   static var seed: Frame { get }
 
   /* 
-    Defines drivers that handle effects, produce events. Requires two default drivers: 
+    Defines drivers that handle frames, produce events. Requires two default drivers: 
 
       1. let application: UIApplicationDelegateProviding - can serve as UIApplicationDelegate
       2. let screen: ScreenDrivable - can provide a root UIViewController
@@ -115,7 +117,7 @@ public protocol IORouter {
   func driversFrom(seed: Frame) -> Drivers
 
   /*
-    Returns a stream of Model created by rendering the incoming stream of effects to drivers and then capturing and transforming their events into the Model type. See example for intended implementation.
+    Returns a stream of Model created by rendering the incoming stream of frames to drivers and then capturing and transforming their events into the Model type. See example for intended implementation.
   */
   func effectsOfEventsCapturedAfterRendering(
     incoming: Observable<Frame>,
@@ -190,7 +192,7 @@ public protocol IORouter {
   }
   ```
   
-2. Define post-filters.
+2. Define event-filters.
   ```swift
   extension ObservableType where E == (Network.Model, AppModel) {
     func reducingFuctionOfYourChoice() -> Observable<AppModel> { return
@@ -289,15 +291,15 @@ public protocol IORouter {
 
 A sample project of the infamous 'Counter' app is included.
 
-## Animated Effects
+## Animations
 
-In most scenarios, an event will produce a single effect  `Event -> Effect`. However, animated responses have a transformation signature of `Event -> [Effect]`. This can be handled by feeding the `[Effect]` into a sampled stream which then outputs an `[Effect]` every _n_ seconds based on the desired frame-rate. That `Effect` array can then be fed to a pre-filter which strips out all but the first frame before being deliver to the drivers. The remaining frames are sent back into the stream to be rendered on the next pass. The following code provides an implementation of this:
+In most scenarios, an event will produce a single frame  `Event -> Frame`. However, animated responses have a transformation signature of `Event -> [Frame]`. This can be handled by feeding the `[Frame]` into a sampled stream which then outputs an `[Frame]` every _n_ seconds based on the desired frame-rate. That `Frame` array can then be fed to a frame-filter which strips out all but the first frame before being deliver to the drivers. The remaining frames are sent back into the stream to be rendered on the next pass. The following code provides an implementation of this:
 
   ```swift
   func effectsOfEventsCapturedAfterRendering(
-    incoming: Observable<[Model]>,
+    incoming: Observable<[Frame]>,
     to drivers: Drivers
-  ) -> Observable<[Model]> {
+  ) -> Observable<[Frame]> {
 
     // Incoming models are rated-limited to 1/60th of a second
     let screenSynced = incoming.sample(
@@ -313,12 +315,12 @@ In most scenarios, an event will produce a single effect  `Event -> Effect`. How
           .screen
           .eventsCapturedAfterRendering(screenSynced.map { $0.first! })
           // The state provided to the reducer comes from the original,
-          // non-rate-limited, incoming stream to handle cases where multiple
-          // events are received in the window between renderings.
+          // non-rate-limited, incoming stream to ensure that the data 
+          // provided isn't slightly stale the way the screenSynced stream might be.
           .withLatestFrom(incoming) { ($0.0, $0.1) }
           .animatedReducer()
         ,
-        // The rest of the models are sent back into the stream and the cycle repeats.
+        // The rest of the frames are sent back into the stream and the cycle repeats.
         screenSynced
           .withLatestFrom(incoming)
           .filter { $0.count > 1 }
@@ -327,7 +329,7 @@ In most scenarios, an event will produce a single effect  `Event -> Effect`. How
   }
   ```
 
-By sending the rest of the anticipated `Effects` back into the stream, your application has the option of re-evaluating animations based on new events during playback. Animations can thus be removed, suspended, or edited in mid-flight. The following pseudo `Event -> [Model]` timelines are examples of ways that animations can be altered as they progress:
+By sending the rest of the anticipated `Frames` back into the stream, your application has the option of re-evaluating animations based on new events during playback. Animations can thus be removed, suspended, or changed in mid-flight. The following pseudo `Event -> [Frame]` timelines are examples of ways that animations can be altered as they progress:
 
   ```
   // Intercepted
