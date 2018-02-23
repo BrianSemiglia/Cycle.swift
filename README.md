@@ -62,7 +62,7 @@ Drivers are stateless objects that simply receive a value, render it to hardware
 Events are simple enum values that may also contain associated values received by hardware. Events are ideally defined and owned by a `Driver` as opposed to being defined at the application level ([Dependency Inversion](https://en.wikipedia.org/wiki/Dependency_inversion_principle)).
 
 #### Event-Filter
-An event-filter function allows for the creation of a new `Frame` based on an incoming `Event` and the current `Frame`. The `Frame` created here becomes available to the incoming `Frame` stream of the main function and is also how a previous `Frame` is accessed using the Rx `scan` operator. The `scan` operator is not limited to just the immediately preceding `Frame` in the timeline; any previous `Frame` can be accessed. This is useful for determinations that require a larger context. For example, a touch-gesture could be recognized by examining the last _n_ number of touch-coordinates. 
+An event-filter function allows for the creation of a new `Frame` based on an incoming `Event` and the previous `Frames`. The use of the Rx `withLatestFrom` can be used to access the first previous frame. The use of the Rx `scan` operator can also be used to reach further back in time should they be necessary. This is useful for determinations that require a larger context. For example, a touch-gesture could be recognized by examining the last _n_ number of touch-coordinates. 
 
 ## Reasoning
 
