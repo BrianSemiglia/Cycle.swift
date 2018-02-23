@@ -80,7 +80,7 @@ Further, perspectives don't have to be specific to a single medium. For example,
 ### Self-Centered Perspective
 Just as paper and celluloid aren't exclusive to the purpose of movies, drivers are independent of an application’s intentions. Drivers set the terms of their contract (view-model) and the events they output. Changes to an application's model don’t break its drivers' design. Changes to its drivers' design do break the application's design. This produces modularity amongst drivers.
 
-### Values as Commands
+### Commands as Values
 Frames in an animation are easy to understand as values, but they can also be understood as commands for the projector at a given moment. By storing commands as values, they can be used as you might frames (verified, reversed, throttled, filtered, spliced, and replayed); all of which make for useful [development tools](https://github.com/BrianSemiglia/CycleMonitor).
 
 ![alt tag](https://github.com/BrianSemiglia/CycleMonitor/raw/master/readme_images/overview.gif)
