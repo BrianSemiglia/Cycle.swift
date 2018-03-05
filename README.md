@@ -314,9 +314,10 @@ In most scenarios, an event will produce a single frame  `Event -> Frame`. Howev
         drivers
           .screen
           .eventsCapturedAfterRendering(screenSynced.map { $0.first! })
-          // The state provided to the reducer comes from the original,
+          // The state provided to the event-filter comes from the original,
           // non-rate-limited, incoming stream to ensure that the data 
-          // provided isn't slightly stale the way the screenSynced stream might be.
+          // provided isn't slightly stale the way data provided by the 
+          // screenSynced stream might be.
           .withLatestFrom(incoming) { ($0.0, $0.1) }
           .animatedReducer()
         ,
