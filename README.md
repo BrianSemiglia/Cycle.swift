@@ -43,26 +43,25 @@ The procedural rendering of those timelines can be visualized like so:
 
 [View as higher-res SVG](https://briansemiglia.github.io/cycled_drivers_reduced.svg)
 
-## In-Depth
-### Anatomy
-#### Frame
+## Anatomy In-Depth
+### Frame
 The `Frame` is simply a struct representing the state of application at a given moment. Its value can store anything that you might expect objects to normally maintain such as view-sizes/positions/colors, navigation-traversal, item-selections, etc. Ideally, the storage of values that can be derived from other values should be avoided. If performance is a concern there is the potential for the caching/memoization of values due to the mostly-referentially-transparent nature of event/frame-filters.  
   
-#### Frame-Filter
+### Frame-Filter
 A frame-filter function allows for applying changes to a received Frame before being rendered. There are two common filters:
   
 - A conversion from your application-specific model to a driver-specific one. This design prevents a dependency of any particular driver to any particular global domain and is basically an application of the [Dependency Inversion Principle](https://en.wikipedia.org/wiki/Dependency_inversion_principle).  
 
 - An equality check to prevent unnecessary renderings. If a desired frame has already been rendered, a model can be created with some sort of no-op value instead. In order to access the previous _n_ frames for this equality check, the `scan` Rx operator can be used. It would also make sense that `Drivers` be the providers of this sort of filter as the implementation of the filter would depend of the `private` implementation of the `Driver`. Either way, this sort of filter would provide a deterministic function for `Driver` state management.
 
-#### Driver
+### Driver
 Drivers are stateless objects that simply receive a value, render it to hardware and output `Event` values as they are experienced by hardware. They ideally have one public function `eventsCapturedAfterRendering(model: RxSwift.Observable<Driver.Model>) -> RxSwift.Observable<Driver.Event>` (aside from an `init` function). They also ideally have no concept of what is beyond their interface, avoiding references to global singletons/types and having a model that they have autonomy over; this would be another application of the [Dependency Inversion Principle](https://en.wikipedia.org/wiki/Dependency_inversion_principle).
 
-#### Event
+### Event
 Events are simple enum values that may also contain associated values received by hardware. Events are ideally defined and owned by a `Driver` as opposed to being defined at the application level ([Dependency Inversion](https://en.wikipedia.org/wiki/Dependency_inversion_principle)).
 
-#### Event-Filter
-An event-filter function allows for the creation of a new `Frame` based on an incoming `Event` and the previous `Frames`. The use of the Rx `withLatestFrom` can be used to access the first previous frame. The use of the Rx `scan` operator can also be used to reach further back in time should they be necessary. This is useful for determinations that require a larger context. For example, a touch-gesture could be recognized by examining the last _n_ number of touch-coordinates. 
+### Event-Filter
+An event-filter function allows for the creation of a new `Frame` based on an incoming `Event` and the previous `Frames`. The use of the Rx `withLatestFrom` can be used to access the first previous frame. The use of the Rx `scan` operator can also be used to reach `Frames`further back in time should they be necessary. This is useful for determinations that require a larger context. For example, a touch-gesture could be recognized by examining the last _n_ number of touch-coordinates. 
 
 ## Reasoning
 
@@ -70,7 +69,7 @@ An event-filter function allows for the creation of a new `Frame` based on an in
 Applications are functions that transform values based on events. However, functional programming discourages mutability. How can something change without changing? Cycle attempts to answer that question with a flip-book like model. Just as every frame of a movie is unchanging, so can be view-models. Change is only produced once a frame is fed into a projector and run past light, or rendered rather. In the same way, Cycle provides the scaffolding necessary to feed an infinite list of view-models into drivers to be procedurally rendered.
 
 ### Truth
-Objects typically maintain their own version of the truth. This has the potential to lead to many truths, sometimes conflicting. These conflicts can cause stale/incorrect data to persist. A single source of truth provides consistency for all. At the same time, moving state out of objects removes their identity and makes them much reusable/disposable. For example, a view that is not visible can be freed/reused without losing the data that it was hosting.
+Objects typically maintain their own version of the truth. This has the potential to lead to many truths, sometimes conflicting. These conflicts can cause stale/incorrect data to persist. A single source of truth provides consistency for all. At the same time, moving state out of objects removes their identity and makes them much more reusable/disposable. For example, a view that is not visible can be freed/reused without losing the data that it was hosting.
 
 ### Perspective
 Going back to the flip-book philosophy, more complex animations also include the use of sound. Light and sound are two perspectives rendered in unison to create the illusion of physical cohesion. The illusion is due to the mediums having no physical dependence on one another. In the Cycle architecture, drivers are the perspectives of the application's state.
@@ -261,7 +260,7 @@ public protocol IORouter {
     fileprivate let output: BehaviorSubject<Model>
     
     // Pull-based interfaces (e.g. UITableViews) require retaining state.
-    // State retention should be made as minimum as possible and well-guarded.
+    // State retention should be made as minimal as possible and well-guarded.
     fileprivate let model: Model
 
     public init(initial: Model) {
