@@ -5,7 +5,7 @@
 [![Platform](https://img.shields.io/cocoapods/p/Cycle.svg?style=flat)](http://cocoapods.org/pods/Cycle)
 
 ## Overview
-Cycle provides a means of writing an application as a function that reduces a stream of events to a stream of effects. The stream of effects can be thought of as a reel of film that can be fed to hardware to be projected. The approach allows for consistant execution and greater observability-of/control-over state. [CycleMonitor](https://github.com/BrianSemiglia/CycleMonitor) is a companion application that can be used to achieve that observability and control.
+Cycle provides a means of writing an application as a function that reduces a stream of events to a stream of effects. The stream of effects can be thought of as a reel of film that can be fed to hardware to be projected. The approach allows for consistant execution and greater observability-of/control-over state. [CycleMonitor](https://github.com/BrianSemiglia/CycleMonitor) is a development tool that can be used to achieve that observability and control over your application.
 
 ### Anatomy
 Label | Purpose
@@ -65,8 +65,13 @@ An event-filter function allows for the creation of a new `Frame` based on an in
 
 ## Reasoning
 
+### Doing One Thing Well
+It's said that good code does one thing well. But what is 'doing' and what is a 'thing'? Verifying that something is being done can be achieved by observing a change so it might be fair to say that 'doing' is 'changing'. A change requires a before and an after so a 'thing' might be defined as a type of value that can vary and that can be compared. Putting it altogether, a revised definition might read 'Good code defines a single, verifiable transformation'. Functional programming embraces this philosphy by prioritizing types and visibility. Pure functions take one value, produce a new value and return it without making any other changes (side-effects). Cycle attempts to make an application a single, verifiable transformation of `Events` to `Frames`.
+
+An exception to this within Cycle is the use of RxSwift. RxSwift isn't completely functional as it allows creating points of persistent state within streams (a side-effect that can affect subsequent executions) but it leans heavily toward dealing in terms of value and visibility.
+
 ### Change without Change
-Applications are functions that transform values based on events. However, functional programming discourages mutability. How can something change without changing? Cycle attempts to answer that question with a flip-book like model. Just as every frame of a movie is unchanging, so can be view-models. Change is only produced once a frame is fed into a projector and run past light, or rendered rather. In the same way, Cycle provides the scaffolding necessary to feed an infinite list of view-models into drivers to be procedurally rendered.
+A transformation is the goal, however functional programming also discourages mutability. How can something change without changing? Cycle attempts to answer that question with a flip-book like model. Just as every frame of a movie is unchanging, so can be view-models. Change is only produced once a frame is fed into a projector and run past light, or rendered rather. In the same way, Cycle provides the scaffolding necessary to feed an infinite list of view-models into a thin layer of drivers to be procedurally rendered.
 
 ### Truth
 Objects typically maintain their own version of the truth. This has the potential to lead to many truths, sometimes conflicting. These conflicts can cause stale/incorrect data to persist. A single source of truth provides consistency for all. At the same time, moving state out of objects removes their identity and makes them much more reusable/disposable. For example, a view that is not visible can be freed/reused without losing the data that it was hosting.
