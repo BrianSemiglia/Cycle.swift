@@ -5,7 +5,7 @@
 [![Platform](https://img.shields.io/cocoapods/p/Cycle.svg?style=flat)](http://cocoapods.org/pods/Cycle)
 
 ## Overview
-Cycle provides a means of writing an application as a function that reduces a stream of events to a stream of effects. The stream of effects can be thought of as a reel of film that can be fed to hardware to be projected. The approach allows for consistant execution and greater observability-of/control-over state. [CycleMonitor](https://github.com/BrianSemiglia/CycleMonitor) is a development tool that can be used to achieve that observability and control over your application.
+Cycle provides a means of writing an application as a function that reduces a stream of events to a stream of effects. The stream of effects can be thought of as a reel of film that can be fed to hardware to be projected. The approach allows for consistant execution and greater observability-of/control-over state. [CycleMonitor](https://github.com/BrianSemiglia/CycleMonitor) is a companion development tool that can be used to achieve that observability and control over your application.
 
 ### Anatomy
 Label | Purpose
