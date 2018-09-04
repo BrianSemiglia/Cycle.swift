@@ -110,7 +110,7 @@ public class RxUIApplication: NSObject, UIApplicationDelegate {
     }
     public struct BackgroundURLSessionAction {
       public let id: String // Readonly
-      public let completion: (Void) -> Void // Readonly
+      public let completion: () -> Void // Readonly
       public var state: State
       public enum State {
         case progressing // Readonly
