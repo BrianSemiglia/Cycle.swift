@@ -45,7 +45,7 @@ struct URLActionOutgoing: IORouter {
     drivers
       .application
       .eventsCapturedAfterRendering(incoming.map { $0.application })
-      .withLatestFrom(incoming) { ($0.0, $0.1) }
+      .withLatestFrom(incoming) { ($0, $1) }
       .reduced()
   }
 }
