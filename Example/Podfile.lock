@@ -2,25 +2,31 @@ PODS:
   - Changeset (2.1)
   - Cycle (0.0.10):
     - Changeset (= 2.1)
-    - RxSwift (~> 3.5.0)
-  - RxCocoa (3.5.0):
-    - RxSwift (~> 3.4)
-  - RxSwift (3.5.0)
+    - RxSwift (~> 4.0)
+  - RxCocoa (4.2.0):
+    - RxSwift (~> 4.0)
+  - RxSwift (4.2.0)
 
 DEPENDENCIES:
   - Cycle (from `../`)
-  - RxCocoa (~> 3.5.0)
+  - RxCocoa (~> 4.0)
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - Changeset
+    - RxCocoa
+    - RxSwift
 
 EXTERNAL SOURCES:
   Cycle:
-    :path: ../
+    :path: "../"
 
 SPEC CHECKSUMS:
   Changeset: 52ae0451caae6d236d8ecee150ab62050c3dc826
-  Cycle: 91cb5589608e5bbe9c424605ae4dea1170761312
-  RxCocoa: a0a09f45d0e5b48ecb6a4a7b4b4c89c88d3f633f
-  RxSwift: 18ee9d78b45edb3b0b7e79916b47a116e6dbc842
+  Cycle: d7ba0c6073a2b49367d499b8958fb8316a2920ac
+  RxCocoa: 0b54909c902e1e581212a03e690bbd94032d8baa
+  RxSwift: 99e10317ddfcc7fbe01356aafd118fde4a0be104
 
-PODFILE CHECKSUM: 12d6dab5911dd8769125460bc1fae2b0b42a109a
+PODFILE CHECKSUM: 7fa9982ff25d0a159e9123a7c2a9711b69df4b0e
 
-COCOAPODS: 1.3.1
+COCOAPODS: 1.5.3
