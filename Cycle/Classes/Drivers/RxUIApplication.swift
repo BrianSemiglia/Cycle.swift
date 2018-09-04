@@ -1083,12 +1083,6 @@ extension RxUIApplication.Model: Equatable {
   }
 }
 
-extension Edit {
-  func possible(_ input: EditOperation) -> Edit? { return
-    input == operation ? self : nil
-  }
-}
-
 extension RxUIApplication.Model.ShortcutAction: CustomDebugStringConvertible {
   public var debugDescription: String { return
     item.type + " " + String(describing: state)
@@ -1610,21 +1604,6 @@ extension RxUIApplication.Model.ShortcutAction: Equatable {
   ) -> Bool { return
     left.item == right.item &&
     left.state == right.state
-  }
-}
-
-extension EditOperation: Equatable {
-  public static func ==(
-    left: EditOperation,
-    right: EditOperation
-  ) -> Bool {
-    switch (left, right) {
-    case (.insertion, .insertion): return true
-    case (.deletion, .deletion): return true
-    case (.substitution, .substitution): return true
-    case (.move(let a), .move(let b)): return a == b
-    default: return false
-    }
   }
 }
 

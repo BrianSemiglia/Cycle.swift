@@ -1,7 +1,7 @@
 PODS:
-  - Changeset (2.1)
+  - Changeset (3.1)
   - Cycle (0.0.10):
-    - Changeset (= 2.1)
+    - Changeset (= 3.1)
     - RxSwift (~> 4.0)
   - RxCocoa (4.2.0):
     - RxSwift (~> 4.0)
@@ -22,8 +22,8 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  Changeset: 52ae0451caae6d236d8ecee150ab62050c3dc826
-  Cycle: d7ba0c6073a2b49367d499b8958fb8316a2920ac
+  Changeset: 2c246447b9ed25c1ed6f40c29a235e154917b1d1
+  Cycle: c44081ad272ad4ccd7d541e9ade2c4a6b7919f2b
   RxCocoa: 0b54909c902e1e581212a03e690bbd94032d8baa
   RxSwift: 99e10317ddfcc7fbe01356aafd118fde4a0be104
 
