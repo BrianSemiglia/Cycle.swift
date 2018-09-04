@@ -1420,14 +1420,14 @@ class RxUIApplicationTestCase: XCTestCase {
   
   func testCompletedBackgroundIDs() {
     let x = [RxUIApplication.Model.BackgroundTask(name: "x", state: .complete(2017))]
-    let z = x.flatMap { $0.ID }
+    let z = x.compactMap { $0.ID }
     XCTAssertEqual(z, [2017])
   }
   
   func testDeletedBackgroundTaskIDs() {
     let x = [RxUIApplication.Model.BackgroundTask(name: "x", state: .progressing(2017))]
     let y: [RxUIApplication.Model.BackgroundTask] = []
-    let z = RxUIApplication.deletions(old: x, new: y).flatMap { $0.ID }
+    let z = RxUIApplication.deletions(old: x, new: y).compactMap { $0.ID }
     XCTAssertEqual(z, [2017])
   }
 

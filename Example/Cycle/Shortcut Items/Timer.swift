@@ -23,7 +23,7 @@ class Timer {
     didSet {
       Changeset(source: oldValue.operations, target: model.operations)
       .edits
-      .flatMap { x -> Model.Operation? in
+      .compactMap { x -> Model.Operation? in
         if case .insertion = x.operation { return x.value }
         else { return nil }
       }

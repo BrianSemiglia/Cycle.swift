@@ -65,11 +65,11 @@ struct IntegerMutatingApp: IORouter {
     )
     
     return Observable
-      .merge([
+      .merge(
         drivers
           .screen
           .eventsCapturedAfterRendering(screenSynced.map { $0.prefiltered() })
-          .withLatestFrom(incoming) { ($0.0, $0.1) }
+          .withLatestFrom(incoming) { ($0, $1) }
 //          .intercepted()
           .appended()
 //          .togglesDisabledUntilAnimationEnd()
@@ -77,14 +77,14 @@ struct IntegerMutatingApp: IORouter {
         drivers
           .application
           .eventsCapturedAfterRendering(screenSynced.map { $0.first!.application })
-          .withLatestFrom(incoming) { ($0.0, $0.1) }
+          .withLatestFrom(incoming) { ($0, $1) }
           .reduced()
         ,
         screenSynced
           .withLatestFrom(incoming)
           .filter { $0.count > 1 }
           .map { $0.tail }
-      ])
+      )
   }
 }
 

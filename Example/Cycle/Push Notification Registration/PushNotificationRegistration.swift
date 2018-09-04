@@ -45,7 +45,7 @@ struct PushNotificationRegistration: IORouter {
     drivers
       .application
       .eventsCapturedAfterRendering(incoming.map { $0.application })
-      .withLatestFrom(incoming) { ($0.0, $0.1) }
+      .withLatestFrom(incoming) { ($0, $1) }
       .reduced()
   }
 }
@@ -75,7 +75,7 @@ extension ObservableType where E == (application: RxUIApplication.Model, push: P
           print(error)
         default: break
         }
-        edit.remoteNotifications = event.remoteNotifications.flatMap {
+        edit.remoteNotifications = event.remoteNotifications.compactMap {
           switch $0.state {
           case .progressing(let completion):
             var edit = $0

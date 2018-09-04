@@ -110,7 +110,7 @@ public class RxUIApplication: NSObject, UIApplicationDelegate {
     }
     public struct BackgroundURLSessionAction {
       public let id: String // Readonly
-      public let completion: (Void) -> Void // Readonly
+      public let completion: () -> Void // Readonly
       public var state: State
       public enum State {
         case progressing // Readonly
@@ -162,8 +162,8 @@ public class RxUIApplication: NSObject, UIApplicationDelegate {
     }
     public enum BackgroundURLSessionDataAvailability {
       case none // Readonly
-      case some (String, (Void) -> Void) // Readonly
-      case ending ((Void) -> Void)
+      case some (String, () -> Void) // Readonly
+      case ending (() -> Void)
     }
     public enum UserActivityState { // Readonly
       case idle
@@ -316,7 +316,7 @@ public class RxUIApplication: NSObject, UIApplicationDelegate {
      Deleted requests are left unresponded to.
      Responding requests are removed.
      */
-    model.watchKitExtensionRequests = model.watchKitExtensionRequests.flatMap {
+    model.watchKitExtensionRequests = model.watchKitExtensionRequests.compactMap {
       if case .responding(let reply) = $0.state {
         $0.completion(reply)
         return nil
@@ -368,7 +368,7 @@ public class RxUIApplication: NSObject, UIApplicationDelegate {
      Tasks marked completed are ended.
      Tasks marked in-progress that were removed are considered canceled and are removed.
      */
-    let finished = model.backgroundTasks.flatMap { x -> UIBackgroundTaskIdentifier? in
+    let finished = model.backgroundTasks.compactMap { x -> UIBackgroundTaskIdentifier? in
       switch x.state {
       case .complete: return x.ID
       case .expiring: return x.ID
@@ -381,7 +381,7 @@ public class RxUIApplication: NSObject, UIApplicationDelegate {
       new: Array(model.backgroundTasks)
     )
     .progressing()
-    .flatMap { $0.ID }
+    .compactMap { $0.ID }
     
     (finished + deletions).forEach {
       application.endBackgroundTask($0)
@@ -413,7 +413,7 @@ public class RxUIApplication: NSObject, UIApplicationDelegate {
       old: old.remoteNotifications,
       new: model.remoteNotifications
     )
-    .flatMap { x -> ((UIBackgroundFetchResult) -> Void)? in
+    .compactMap { x -> ((UIBackgroundFetchResult) -> Void)? in
       if case .progressing(let a) = x.state { return a }
       else { return nil }
     }
@@ -421,7 +421,7 @@ public class RxUIApplication: NSObject, UIApplicationDelegate {
       $0(.noData)
     }
     
-    model.remoteNotifications =  model.remoteNotifications.flatMap {
+    model.remoteNotifications =  model.remoteNotifications.compactMap {
       if case .complete(let result, let completion) = $0.state {
         completion(result) // SIDE EFFECT!
         return nil
@@ -504,7 +504,7 @@ public class RxUIApplication: NSObject, UIApplicationDelegate {
     }
     
     model.backgroundURLSessions = Set(
-      model.backgroundURLSessions.flatMap {
+      model.backgroundURLSessions.compactMap {
         if case .complete = $0.state {
           $0.completion() // SIDE EFFECT!
           return nil
@@ -850,7 +850,7 @@ public class RxUIApplication: NSObject, UIApplicationDelegate {
       model.interfaceOrientations += [.considering(window)]
       output.on(.next(model))
       return self.model.interfaceOrientations
-        .flatMap { $0.allowed() }
+        .compactMap { $0.allowed() }
         .filter { $0.window == window }
         .first
         .map { $0.orientation }
@@ -1697,13 +1697,13 @@ extension RxUIApplication.Model.BackgroundFetch.Interval {
 
 extension Collection where Iterator.Element == RxUIApplication.Model.BackgroundTask {
   func progressing() -> [RxUIApplication.Model.BackgroundTask] { return
-    flatMap {
+    compactMap {
       if case .progressing = $0.state { return $0 }
       else { return nil }
     }
   }
   func complete() -> [RxUIApplication.Model.BackgroundTask] { return
-    flatMap {
+    compactMap {
       if case .complete = $0.state { return $0 }
       else { return nil }
     }

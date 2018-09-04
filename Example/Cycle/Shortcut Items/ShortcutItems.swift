@@ -49,13 +49,13 @@ struct ShortcutActionsExample: IORouter {
       drivers
         .application
         .eventsCapturedAfterRendering(incoming.map { $0.application })
-        .withLatestFrom(incoming) { ($0.0, $0.1) }
+        .withLatestFrom(incoming) { ($0, $1) }
         .reduced()
       ,
       drivers
         .timer
         .eventsCapturedAfterRendering(incoming.map { $0.async })
-        .withLatestFrom(incoming) { ($0.0, $0.1) }
+        .withLatestFrom(incoming) { ($0, $1) }
         .reduced()
     ])
   }
@@ -88,7 +88,7 @@ extension ObservableType where E == (RxUIApplication.Model, ShortcutActionsExamp
       }
       
       var a = context.async
-      a.operations = e.shortcutActions.flatMap {
+      a.operations = e.shortcutActions.compactMap {
         if case .progressing = $0.state {
           return Timer.Model.Operation(
             id: $0.item.type,
