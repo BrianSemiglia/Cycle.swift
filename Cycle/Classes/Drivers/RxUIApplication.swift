@@ -464,8 +464,8 @@ public class RxUIApplication: NSObject, UIApplicationDelegate {
         : application.endReceivingRemoteControlEvents()
     }
     
-    if old.newsStandIconImage != model.newsStandIconImage {
-      application.setNewsstandIconImage(model.newsStandIconImage)
+    if #available(iOS 9.0, *) {} else if old.newsStandIconImage != model.newsStandIconImage {
+        application.setNewsstandIconImage(model.newsStandIconImage)
     }
     
     application.shortcutItems = model.shortcutActions.map { $0.item }
