@@ -130,7 +130,7 @@ extension ObservableType where E == (ValueToggler.Action, IntegerMutatingApp.Fra
         }
         .map { global + $0 }
       
-      print(appended?.map { $0.total })
+      print(appended?.map({ $0.total }) ?? [])
       return appended ?? []
     }
   }
@@ -158,7 +158,7 @@ extension ObservableType where E == (ValueToggler.Action, IntegerMutatingApp.Fra
         }
         .map { global + $0 }
       
-      print(appended?.map { $0.total })
+      print(appended?.map { $0.total } ?? [])
       return appended ?? []
     }
   }
