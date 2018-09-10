@@ -828,7 +828,7 @@ class RxUIApplicationTestCase: XCTestCase {
       router: cycle
     ) as UIApplicationDelegate
     
-    delegate.application!(
+    let _ = delegate.application!(
       UIApplication.shared,
       willFinishLaunchingWithOptions: [:]
     )
@@ -868,7 +868,7 @@ class RxUIApplicationTestCase: XCTestCase {
       router: cycle
     ) as UIApplicationDelegate
     
-    delegate.application!(
+    let _ = delegate.application!(
       UIApplication.shared,
       willFinishLaunchingWithOptions: [:]
     )
@@ -915,7 +915,7 @@ class RxUIApplicationTestCase: XCTestCase {
       router: cycle
     ) as UIApplicationDelegate
     
-    delegate.application!(
+    let _ = delegate.application!(
       UIApplication.shared,
       willFinishLaunchingWithOptions: [:]
     )
@@ -951,7 +951,7 @@ class RxUIApplicationTestCase: XCTestCase {
       router: cycle
     ) as UIApplicationDelegate
     
-    delegate.application!(
+    let _ = delegate.application!(
       UIApplication.shared,
       willFinishLaunchingWithOptions: [:]
     )
@@ -992,7 +992,7 @@ class RxUIApplicationTestCase: XCTestCase {
       router: cycle
     ) as UIApplicationDelegate
     
-    delegate.application!(
+    let _ = delegate.application!(
       UIApplication.shared,
       willFinishLaunchingWithOptions: [:]
     )
@@ -1029,7 +1029,7 @@ class RxUIApplicationTestCase: XCTestCase {
       router: cycle
     ) as UIApplicationDelegate
     
-    delegate.application!(
+    let _ = delegate.application!(
       UIApplication.shared,
       willFinishLaunchingWithOptions: [:]
     )
@@ -1065,7 +1065,7 @@ class RxUIApplicationTestCase: XCTestCase {
       router: cycle
     ) as UIApplicationDelegate
     
-    delegate.application!(
+    let _ = delegate.application!(
       UIApplication.shared,
       willFinishLaunchingWithOptions: [:]
     )
@@ -1101,7 +1101,7 @@ class RxUIApplicationTestCase: XCTestCase {
       router: cycle
     ) as UIApplicationDelegate
     
-    delegate.application!(
+    let _ = delegate.application!(
       UIApplication.shared,
       willFinishLaunchingWithOptions: [:]
     )
@@ -1137,7 +1137,7 @@ class RxUIApplicationTestCase: XCTestCase {
       router: cycle
     ) as UIApplicationDelegate
     
-    delegate.application!(
+    let _ = delegate.application!(
       UIApplication.shared,
       willFinishLaunchingWithOptions: [:]
     )
