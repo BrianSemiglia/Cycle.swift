@@ -76,6 +76,20 @@
                ReferencedContainer = "container:Cycle.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "D31FAC71201691A20015FD22"
+               BuildableName = "Integer Mutation Animated.app"
+               BlueprintName = "Integer Mutation Animated"
+               ReferencedContainer = "container:Cycle.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
