@@ -12,7 +12,7 @@ import RxSwift
 
 @UIApplicationMain
 class URLActionOutgoingDelegate: CycledApplicationDelegate<URLActionOutgoing> {
-  init() {
+  override init() {
     super.init(
       router: URLActionOutgoing()
     )

@@ -12,7 +12,7 @@ import RxSwift
 
 @UIApplicationMain
 class Example: CycledApplicationDelegate<IntegerMutatingApp> {
-  init() {
+  override init() {
     super.init(
       router: IntegerMutatingApp()
     )

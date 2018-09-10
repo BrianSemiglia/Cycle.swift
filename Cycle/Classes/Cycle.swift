@@ -14,6 +14,10 @@ open class CycledApplicationDelegate<T: IORouter>: UIResponder, UIApplicationDel
   private var cycle: Cycle<T>
   public var window: UIWindow?
   
+  public override init() {
+    fatalError("CycledApplicationDelegate must be instantiated with a router.")
+  }
+  
   public init(router: T) {
     cycle = Cycle(router: router)
     super.init()

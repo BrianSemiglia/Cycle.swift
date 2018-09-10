@@ -12,7 +12,7 @@ import RxSwift
 
 @UIApplicationMain
 class ShortcutActionsExampleDelegate: CycledApplicationDelegate<ShortcutActionsExample> {
-  init() {
+  override init() {
     super.init(
       router: ShortcutActionsExample()
     )

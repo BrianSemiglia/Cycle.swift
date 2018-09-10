@@ -12,7 +12,7 @@ import RxSwift
 
 @UIApplicationMain
 class PushNotificationRegistrationDelegate: CycledApplicationDelegate<PushNotificationRegistration> {
-  init() {
+  override init() {
     super.init(
       router: PushNotificationRegistration()
     )
@@ -45,6 +45,7 @@ struct PushNotificationRegistration: IORouter {
     drivers
       .application
       .eventsCapturedAfterRendering(incoming.map { $0.application })
+      // event + model.previous -> model.new + model.previous -> operation
       .withLatestFrom(incoming) { ($0, $1) }
       .reduced()
   }
