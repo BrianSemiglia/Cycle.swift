@@ -116,6 +116,11 @@ public class RxUIApplication: NSObject, UIApplicationDelegate {
         case progressing // Readonly
         case complete
       }
+      public init(id: String, completion: @escaping () -> Void, state: State) {
+        self.id = id
+        self.completion = completion
+        self.state = state
+      }
     }
     public struct BackgroundFetch {
       public var minimumInterval: Interval
@@ -129,6 +134,10 @@ public class RxUIApplication: NSObject, UIApplicationDelegate {
         case minimum
         case some(TimeInterval)
         case never
+      }
+      public init(minimumInterval: Interval, state: State) {
+        self.minimumInterval = minimumInterval
+        self.state = state
       }
     }
     public struct ShortcutAction {
@@ -151,6 +160,10 @@ public class RxUIApplication: NSObject, UIApplicationDelegate {
         case progressing((UIBackgroundFetchResult) -> Void) // Readonly
         case complete(UIBackgroundFetchResult, (UIBackgroundFetchResult) -> Void)
       }
+      public init(notification: [AnyHashable : Any], state: State) {
+        self.notification = notification
+        self.state = state
+      }
     }
     public struct watchKitExtensionRequests {
       public let completion: ([AnyHashable : Any]?) -> Void
@@ -158,6 +171,10 @@ public class RxUIApplication: NSObject, UIApplicationDelegate {
       public enum State {
         case progressing(info: [AnyHashable: Any]?)
         case responding(response: [AnyHashable : Any]?)
+      }
+      public init(completion: @escaping ([AnyHashable : Any]?) -> Void, state: State) {
+        self.completion = completion
+        self.state = state
       }
     }
     public enum BackgroundURLSessionDataAvailability {
@@ -192,6 +209,10 @@ public class RxUIApplication: NSObject, UIApplicationDelegate {
           case some
         }
       }
+      public init(shouldLaunch: Bool, state: Change<State>) {
+        self.shouldLaunch = shouldLaunch
+        self.state = state
+      }
     }
     
     // IDEA: prevent transitioning between certain enum states with pattern matched conversion methods and private intializer
@@ -199,14 +220,26 @@ public class RxUIApplication: NSObject, UIApplicationDelegate {
     public struct WindowResponse {
       public var window: UIWindow
       public var orientation: UIInterfaceOrientationMask
+      public init(window: UIWindow, orientation: UIInterfaceOrientationMask) {
+        self.window = window
+        self.orientation = orientation
+      }
     }
     public struct RestorationQuery {
       public var identifier: String
       public var coder: NSCoder
+      public init(identifier: String, coder: NSCoder) {
+        self.identifier = identifier
+        self.coder = coder
+      }
     }
     public struct RestorationResponse {
       public var identifier: String
       public var view: UIViewController
+      public init(identifier: String, view: UIViewController) {
+        self.identifier = identifier
+        self.view = view
+      }
     }
     public struct BackgroundTask {
       public var name: String // Readonly
@@ -216,6 +249,10 @@ public class RxUIApplication: NSObject, UIApplicationDelegate {
         case progressing(UIBackgroundTaskIdentifier) // Readonly
         case complete(UIBackgroundTaskIdentifier)
         case expiring // Readonly
+      }
+      public init(name: String, state: State) {
+        self.name = name
+        self.state = state
       }
     }
     public enum TartgetActionProcess {
@@ -228,6 +265,109 @@ public class RxUIApplication: NSObject, UIApplicationDelegate {
       public var target: Any?
       public var sender: Any?
       public var event: UIEvent?
+      public init(action: Selector, target: Any?, sender: Any?, event: UIEvent?) {
+        self.action = action
+        self.target = target
+        self.sender = sender
+        self.event = event
+      }
+    }
+
+    public init(
+      backgroundURLSessions: Set<BackgroundURLSessionAction>,
+      backgroundFetch: BackgroundFetch,
+      remoteAction: AsyncAction<ActionRemote>,
+      localAction: AsyncAction<ActionLocal>,
+      userActivityState: UserActivityState,
+      stateRestoration: StateRestoration,
+      watchKitExtensionRequests: [watchKitExtensionRequests],
+      localNotification: UILocalNotification?,
+      remoteNotifications: [RemoteNofitication],
+      isObservingSignificantTimeChange: Bool,
+      isExperiencingMemoryWarning: Bool,
+      session: Session,
+      statusBarFrame: Change<CGRect>,
+      isProtectedDataAvailable: Change<Bool>,
+      remoteNotificationRegistration: RemoteNotificationRegistration,
+      statusBarOrientation: Change<UIInterfaceOrientation>,
+      backgroundTasks: Set<BackgroundTask>,
+      isExperiencingHealthAuthorizationRequest: Bool,
+      isIgnoringUserEvents: Bool,
+      isIdleTimerDisabled: Bool,
+      urlActionOutgoing: URLActionOutgoing,
+      sendingEvent: UIEvent?,
+      targetAction: TartgetActionProcess,
+      isNetworkActivityIndicatorVisible: Bool,
+      iconBadgeNumber: Int,
+      supportsShakeToEdit: Bool,
+      presentedLocalNotification: UILocalNotification?,
+      scheduledLocalNotifications: [UILocalNotification],
+      userNotificationSettings: UserNotificationSettingsState,
+      isReceivingRemoteControlEvents: Bool,
+      newsStandIconImage: UIImage?,
+      shortcutActions: [ShortcutAction],
+      shouldSaveApplicationState: Filtered<
+        NSCoder,
+        Bool
+      >,
+      shouldRestoreApplicationState: Filtered<
+        NSCoder,
+        Bool
+      >,
+      shouldLaunch: Bool,
+      urlActionIncoming: Filtered<
+        RxUIApplication.Model.URLLaunch,
+        URL
+      >,
+      extensionPointIdentifier: Filtered<
+        UIApplicationExtensionPointIdentifier,
+        UIApplicationExtensionPointIdentifier
+      >,
+      interfaceOrientations: [Filtered<UIWindow, WindowResponse>],
+      viewControllerRestoration: Filtered<
+        RestorationQuery,
+        RestorationResponse
+      >
+    ) {
+      self.backgroundURLSessions = backgroundURLSessions
+      self.backgroundFetch = backgroundFetch
+      self.remoteAction = remoteAction
+      self.localAction = localAction
+      self.userActivityState = userActivityState
+      self.stateRestoration = stateRestoration
+      self.watchKitExtensionRequests = watchKitExtensionRequests
+      self.localNotification = localNotification
+      self.remoteNotifications = remoteNotifications
+      self.isObservingSignificantTimeChange = isObservingSignificantTimeChange
+      self.isExperiencingMemoryWarning = isExperiencingMemoryWarning
+      self.session = session
+      self.statusBarFrame = statusBarFrame
+      self.isProtectedDataAvailable = isProtectedDataAvailable
+      self.remoteNotificationRegistration = remoteNotificationRegistration
+      self.statusBarOrientation = statusBarOrientation
+      self.backgroundTasks = backgroundTasks
+      self.isExperiencingHealthAuthorizationRequest = isExperiencingHealthAuthorizationRequest
+      self.isIgnoringUserEvents = isIgnoringUserEvents
+      self.isIdleTimerDisabled = isIdleTimerDisabled
+      self.urlActionOutgoing = urlActionOutgoing
+      self.sendingEvent = sendingEvent
+      self.targetAction = targetAction
+      self.isNetworkActivityIndicatorVisible = isNetworkActivityIndicatorVisible
+      self.iconBadgeNumber = iconBadgeNumber
+      self.supportsShakeToEdit = supportsShakeToEdit
+      self.presentedLocalNotification = presentedLocalNotification
+      self.scheduledLocalNotifications = scheduledLocalNotifications
+      self.userNotificationSettings = userNotificationSettings
+      self.isReceivingRemoteControlEvents = isReceivingRemoteControlEvents
+      self.newsStandIconImage = newsStandIconImage
+      self.shortcutActions = shortcutActions
+      self.shouldSaveApplicationState = shouldSaveApplicationState
+      self.shouldRestoreApplicationState = shouldRestoreApplicationState
+      self.shouldLaunch = shouldLaunch
+      self.urlActionIncoming = urlActionIncoming
+      self.extensionPointIdentifier = extensionPointIdentifier
+      self.interfaceOrientations = interfaceOrientations
+      self.viewControllerRestoration = viewControllerRestoration
     }
   }
   
@@ -464,8 +604,8 @@ public class RxUIApplication: NSObject, UIApplicationDelegate {
         : application.endReceivingRemoteControlEvents()
     }
     
-    if #available(iOS 9.0, *) {} else if old.newsStandIconImage != model.newsStandIconImage {
-        application.setNewsstandIconImage(model.newsStandIconImage)
+    if old.newsStandIconImage != model.newsStandIconImage {
+      application.setNewsstandIconImage(model.newsStandIconImage)
     }
     
     application.shortcutItems = model.shortcutActions.map { $0.item }
@@ -981,18 +1121,18 @@ public class RxUIApplication: NSObject, UIApplicationDelegate {
 
 }
 
-func +=<Key, Value> (left: inout [Key: Value], right: [Key: Value]) {
+public func +=<Key, Value> (left: inout [Key: Value], right: [Key: Value]) {
   left = left + right
 }
 
-func +<Key, Value> (left: [Key: Value], right: [Key: Value]) -> [Key: Value] {
+public func +<Key, Value> (left: [Key: Value], right: [Key: Value]) -> [Key: Value] {
   var x = right
   left.forEach{ x[$0] = $1 }
   return x
 }
 
 extension RxUIApplication {
-  static func deletions<T: Equatable>(
+  public static func deletions<T: Equatable>(
     old: [T]?,
     new: [T]
   ) -> [T] { return
@@ -1015,7 +1155,7 @@ extension RxUIApplication {
 }
 
 extension RxUIApplication {
-  static func additions<T: Equatable>(
+  public static func additions<T: Equatable>(
     new: [T],
     old: [T]?
   ) -> [T] { return
