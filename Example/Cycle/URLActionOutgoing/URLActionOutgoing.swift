@@ -9,6 +9,7 @@
 import Foundation
 import Cycle
 import RxSwift
+import RxUIApplicationDelegate
 
 @UIApplicationMain
 class URLActionOutgoingDelegate: CycledApplicationDelegate<URLActionOutgoing> {
@@ -26,16 +27,16 @@ struct ScreenDriver: UIViewControllerProviding {
 struct URLActionOutgoing: IORouter {
   static let seed = Model()
   struct Model {
-    var application = RxUIApplication.Model.empty
+    var application = RxUIApplicationDelegate.Model.empty
   }
   struct Drivers: UIApplicationDelegateProviding, ScreenDrivable {
     let screen: ScreenDriver
-    let application: RxUIApplication
+    let application: RxUIApplicationDelegate
   }
   func driversFrom(seed: URLActionOutgoing.Model) -> URLActionOutgoing.Drivers {
     return Drivers(
       screen: ScreenDriver(),
-      application: RxUIApplication(initial: seed.application)
+      application: RxUIApplicationDelegate(initial: seed.application)
     )
   }
   func effectsOfEventsCapturedAfterRendering(
@@ -58,7 +59,7 @@ extension URLActionOutgoing.Model {
   }
 }
 
-extension ObservableType where E == (RxUIApplication.Model, URLActionOutgoing.Model) {
+extension ObservableType where E == (RxUIApplicationDelegate.Model, URLActionOutgoing.Model) {
   func reduced() -> Observable<URLActionOutgoing.Model> { return
     map { event, context in
       

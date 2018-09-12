@@ -9,6 +9,7 @@
 import Foundation
 import Cycle
 import RxSwift
+import RxUIApplicationDelegate
 
 @UIApplicationMain
 class ShortcutActionsExampleDelegate: CycledApplicationDelegate<ShortcutActionsExample> {
@@ -26,19 +27,19 @@ struct ScreenDriver: UIViewControllerProviding {
 struct ShortcutActionsExample: IORouter {
   static let seed = Model()
   struct Model {
-    var application = RxUIApplication.Model.empty
+    var application = RxUIApplicationDelegate.Model.empty
     var async = Timer.Model.empty
   }
   struct Drivers: UIApplicationDelegateProviding, ScreenDrivable {
     let screen: ScreenDriver
     let timer: Timer
-    let application: RxUIApplication
+    let application: RxUIApplicationDelegate
   }
   func driversFrom(seed: ShortcutActionsExample.Model) -> ShortcutActionsExample.Drivers {
     return Drivers(
       screen: ScreenDriver(),
       timer: Timer(seed.async),
-      application: RxUIApplication(initial: seed.application)
+      application: RxUIApplicationDelegate(initial: seed.application)
     )
   }
   func effectsOfEventsCapturedAfterRendering(
@@ -70,14 +71,14 @@ extension ShortcutActionsExample.Model {
   }
 }
 
-extension ObservableType where E == (RxUIApplication.Model, ShortcutActionsExample.Model) {
+extension ObservableType where E == (RxUIApplicationDelegate.Model, ShortcutActionsExample.Model) {
   func reduced() -> Observable<ShortcutActionsExample.Model> { return
     map { event, context in
       
       var e = event
       if case .pre(.resigned) = e.session.state {
         e.shortcutActions = Array(0...arc4random_uniform(3)).map {
-          RxUIApplication.Model.ShortcutAction(
+          RxUIApplicationDelegate.Model.ShortcutAction(
             item: UIApplicationShortcutItem(
               type: "test " + String($0),
               localizedTitle: "test " + String($0)

@@ -9,6 +9,7 @@
 import Foundation
 import Cycle
 import RxSwift
+import RxUIApplicationDelegate
 
 @UIApplicationMain
 class Example: CycledApplicationDelegate<IntegerMutatingApp> {
@@ -23,16 +24,16 @@ struct IntegerMutatingApp: IORouter {
   static let seed = Model()
   struct Model {
     var screen = ValueToggler.Model.empty
-    var application = RxUIApplication.Model.empty
+    var application = RxUIApplicationDelegate.Model.empty
   }
   struct Drivers: UIApplicationDelegateProviding, ScreenDrivable {
     let screen: ValueToggler
-    let application: RxUIApplication
+    let application: RxUIApplicationDelegate
   }
   func driversFrom(seed: IntegerMutatingApp.Model) -> IntegerMutatingApp.Drivers { return
     Drivers(
       screen: ValueToggler(),
-      application: RxUIApplication(initial: seed.application)
+      application: RxUIApplicationDelegate(initial: seed.application)
     )
   }
   func effectsOfEventsCapturedAfterRendering(
@@ -82,7 +83,7 @@ extension ObservableType where E == (ValueToggler.Model, IntegerMutatingApp.Mode
   }
 }
 
-extension ObservableType where E == (RxUIApplication.Model, IntegerMutatingApp.Model) {
+extension ObservableType where E == (RxUIApplicationDelegate.Model, IntegerMutatingApp.Model) {
   func reduced() -> Observable<IntegerMutatingApp.Model> { return
     map { event, global in
       var c = global

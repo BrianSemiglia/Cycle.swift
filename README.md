@@ -111,7 +111,7 @@ public protocol IORouter {
       1. let application: UIApplicationDelegateProviding - can serve as UIApplicationDelegate
       2. let screen: ScreenDrivable - can provide a root UIViewController
 
-    A default UIApplicationDelegateProviding driver, RxUIApplication, is included with Cycle.
+    A default UIApplicationDelegateProviding driver, RxUIApplicationDelegate, is included with Cycle.
   */
   associatedtype Drivers: UIApplicationDelegateProviding, ScreenDrivable
 
@@ -146,20 +146,20 @@ public protocol IORouter {
     struct AppModel {
       let network = Network.Model()
       let screen = Screen.Model()
-      let application = RxUIApplication.Model()
+      let application = RxUIApplicationDelegate.Model()
     }
     
     struct Drivers: UIApplicationDelegateProviding, ScreenDrivable {
       let network: Network
       let screen: Screen // Anything that provides a 'root' UIViewController
-      let application: RxUIApplication // Anything that conforms to UIApplicationDelegate
+      let application: RxUIApplicationDelegate // Anything that conforms to UIApplicationDelegate
     }
 
     func driversFrom(seed: AppModel) -> Drivers { return
       Drivers(
         network = Network(model: intitial.network),
         screen = Screen(model: intitial.screen),
-        application = RxUIApplication(model: initial.application)
+        application = RxUIApplicationDelegate(model: initial.application)
       )
     }
 
@@ -230,7 +230,7 @@ public protocol IORouter {
     }
   }
 
-  extension ObservableType where E == (RxUIApplication.Model, AppModel) {
+  extension ObservableType where E == (RxUIApplicationDelegate.Model, AppModel) {
     func reduced() -> Observable<AppModel> { return
       map { event, context in
         var new = context

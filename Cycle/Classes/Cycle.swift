@@ -93,7 +93,7 @@ public protocol IORouter {
    1. let application: UIApplicationDelegateProviding - can serve as UIApplicationDelegate
    2. let screen: ScreenDrivable - can provide a root UIViewController
    
-   A default UIApplicationDelegateProviding driver, RxUIApplication, is included with Cycle.
+   A default UIApplicationDelegateProviding driver, RxUIApplicationDelegate, is included with Cycle.
    */
   associatedtype Drivers: UIApplicationDelegateProviding, ScreenDrivable
   

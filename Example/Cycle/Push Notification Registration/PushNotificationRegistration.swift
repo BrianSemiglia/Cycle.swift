@@ -9,6 +9,7 @@
 import Foundation
 import Cycle
 import RxSwift
+import RxUIApplicationDelegate
 
 @UIApplicationMain
 class PushNotificationRegistrationDelegate: CycledApplicationDelegate<PushNotificationRegistration> {
@@ -26,16 +27,16 @@ struct ScreenDriver: UIViewControllerProviding {
 struct PushNotificationRegistration: IORouter {
   static let seed = Model()
   struct Model {
-    var application = RxUIApplication.Model.empty
+    var application = RxUIApplicationDelegate.Model.empty
   }
   struct Drivers: UIApplicationDelegateProviding, ScreenDrivable {
     let screen: ScreenDriver
-    let application: RxUIApplication
+    let application: RxUIApplicationDelegate
   }
   func driversFrom(seed: PushNotificationRegistration.Model) -> PushNotificationRegistration.Drivers { return
     Drivers(
       screen: ScreenDriver(),
-      application: RxUIApplication(initial: seed.application)
+      application: RxUIApplicationDelegate(initial: seed.application)
     )
   }
   func effectsOfEventsCapturedAfterRendering(
@@ -59,7 +60,7 @@ extension PushNotificationRegistration.Model {
   }
 }
 
-extension ObservableType where E == (application: RxUIApplication.Model, push: PushNotificationRegistration.Model) {
+extension ObservableType where E == (application: RxUIApplicationDelegate.Model, push: PushNotificationRegistration.Model) {
   func reduced() -> Observable<PushNotificationRegistration.Model> { return
     map { event, context in
       var edit = event

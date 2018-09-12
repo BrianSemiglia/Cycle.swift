@@ -28,7 +28,6 @@
 		D30605301E5EA484007BE6F0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D30604E71E5E5247007BE6F0 /* Images.xcassets */; };
 		D30605311E5EA484007BE6F0 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D30604E31E5E5247007BE6F0 /* LaunchScreen.xib */; };
 		D306053C1E5EA54A007BE6F0 /* URLActionOutgoing.swift in Sources */ = {isa = PBXBuildFile; fileRef = D30605261E5EA45D007BE6F0 /* URLActionOutgoing.swift */; };
-		D306053E1E5EAC4D007BE6F0 /* RxUIApplicationTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = D306053D1E5EAC4D007BE6F0 /* RxUIApplicationTestCase.swift */; };
 		D31FAC74201691A20015FD22 /* Timer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D30605051E5E6656007BE6F0 /* Timer.swift */; };
 		D31FAC78201691A20015FD22 /* Pods_Integer_Mutation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AB3EC56074E54409661B9B4 /* Pods_Integer_Mutation.framework */; };
 		D31FAC7A201691A20015FD22 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D30604E71E5E5247007BE6F0 /* Images.xcassets */; };
@@ -81,7 +80,6 @@
 		D30605261E5EA45D007BE6F0 /* URLActionOutgoing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = URLActionOutgoing.swift; sourceTree = "<group>"; };
 		D30605381E5EA484007BE6F0 /* URL Action Outgoing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "URL Action Outgoing.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D306053A1E5EA4F0007BE6F0 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D306053D1E5EAC4D007BE6F0 /* RxUIApplicationTestCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RxUIApplicationTestCase.swift; sourceTree = "<group>"; };
 		D31FAC81201691A20015FD22 /* Integer Mutation Animated.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Integer Mutation Animated.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D31FAC82201691A30015FD22 /* Integer Mutation copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Integer Mutation copy-Info.plist"; path = "/Users/brian/Downloads/Cycle.swift/Example/Integer Mutation copy-Info.plist"; sourceTree = "<absolute>"; };
 		D31FAC84201691CB0015FD22 /* IntegerMutatingApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntegerMutatingApp.swift; sourceTree = "<group>"; };
@@ -206,7 +204,6 @@
 		607FACE81AFB9204008FA782 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				D306053D1E5EAC4D007BE6F0 /* RxUIApplicationTestCase.swift */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
 			);
 			path = Tests;
@@ -608,12 +605,14 @@
 				"${BUILT_PRODUCTS_DIR}/Changeset/Changeset.framework",
 				"${BUILT_PRODUCTS_DIR}/Cycle/Cycle.framework",
 				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/RxUIApplicationDelegate/RxUIApplicationDelegate.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Changeset.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Cycle.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxUIApplicationDelegate.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -648,12 +647,14 @@
 				"${BUILT_PRODUCTS_DIR}/Changeset/Changeset.framework",
 				"${BUILT_PRODUCTS_DIR}/Cycle/Cycle.framework",
 				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/RxUIApplicationDelegate/RxUIApplicationDelegate.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Changeset.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Cycle.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxUIApplicationDelegate.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -688,6 +689,7 @@
 				"${BUILT_PRODUCTS_DIR}/Changeset/Changeset.framework",
 				"${BUILT_PRODUCTS_DIR}/Cycle/Cycle.framework",
 				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/RxUIApplicationDelegate/RxUIApplicationDelegate.framework",
 				"${BUILT_PRODUCTS_DIR}/RxCocoa/RxCocoa.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -695,6 +697,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Changeset.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Cycle.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxUIApplicationDelegate.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxCocoa.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -712,12 +715,14 @@
 				"${BUILT_PRODUCTS_DIR}/Changeset/Changeset.framework",
 				"${BUILT_PRODUCTS_DIR}/Cycle/Cycle.framework",
 				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/RxUIApplicationDelegate/RxUIApplicationDelegate.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Changeset.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Cycle.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxUIApplicationDelegate.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -734,6 +739,7 @@
 				"${BUILT_PRODUCTS_DIR}/Changeset/Changeset.framework",
 				"${BUILT_PRODUCTS_DIR}/Cycle/Cycle.framework",
 				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/RxUIApplicationDelegate/RxUIApplicationDelegate.framework",
 				"${BUILT_PRODUCTS_DIR}/RxCocoa/RxCocoa.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -741,6 +747,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Changeset.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Cycle.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxUIApplicationDelegate.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxCocoa.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -763,7 +770,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D306053E1E5EAC4D007BE6F0 /* RxUIApplicationTestCase.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
