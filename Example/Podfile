@@ -3,7 +3,7 @@ platform :ios, 9.0
 
 target 'Push Notification Registration' do
   pod 'Cycle', :path => '../'
-  pod 'RxUIApplicationDelegate', :path => '~/Documents/RxUIApplicationDelegate/'
+  pod 'RxUIApplicationDelegate'
   target 'Cycle_Tests' do
     inherit! :search_paths
   end
@@ -11,23 +11,22 @@ end
 
 target 'Shortcut Items' do
   pod 'Cycle', :path => '../'
-  pod 'RxUIApplicationDelegate', :path => '~/Documents/RxUIApplicationDelegate/'
+  pod 'RxUIApplicationDelegate'
 end
 
 target 'Integer Mutation' do
   pod 'Cycle', :path => '../'
-  pod 'RxUIApplicationDelegate', :path => '~/Documents/RxUIApplicationDelegate/'
+  pod 'RxUIApplicationDelegate'
   pod 'RxCocoa', '~> 4.0'
 end
 
 target 'Integer Mutation Animated' do
   pod 'Cycle', :path => '../'
-  pod 'RxUIApplicationDelegate', :path => '~/Documents/RxUIApplicationDelegate/'
-
+  pod 'RxUIApplicationDelegate'
   pod 'RxCocoa', '~> 4.0'
 end
 
 target 'URL Action Outgoing' do
   pod 'Cycle', :path => '../'
-  pod 'RxUIApplicationDelegate', :path => '~/Documents/RxUIApplicationDelegate/'
+  pod 'RxUIApplicationDelegate'
 end
