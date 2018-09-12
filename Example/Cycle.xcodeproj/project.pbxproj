@@ -34,7 +34,6 @@
 		D31FAC7B201691A20015FD22 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D30604E31E5E5247007BE6F0 /* LaunchScreen.xib */; };
 		D31FAC87201691CB0015FD22 /* IntegerMutatingApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D31FAC84201691CB0015FD22 /* IntegerMutatingApp.swift */; };
 		D31FAC88201691CB0015FD22 /* ValueToggler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D31FAC85201691CB0015FD22 /* ValueToggler.swift */; };
-		D31FAC89201691CB0015FD22 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D31FAC86201691CB0015FD22 /* Info.plist */; };
 		D38E6187200F35D600E94387 /* Timer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D30605051E5E6656007BE6F0 /* Timer.swift */; };
 /* End PBXBuildFile section */
 
@@ -81,7 +80,6 @@
 		D30605381E5EA484007BE6F0 /* URL Action Outgoing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "URL Action Outgoing.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D306053A1E5EA4F0007BE6F0 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D31FAC81201691A20015FD22 /* Integer Mutation Animated.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Integer Mutation Animated.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		D31FAC82201691A30015FD22 /* Integer Mutation copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Integer Mutation copy-Info.plist"; path = "/Users/brian/Downloads/Cycle.swift/Example/Integer Mutation copy-Info.plist"; sourceTree = "<absolute>"; };
 		D31FAC84201691CB0015FD22 /* IntegerMutatingApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntegerMutatingApp.swift; sourceTree = "<group>"; };
 		D31FAC85201691CB0015FD22 /* ValueToggler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ValueToggler.swift; sourceTree = "<group>"; };
 		D31FAC86201691CB0015FD22 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -171,7 +169,6 @@
 				607FACD11AFB9204008FA782 /* Products */,
 				F9A6C6FB5832BFCE3FED7321 /* Pods */,
 				420949623F63038D9B3C3651 /* Frameworks */,
-				D31FAC82201691A30015FD22 /* Integer Mutation copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -516,7 +513,6 @@
 			files = (
 				D31FAC7A201691A20015FD22 /* Images.xcassets in Resources */,
 				D31FAC7B201691A20015FD22 /* LaunchScreen.xib in Resources */,
-				D31FAC89201691CB0015FD22 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1102,7 +1098,7 @@
 			baseConfigurationReference = 20983B48B2B20294687C61B1 /* Pods-Integer Mutation Animated.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				INFOPLIST_FILE = "Integer Mutation copy-Info.plist";
+				INFOPLIST_FILE = "Cycle/Integer Mutation Animated/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
@@ -1116,7 +1112,7 @@
 			baseConfigurationReference = FFF0458912A447A5D0B4BA2F /* Pods-Integer Mutation Animated.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				INFOPLIST_FILE = "Integer Mutation copy-Info.plist";
+				INFOPLIST_FILE = "Cycle/Integer Mutation Animated/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
