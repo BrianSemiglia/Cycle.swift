@@ -17,10 +17,6 @@
 		3549BB8B1DA38C0A00C63030 /* CycleSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3549BB8A1DA38C0A00C63030 /* CycleSpec.swift */; };
 		3549BB8C1DA38C0A00C63030 /* CycleSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3549BB8A1DA38C0A00C63030 /* CycleSpec.swift */; };
 		3549BB8D1DA38C0A00C63030 /* CycleSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3549BB8A1DA38C0A00C63030 /* CycleSpec.swift */; };
-		359649031FB18CC000FC7ADC /* Cycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 359649021FB18CBF00FC7ADC /* Cycle.swift */; };
-		359649041FB18CC000FC7ADC /* Cycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 359649021FB18CBF00FC7ADC /* Cycle.swift */; };
-		359649051FB18CC000FC7ADC /* Cycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 359649021FB18CBF00FC7ADC /* Cycle.swift */; };
-		359649061FB18CC000FC7ADC /* Cycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 359649021FB18CBF00FC7ADC /* Cycle.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -523,7 +519,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				359649031FB18CC000FC7ADC /* Cycle.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -531,7 +526,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				359649061FB18CC000FC7ADC /* Cycle.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -539,7 +533,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				359649041FB18CC000FC7ADC /* Cycle.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -547,7 +540,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				359649051FB18CC000FC7ADC /* Cycle.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -888,7 +880,6 @@
 		3549BB6A1DA38ADB00C63030 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -905,7 +896,6 @@
 		3549BB6B1DA38ADB00C63030 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -921,7 +911,6 @@
 		3549BB791DA38AEF00C63030 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -940,7 +929,6 @@
 		3549BB7A1DA38AEF00C63030 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -958,7 +946,6 @@
 		3549BB881DA38B0000C63030 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -978,7 +965,6 @@
 		3549BB891DA38B0000C63030 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
