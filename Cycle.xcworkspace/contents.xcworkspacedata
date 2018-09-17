@@ -41,12 +41,6 @@
       location = "group:Gemfile.lock">
    </FileRef>
    <FileRef
-      location = "group:Package.swift">
-   </FileRef>
-   <FileRef
-      location = "group:Package.resolved">
-   </FileRef>
-   <FileRef
       location = "group:Cycle.podspec">
    </FileRef>
 </Workspace>
