@@ -6,6 +6,8 @@
 //  Copyright © 2017 Brian Semiglia. All rights reserved.
 //
 
+#if os(iOS) || os(tvOS)
+
 import UIKit
 import RxSwift
 
@@ -125,3 +127,5 @@ public protocol UIApplicationDelegateProviding {
   associatedtype Delegate: UIApplicationDelegate
   var application: Delegate { get }
 }
+
+#endif
