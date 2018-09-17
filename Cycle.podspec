@@ -6,7 +6,10 @@ Pod::Spec.new do |s|
   s.homepage         = 'https://github.com/BrianSemiglia/Cycle.swift'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'brian.semiglia@gmail.com' => 'brian.semiglia@gmail.com' }
-  s.source           = { :git => 'https://github.com/BrianSemiglia/Cycle.swift.git', :tag => s.version.to_s }
+  s.source           = {
+    :git => 'https://github.com/BrianSemiglia/Cycle.swift.git',
+    :tag => s.version.to_s
+  }
   s.social_media_url = 'https://twitter.com/brians_'
   s.platforms = {
     :ios => "8.0",
@@ -14,7 +17,12 @@ Pod::Spec.new do |s|
     :tvos => "9.0",
     :watchos => "2.0"
   }
-  s.source_files = 'Cycle/Classes/**/*'
+  s.requires_arc = true
+  s.default_subspec = "Core"
+  s.subspec "Core" do |ss|
+    ss.source_files  = "Sources/**/*.swift"
+    ss.framework  = "Foundation"
+  end
   s.dependency 'RxSwift',   '~> 4.0'
   s.dependency 'Changeset', '3.1'
 end
