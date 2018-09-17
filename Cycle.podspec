@@ -8,7 +8,12 @@ Pod::Spec.new do |s|
   s.author           = { 'brian.semiglia@gmail.com' => 'brian.semiglia@gmail.com' }
   s.source           = { :git => 'https://github.com/BrianSemiglia/Cycle.swift.git', :tag => s.version.to_s }
   s.social_media_url = 'https://twitter.com/brians_'
-  s.ios.deployment_target = '9.0'
+  s.platforms = {
+    :ios => "8.0",
+    :osx => "10.10",
+    :tvos => "9.0",
+    :watchos => "2.0"
+  }
   s.source_files = 'Cycle/Classes/**/*'
   s.dependency 'RxSwift',   '~> 4.0'
   s.dependency 'Changeset', '3.1'
