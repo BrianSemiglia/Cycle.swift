@@ -18,6 +18,7 @@ Pod::Spec.new do |s|
     :watchos => "2.0"
   }
   s.requires_arc = true
+  s.swift_version = "4.1"
   s.default_subspec = "Core"
   s.subspec "Core" do |ss|
     ss.source_files  = "Sources/**/*.swift"
