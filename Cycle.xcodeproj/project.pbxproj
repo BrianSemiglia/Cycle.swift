@@ -28,6 +28,13 @@
 		D353F65C214F416000B95E69 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F658214F416000B95E69 /* RxCocoa.framework */; };
 		D353F65E214F423800B95E69 /* Cycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 359649021FB18CBF00FC7ADC /* Cycle.swift */; };
 		D353F65F214F43A300B95E69 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F655214F416000B95E69 /* RxSwift.framework */; };
+		D353F67B214F453000B95E69 /* URLActionOutgoing.swift in Sources */ = {isa = PBXBuildFile; fileRef = D353F679214F452F00B95E69 /* URLActionOutgoing.swift */; };
+		D353F67C214F453000B95E69 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D353F67A214F452F00B95E69 /* Info.plist */; };
+		D353F67D214F455600B95E69 /* Changeset.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F657214F416000B95E69 /* Changeset.framework */; };
+		D353F67E214F455600B95E69 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F658214F416000B95E69 /* RxCocoa.framework */; };
+		D353F67F214F455600B95E69 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F655214F416000B95E69 /* RxSwift.framework */; };
+		D353F680214F455600B95E69 /* RxUIApplicationDelegate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F656214F416000B95E69 /* RxUIApplicationDelegate.framework */; };
+		D353F681214F456600B95E69 /* Cycle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3549BB211DA389CD00C63030 /* Cycle.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -111,6 +118,9 @@
 		D353F656214F416000B95E69 /* RxUIApplicationDelegate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxUIApplicationDelegate.framework; path = Carthage/Build/iOS/RxUIApplicationDelegate.framework; sourceTree = "<group>"; };
 		D353F657214F416000B95E69 /* Changeset.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Changeset.framework; path = Carthage/Build/iOS/Changeset.framework; sourceTree = "<group>"; };
 		D353F658214F416000B95E69 /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxCocoa.framework; path = Carthage/Build/iOS/RxCocoa.framework; sourceTree = "<group>"; };
+		D353F666214F450900B95E69 /* URL Action Outgoing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "URL Action Outgoing.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D353F679214F452F00B95E69 /* URLActionOutgoing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = URLActionOutgoing.swift; sourceTree = "<group>"; };
+		D353F67A214F452F00B95E69 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -179,6 +189,18 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D353F663214F450900B95E69 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D353F67D214F455600B95E69 /* Changeset.framework in Frameworks */,
+				D353F67E214F455600B95E69 /* RxCocoa.framework in Frameworks */,
+				D353F67F214F455600B95E69 /* RxSwift.framework in Frameworks */,
+				D353F681214F456600B95E69 /* Cycle.framework in Frameworks */,
+				D353F680214F455600B95E69 /* RxUIApplicationDelegate.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -204,6 +226,7 @@
 				3549BB701DA38AEF00C63030 /* CycleTests-tvOS.xctest */,
 				3549BB7F1DA38B0000C63030 /* CycleTests-macOS.xctest */,
 				D353F636214F3FFF00B95E69 /* Push Notification Registration.app */,
+				D353F666214F450900B95E69 /* URL Action Outgoing.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -267,6 +290,7 @@
 		D353F648214F403100B95E69 /* Examples */ = {
 			isa = PBXGroup;
 			children = (
+				D353F678214F452F00B95E69 /* URL Action Outgoing */,
 				D353F649214F404B00B95E69 /* Push Notification Registration */,
 			);
 			path = Examples;
@@ -281,6 +305,15 @@
 				D353F64E214F404B00B95E69 /* Info.plist */,
 			);
 			path = "Push Notification Registration";
+			sourceTree = "<group>";
+		};
+		D353F678214F452F00B95E69 /* URL Action Outgoing */ = {
+			isa = PBXGroup;
+			children = (
+				D353F679214F452F00B95E69 /* URLActionOutgoing.swift */,
+				D353F67A214F452F00B95E69 /* Info.plist */,
+			);
+			path = "URL Action Outgoing";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -468,6 +501,24 @@
 			productReference = D353F636214F3FFF00B95E69 /* Push Notification Registration.app */;
 			productType = "com.apple.product-type.application";
 		};
+		D353F665214F450900B95E69 /* URL Action Outgoing */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D353F677214F450B00B95E69 /* Build configuration list for PBXNativeTarget "URL Action Outgoing" */;
+			buildPhases = (
+				D353F662214F450900B95E69 /* Sources */,
+				D353F663214F450900B95E69 /* Frameworks */,
+				D353F664214F450900B95E69 /* Resources */,
+				D353F682214F457900B95E69 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "URL Action Outgoing";
+			productName = "URL Action Outgoing";
+			productReference = D353F666214F450900B95E69 /* URL Action Outgoing.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -517,6 +568,10 @@
 						CreatedOnToolsVersion = 9.4.1;
 						ProvisioningStyle = Automatic;
 					};
+					D353F665214F450900B95E69 = {
+						CreatedOnToolsVersion = 9.4.1;
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = 3549BAFF1DA387DB00C63030 /* Build configuration list for PBXProject "Cycle" */;
@@ -540,6 +595,7 @@
 				3549BB6F1DA38AEF00C63030 /* CycleTests-tvOS */,
 				3549BB2D1DA389DB00C63030 /* Cycle-watchOS */,
 				D353F635214F3FFF00B95E69 /* Push Notification Registration */,
+				D353F665214F450900B95E69 /* URL Action Outgoing */,
 			);
 		};
 /* End PBXProject section */
@@ -604,10 +660,39 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D353F664214F450900B95E69 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D353F67C214F453000B95E69 /* Info.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
 		D353F65D214F417900B95E69 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/RxSwift.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/RxCocoa.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/RxUIApplicationDelegate.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/Changeset.framework",
+			);
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxSwift.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxCocoa.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxUIApplicationDelegate.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Changeset.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/carthage copy-frameworks";
+		};
+		D353F682214F457900B95E69 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -689,6 +774,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				D353F64F214F404B00B95E69 /* PushNotificationRegistration.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D353F662214F450900B95E69 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D353F67B214F453000B95E69 /* URLActionOutgoing.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1174,6 +1267,56 @@
 			};
 			name = Release;
 		};
+		D353F675214F450B00B95E69 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = "Examples/URL Action Outgoing/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.briansemiglia.URL-Action-Outgoing";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		D353F676214F450B00B95E69 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = "Examples/URL Action Outgoing/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.briansemiglia.URL-Action-Outgoing";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1254,6 +1397,15 @@
 			buildConfigurations = (
 				D353F645214F400100B95E69 /* Debug */,
 				D353F646214F400100B95E69 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D353F677214F450B00B95E69 /* Build configuration list for PBXNativeTarget "URL Action Outgoing" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D353F675214F450B00B95E69 /* Debug */,
+				D353F676214F450B00B95E69 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
