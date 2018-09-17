@@ -20,7 +20,6 @@
 		D353F64F214F404B00B95E69 /* PushNotificationRegistration.swift in Sources */ = {isa = PBXBuildFile; fileRef = D353F64A214F404B00B95E69 /* PushNotificationRegistration.swift */; };
 		D353F650214F404B00B95E69 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D353F64B214F404B00B95E69 /* LaunchScreen.xib */; };
 		D353F651214F404B00B95E69 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D353F64D214F404B00B95E69 /* Images.xcassets */; };
-		D353F652214F404B00B95E69 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D353F64E214F404B00B95E69 /* Info.plist */; };
 		D353F654214F413000B95E69 /* Cycle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3549BB211DA389CD00C63030 /* Cycle.framework */; };
 		D353F659214F416000B95E69 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F655214F416000B95E69 /* RxSwift.framework */; };
 		D353F65A214F416000B95E69 /* RxUIApplicationDelegate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F656214F416000B95E69 /* RxUIApplicationDelegate.framework */; };
@@ -29,7 +28,6 @@
 		D353F65E214F423800B95E69 /* Cycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 359649021FB18CBF00FC7ADC /* Cycle.swift */; };
 		D353F65F214F43A300B95E69 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F655214F416000B95E69 /* RxSwift.framework */; };
 		D353F67B214F453000B95E69 /* URLActionOutgoing.swift in Sources */ = {isa = PBXBuildFile; fileRef = D353F679214F452F00B95E69 /* URLActionOutgoing.swift */; };
-		D353F67C214F453000B95E69 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D353F67A214F452F00B95E69 /* Info.plist */; };
 		D353F67D214F455600B95E69 /* Changeset.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F657214F416000B95E69 /* Changeset.framework */; };
 		D353F67E214F455600B95E69 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F658214F416000B95E69 /* RxCocoa.framework */; };
 		D353F67F214F455600B95E69 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F655214F416000B95E69 /* RxSwift.framework */; };
@@ -42,18 +40,15 @@
 		D353F69E214F48C400B95E69 /* RxUIApplicationDelegate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F656214F416000B95E69 /* RxUIApplicationDelegate.framework */; };
 		D353F6A3214F48F700B95E69 /* IntegerMutatingApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D353F6A0214F48F700B95E69 /* IntegerMutatingApp.swift */; };
 		D353F6A4214F48F700B95E69 /* ValueToggler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D353F6A1214F48F700B95E69 /* ValueToggler.swift */; };
-		D353F6A5214F48F800B95E69 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D353F6A2214F48F700B95E69 /* Info.plist */; };
 		D353F6BC214F49E700B95E69 /* Cycle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3549BB211DA389CD00C63030 /* Cycle.framework */; };
 		D353F6C2214F4AAE00B95E69 /* IntegerMutatingApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D353F6BF214F4AAE00B95E69 /* IntegerMutatingApp.swift */; };
 		D353F6C3214F4AAE00B95E69 /* ValueToggler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D353F6C0214F4AAE00B95E69 /* ValueToggler.swift */; };
-		D353F6C4214F4AAE00B95E69 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D353F6C1214F4AAE00B95E69 /* Info.plist */; };
 		D353F6C5214F4AD400B95E69 /* Changeset.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F657214F416000B95E69 /* Changeset.framework */; };
 		D353F6C6214F4AD400B95E69 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F658214F416000B95E69 /* RxCocoa.framework */; };
 		D353F6C7214F4AD400B95E69 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F655214F416000B95E69 /* RxSwift.framework */; };
 		D353F6C8214F4AD400B95E69 /* RxUIApplicationDelegate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F656214F416000B95E69 /* RxUIApplicationDelegate.framework */; };
 		D353F6E3214F4B3300B95E69 /* Timer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D353F6E0214F4B3300B95E69 /* Timer.swift */; };
 		D353F6E4214F4B3300B95E69 /* ShortcutItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = D353F6E1214F4B3300B95E69 /* ShortcutItems.swift */; };
-		D353F6E5214F4B3300B95E69 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D353F6E2214F4B3300B95E69 /* Info.plist */; };
 		D353F6E6214F4B3B00B95E69 /* Cycle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3549BB211DA389CD00C63030 /* Cycle.framework */; };
 		D353F6E7214F4B5400B95E69 /* Changeset.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F657214F416000B95E69 /* Changeset.framework */; };
 		D353F6E8214F4B5400B95E69 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F658214F416000B95E69 /* RxCocoa.framework */; };
@@ -688,7 +683,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0940;
-				LastUpgradeCheck = 0930;
+				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = BrianSemiglia;
 				TargetAttributes = {
 					3549BB201DA389CD00C63030 = {
@@ -833,7 +828,6 @@
 			files = (
 				D353F650214F404B00B95E69 /* LaunchScreen.xib in Resources */,
 				D353F651214F404B00B95E69 /* Images.xcassets in Resources */,
-				D353F652214F404B00B95E69 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -841,7 +835,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D353F67C214F453000B95E69 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -849,7 +842,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D353F6A5214F48F800B95E69 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -857,7 +849,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D353F6C4214F4AAE00B95E69 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -865,7 +856,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D353F6E5214F4B3300B95E69 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
