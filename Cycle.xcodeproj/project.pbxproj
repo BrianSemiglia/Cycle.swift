@@ -17,7 +17,17 @@
 		3549BB8B1DA38C0A00C63030 /* CycleSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3549BB8A1DA38C0A00C63030 /* CycleSpec.swift */; };
 		3549BB8C1DA38C0A00C63030 /* CycleSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3549BB8A1DA38C0A00C63030 /* CycleSpec.swift */; };
 		3549BB8D1DA38C0A00C63030 /* CycleSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3549BB8A1DA38C0A00C63030 /* CycleSpec.swift */; };
-		D353F661214F43F600B95E69 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F660214F43F600B95E69 /* RxSwift.framework */; };
+		D353F64F214F404B00B95E69 /* PushNotificationRegistration.swift in Sources */ = {isa = PBXBuildFile; fileRef = D353F64A214F404B00B95E69 /* PushNotificationRegistration.swift */; };
+		D353F650214F404B00B95E69 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D353F64B214F404B00B95E69 /* LaunchScreen.xib */; };
+		D353F651214F404B00B95E69 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D353F64D214F404B00B95E69 /* Images.xcassets */; };
+		D353F652214F404B00B95E69 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D353F64E214F404B00B95E69 /* Info.plist */; };
+		D353F654214F413000B95E69 /* Cycle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3549BB211DA389CD00C63030 /* Cycle.framework */; };
+		D353F659214F416000B95E69 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F655214F416000B95E69 /* RxSwift.framework */; };
+		D353F65A214F416000B95E69 /* RxUIApplicationDelegate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F656214F416000B95E69 /* RxUIApplicationDelegate.framework */; };
+		D353F65B214F416000B95E69 /* Changeset.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F657214F416000B95E69 /* Changeset.framework */; };
+		D353F65C214F416000B95E69 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F658214F416000B95E69 /* RxCocoa.framework */; };
+		D353F65E214F423800B95E69 /* Cycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 359649021FB18CBF00FC7ADC /* Cycle.swift */; };
+		D353F65F214F43A300B95E69 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F655214F416000B95E69 /* RxSwift.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -92,7 +102,15 @@
 		3549BB7F1DA38B0000C63030 /* CycleTests-macOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "CycleTests-macOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3549BB8A1DA38C0A00C63030 /* CycleSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CycleSpec.swift; sourceTree = "<group>"; };
 		359649021FB18CBF00FC7ADC /* Cycle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cycle.swift; sourceTree = "<group>"; };
-		D353F660214F43F600B95E69 /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = Carthage/Build/iOS/RxSwift.framework; sourceTree = "<group>"; };
+		D353F636214F3FFF00B95E69 /* Push Notification Registration.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Push Notification Registration.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D353F64A214F404B00B95E69 /* PushNotificationRegistration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushNotificationRegistration.swift; sourceTree = "<group>"; };
+		D353F64C214F404B00B95E69 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
+		D353F64D214F404B00B95E69 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		D353F64E214F404B00B95E69 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D353F655214F416000B95E69 /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = Carthage/Build/iOS/RxSwift.framework; sourceTree = "<group>"; };
+		D353F656214F416000B95E69 /* RxUIApplicationDelegate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxUIApplicationDelegate.framework; path = Carthage/Build/iOS/RxUIApplicationDelegate.framework; sourceTree = "<group>"; };
+		D353F657214F416000B95E69 /* Changeset.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Changeset.framework; path = Carthage/Build/iOS/Changeset.framework; sourceTree = "<group>"; };
+		D353F658214F416000B95E69 /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxCocoa.framework; path = Carthage/Build/iOS/RxCocoa.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,7 +118,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D353F661214F43F600B95E69 /* RxSwift.framework in Frameworks */,
+				D353F65F214F43A300B95E69 /* RxSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -149,6 +167,18 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D353F633214F3FFF00B95E69 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D353F659214F416000B95E69 /* RxSwift.framework in Frameworks */,
+				D353F65C214F416000B95E69 /* RxCocoa.framework in Frameworks */,
+				D353F65A214F416000B95E69 /* RxUIApplicationDelegate.framework in Frameworks */,
+				D353F654214F413000B95E69 /* Cycle.framework in Frameworks */,
+				D353F65B214F416000B95E69 /* Changeset.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -156,6 +186,7 @@
 			isa = PBXGroup;
 			children = (
 				3549BB161DA3890B00C63030 /* Sources */,
+				D353F648214F403100B95E69 /* Examples */,
 				3549BB191DA3890B00C63030 /* Tests */,
 				3549BB061DA387DB00C63030 /* Products */,
 				357D954B1DA3F2B400AEC55F /* Frameworks */,
@@ -172,6 +203,7 @@
 				3549BB611DA38ADB00C63030 /* CycleTests-iOS.xctest */,
 				3549BB701DA38AEF00C63030 /* CycleTests-tvOS.xctest */,
 				3549BB7F1DA38B0000C63030 /* CycleTests-macOS.xctest */,
+				D353F636214F3FFF00B95E69 /* Push Notification Registration.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -216,7 +248,10 @@
 		357D954B1DA3F2B400AEC55F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				D353F660214F43F600B95E69 /* RxSwift.framework */,
+				D353F657214F416000B95E69 /* Changeset.framework */,
+				D353F658214F416000B95E69 /* RxCocoa.framework */,
+				D353F655214F416000B95E69 /* RxSwift.framework */,
+				D353F656214F416000B95E69 /* RxUIApplicationDelegate.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -227,6 +262,25 @@
 				359649021FB18CBF00FC7ADC /* Cycle.swift */,
 			);
 			path = Core;
+			sourceTree = "<group>";
+		};
+		D353F648214F403100B95E69 /* Examples */ = {
+			isa = PBXGroup;
+			children = (
+				D353F649214F404B00B95E69 /* Push Notification Registration */,
+			);
+			path = Examples;
+			sourceTree = "<group>";
+		};
+		D353F649214F404B00B95E69 /* Push Notification Registration */ = {
+			isa = PBXGroup;
+			children = (
+				D353F64A214F404B00B95E69 /* PushNotificationRegistration.swift */,
+				D353F64B214F404B00B95E69 /* LaunchScreen.xib */,
+				D353F64D214F404B00B95E69 /* Images.xcassets */,
+				D353F64E214F404B00B95E69 /* Info.plist */,
+			);
+			path = "Push Notification Registration";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -396,13 +450,31 @@
 			productReference = 3549BB7F1DA38B0000C63030 /* CycleTests-macOS.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		D353F635214F3FFF00B95E69 /* Push Notification Registration */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D353F647214F400100B95E69 /* Build configuration list for PBXNativeTarget "Push Notification Registration" */;
+			buildPhases = (
+				D353F632214F3FFF00B95E69 /* Sources */,
+				D353F633214F3FFF00B95E69 /* Frameworks */,
+				D353F634214F3FFF00B95E69 /* Resources */,
+				D353F65D214F417900B95E69 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Push Notification Registration";
+			productName = "Push Notification Registration";
+			productReference = D353F636214F3FFF00B95E69 /* Push Notification Registration.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		3549BAFC1DA387DB00C63030 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0800;
+				LastSwiftUpdateCheck = 0940;
 				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = BrianSemiglia;
 				TargetAttributes = {
@@ -441,6 +513,10 @@
 						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 					};
+					D353F635214F3FFF00B95E69 = {
+						CreatedOnToolsVersion = 9.4.1;
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = 3549BAFF1DA387DB00C63030 /* Build configuration list for PBXProject "Cycle" */;
@@ -449,6 +525,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 3549BAFB1DA387DB00C63030;
 			productRefGroup = 3549BB061DA387DB00C63030 /* Products */;
@@ -462,6 +539,7 @@
 				3549BB471DA389F300C63030 /* Cycle-tvOS */,
 				3549BB6F1DA38AEF00C63030 /* CycleTests-tvOS */,
 				3549BB2D1DA389DB00C63030 /* Cycle-watchOS */,
+				D353F635214F3FFF00B95E69 /* Push Notification Registration */,
 			);
 		};
 /* End PBXProject section */
@@ -516,13 +594,48 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D353F634214F3FFF00B95E69 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D353F650214F404B00B95E69 /* LaunchScreen.xib in Resources */,
+				D353F651214F404B00B95E69 /* Images.xcassets in Resources */,
+				D353F652214F404B00B95E69 /* Info.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		D353F65D214F417900B95E69 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/RxSwift.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/RxCocoa.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/RxUIApplicationDelegate.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/Changeset.framework",
+			);
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxSwift.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxCocoa.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxUIApplicationDelegate.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Changeset.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/carthage copy-frameworks";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		3549BB1C1DA389CD00C63030 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D353F65E214F423800B95E69 /* Cycle.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -571,6 +684,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D353F632214F3FFF00B95E69 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D353F64F214F404B00B95E69 /* PushNotificationRegistration.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -590,6 +711,17 @@
 			targetProxy = 3549BB851DA38B0000C63030 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		D353F64B214F404B00B95E69 /* LaunchScreen.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D353F64C214F404B00B95E69 /* Base */,
+			);
+			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		3549BB0B1DA387DB00C63030 /* Debug */ = {
@@ -890,6 +1022,7 @@
 		3549BB6A1DA38ADB00C63030 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -906,6 +1039,7 @@
 		3549BB6B1DA38ADB00C63030 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -990,6 +1124,56 @@
 			};
 			name = Release;
 		};
+		D353F645214F400100B95E69 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = "Examples/Push Notification Registration/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.briansemiglia.Push-Notification-Registration";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		D353F646214F400100B95E69 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = "Examples/Push Notification Registration/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.briansemiglia.Push-Notification-Registration";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1061,6 +1245,15 @@
 			buildConfigurations = (
 				3549BB881DA38B0000C63030 /* Debug */,
 				3549BB891DA38B0000C63030 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D353F647214F400100B95E69 /* Build configuration list for PBXNativeTarget "Push Notification Registration" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D353F645214F400100B95E69 /* Debug */,
+				D353F646214F400100B95E69 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
