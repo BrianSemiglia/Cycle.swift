@@ -3,6 +3,7 @@
 [![Version](https://img.shields.io/cocoapods/v/Cycle.svg?style=flat)](http://cocoapods.org/pods/Cycle)
 [![License](https://img.shields.io/cocoapods/l/Cycle.svg?style=flat)](http://cocoapods.org/pods/Cycle)
 [![Platform](https://img.shields.io/cocoapods/p/Cycle.svg?style=flat)](http://cocoapods.org/pods/Cycle)
+[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 
 ## Overview
 Cycle provides a means of writing an application as a function that reduces a stream of events to a stream of effects. The stream of effects can be thought of as a reel of film that can be fed to hardware to be projected. The approach allows for consistant execution and greater observability-of/control-over state. [CycleMonitor](https://github.com/BrianSemiglia/CycleMonitor) is a companion development tool that can be used to achieve that observability and control over your application.
@@ -381,12 +382,23 @@ The included sample application `Integer Mutation Animated` provides a working d
 ## Requirements
 iOS 9+
 
+## Sample Apps
+
+To run the sample apps, you'll need to build their dependencies. You can do so by opening Terminal and running `carthage bootstrap`.
+
 ## Installation
-Cycle is available through [CocoaPods](http://cocoapods.org). To install
-it, simply add the following line to your Podfile:
+
+Cycle is available via [CocoaPods](http://cocoapods.org) or [Carthage](https://github.com/Carthage/Carthage).
+To install via Cocoapods, add the following line to your Podfile:
 
 ```ruby
 pod "Cycle"
+```
+
+To install via Carthage, add the following line to your Cartfile:
+
+```
+github "BrianSemiglia/Cycle.swift"
 ```
 
 ## License
