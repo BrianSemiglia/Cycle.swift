@@ -12,7 +12,7 @@ import RxSwift
 import CoreLocation //
 import Cycle
 
-class ValueToggler: UIViewControllerProviding {
+class ValueToggler: RootViewProviding {
     
   struct Model {
     struct Button {

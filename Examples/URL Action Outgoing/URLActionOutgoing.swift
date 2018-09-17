@@ -20,7 +20,7 @@ class URLActionOutgoingDelegate: CycledApplicationDelegate<URLActionOutgoing> {
   }
 }
 
-struct ScreenDriver: UIViewControllerProviding {
+struct ScreenDriver: RootViewProviding {
   let root = UIViewController.empty
 }
 
@@ -29,7 +29,7 @@ struct URLActionOutgoing: IORouter {
   struct Model {
     var application = RxUIApplicationDelegate.Model.empty
   }
-  struct Drivers: UIApplicationDelegateProviding, ScreenDrivable {
+  struct Drivers: MainDelegateProviding, ScreenDrivable {
     let screen: ScreenDriver
     let application: RxUIApplicationDelegate
   }

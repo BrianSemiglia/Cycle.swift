@@ -20,7 +20,7 @@ class ShortcutActionsExampleDelegate: CycledApplicationDelegate<ShortcutActionsE
   }
 }
 
-struct ScreenDriver: UIViewControllerProviding {
+struct ScreenDriver: RootViewProviding {
   let root = UIViewController.empty
 }
 
@@ -30,7 +30,7 @@ struct ShortcutActionsExample: IORouter {
     var application = RxUIApplicationDelegate.Model.empty
     var async = Timer.Model.empty
   }
-  struct Drivers: UIApplicationDelegateProviding, ScreenDrivable {
+  struct Drivers: MainDelegateProviding, ScreenDrivable {
     let screen: ScreenDriver
     let timer: Timer
     let application: RxUIApplicationDelegate

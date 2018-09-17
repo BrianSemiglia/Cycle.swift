@@ -26,7 +26,7 @@ struct IntegerMutatingApp: IORouter {
     var screen: ValueToggler.Model
     var application: RxUIApplicationDelegate.Model
   }
-  struct Drivers: UIApplicationDelegateProviding, ScreenDrivable {
+  struct Drivers: MainDelegateProviding, ScreenDrivable {
     let screen: ValueToggler
     let application: RxUIApplicationDelegate
   }
