@@ -29,7 +29,6 @@ struct IntegerMutatingApp: IORouter {
   struct Drivers: UIApplicationDelegateProviding, ScreenDrivable {
     let screen: ValueToggler
     let application: RxUIApplicationDelegate
-    let delay: Timer
   }
   static var seed: [Model] { return
     [
@@ -45,11 +44,6 @@ struct IntegerMutatingApp: IORouter {
       screen: ValueToggler(),
       application: RxUIApplicationDelegate(
         initial: seed.first!.application
-      ),
-      delay: Timer(
-        Timer.Model(
-          operations: []
-        )
       )
     )
   }

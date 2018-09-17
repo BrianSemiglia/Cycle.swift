@@ -43,6 +43,14 @@
 		D353F6A3214F48F700B95E69 /* IntegerMutatingApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D353F6A0214F48F700B95E69 /* IntegerMutatingApp.swift */; };
 		D353F6A4214F48F700B95E69 /* ValueToggler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D353F6A1214F48F700B95E69 /* ValueToggler.swift */; };
 		D353F6A5214F48F800B95E69 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D353F6A2214F48F700B95E69 /* Info.plist */; };
+		D353F6BC214F49E700B95E69 /* Cycle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3549BB211DA389CD00C63030 /* Cycle.framework */; };
+		D353F6C2214F4AAE00B95E69 /* IntegerMutatingApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D353F6BF214F4AAE00B95E69 /* IntegerMutatingApp.swift */; };
+		D353F6C3214F4AAE00B95E69 /* ValueToggler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D353F6C0214F4AAE00B95E69 /* ValueToggler.swift */; };
+		D353F6C4214F4AAE00B95E69 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D353F6C1214F4AAE00B95E69 /* Info.plist */; };
+		D353F6C5214F4AD400B95E69 /* Changeset.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F657214F416000B95E69 /* Changeset.framework */; };
+		D353F6C6214F4AD400B95E69 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F658214F416000B95E69 /* RxCocoa.framework */; };
+		D353F6C7214F4AD400B95E69 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F655214F416000B95E69 /* RxSwift.framework */; };
+		D353F6C8214F4AD400B95E69 /* RxUIApplicationDelegate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F656214F416000B95E69 /* RxUIApplicationDelegate.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -133,6 +141,10 @@
 		D353F6A0214F48F700B95E69 /* IntegerMutatingApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntegerMutatingApp.swift; sourceTree = "<group>"; };
 		D353F6A1214F48F700B95E69 /* ValueToggler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ValueToggler.swift; sourceTree = "<group>"; };
 		D353F6A2214F48F700B95E69 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D353F6AA214F49DD00B95E69 /* Integer Mutation Animated.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Integer Mutation Animated.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D353F6BF214F4AAE00B95E69 /* IntegerMutatingApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntegerMutatingApp.swift; sourceTree = "<group>"; };
+		D353F6C0214F4AAE00B95E69 /* ValueToggler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ValueToggler.swift; sourceTree = "<group>"; };
+		D353F6C1214F4AAE00B95E69 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -225,6 +237,18 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D353F6A7214F49DD00B95E69 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D353F6BC214F49E700B95E69 /* Cycle.framework in Frameworks */,
+				D353F6C5214F4AD400B95E69 /* Changeset.framework in Frameworks */,
+				D353F6C6214F4AD400B95E69 /* RxCocoa.framework in Frameworks */,
+				D353F6C7214F4AD400B95E69 /* RxSwift.framework in Frameworks */,
+				D353F6C8214F4AD400B95E69 /* RxUIApplicationDelegate.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -252,6 +276,7 @@
 				D353F636214F3FFF00B95E69 /* Push Notification Registration.app */,
 				D353F666214F450900B95E69 /* URL Action Outgoing.app */,
 				D353F687214F47E500B95E69 /* Integer Mutation.app */,
+				D353F6AA214F49DD00B95E69 /* Integer Mutation Animated.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -315,6 +340,7 @@
 		D353F648214F403100B95E69 /* Examples */ = {
 			isa = PBXGroup;
 			children = (
+				D353F6BE214F4AAE00B95E69 /* Integer Mutation Animated */,
 				D353F69F214F48F700B95E69 /* Integer Mutation */,
 				D353F678214F452F00B95E69 /* URL Action Outgoing */,
 				D353F649214F404B00B95E69 /* Push Notification Registration */,
@@ -350,6 +376,16 @@
 				D353F6A2214F48F700B95E69 /* Info.plist */,
 			);
 			path = "Integer Mutation";
+			sourceTree = "<group>";
+		};
+		D353F6BE214F4AAE00B95E69 /* Integer Mutation Animated */ = {
+			isa = PBXGroup;
+			children = (
+				D353F6BF214F4AAE00B95E69 /* IntegerMutatingApp.swift */,
+				D353F6C0214F4AAE00B95E69 /* ValueToggler.swift */,
+				D353F6C1214F4AAE00B95E69 /* Info.plist */,
+			);
+			path = "Integer Mutation Animated";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -573,6 +609,24 @@
 			productReference = D353F687214F47E500B95E69 /* Integer Mutation.app */;
 			productType = "com.apple.product-type.application";
 		};
+		D353F6A9214F49DD00B95E69 /* Integer Mutation Animated */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D353F6B9214F49DE00B95E69 /* Build configuration list for PBXNativeTarget "Integer Mutation Animated" */;
+			buildPhases = (
+				D353F6A6214F49DD00B95E69 /* Sources */,
+				D353F6A7214F49DD00B95E69 /* Frameworks */,
+				D353F6A8214F49DD00B95E69 /* Resources */,
+				D353F6BD214F4A0900B95E69 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Integer Mutation Animated";
+			productName = "Integer Mutation Animated";
+			productReference = D353F6AA214F49DD00B95E69 /* Integer Mutation Animated.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -630,6 +684,10 @@
 						CreatedOnToolsVersion = 9.4.1;
 						ProvisioningStyle = Automatic;
 					};
+					D353F6A9214F49DD00B95E69 = {
+						CreatedOnToolsVersion = 9.4.1;
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = 3549BAFF1DA387DB00C63030 /* Build configuration list for PBXProject "Cycle" */;
@@ -655,6 +713,7 @@
 				D353F635214F3FFF00B95E69 /* Push Notification Registration */,
 				D353F665214F450900B95E69 /* URL Action Outgoing */,
 				D353F686214F47E500B95E69 /* Integer Mutation */,
+				D353F6A9214F49DD00B95E69 /* Integer Mutation Animated */,
 			);
 		};
 /* End PBXProject section */
@@ -735,6 +794,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D353F6A8214F49DD00B95E69 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D353F6C4214F4AAE00B95E69 /* Info.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
@@ -781,6 +848,27 @@
 			shellScript = "/usr/local/bin/carthage copy-frameworks";
 		};
 		D353F69A214F481D00B95E69 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/RxSwift.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/RxCocoa.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/RxUIApplicationDelegate.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/Changeset.framework",
+			);
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxSwift.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxCocoa.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxUIApplicationDelegate.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Changeset.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/carthage copy-frameworks";
+		};
+		D353F6BD214F4A0900B95E69 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -879,6 +967,15 @@
 			files = (
 				D353F6A3214F48F700B95E69 /* IntegerMutatingApp.swift in Sources */,
 				D353F6A4214F48F700B95E69 /* ValueToggler.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D353F6A6214F49DD00B95E69 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D353F6C3214F4AAE00B95E69 /* ValueToggler.swift in Sources */,
+				D353F6C2214F4AAE00B95E69 /* IntegerMutatingApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1464,6 +1561,56 @@
 			};
 			name = Release;
 		};
+		D353F6BA214F49DE00B95E69 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = "Examples/Integer Mutation Animated/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.briansemiglia.Integer-Mutation-Animated";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		D353F6BB214F49DE00B95E69 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = "Examples/Integer Mutation Animated/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.briansemiglia.Integer-Mutation-Animated";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1562,6 +1709,15 @@
 			buildConfigurations = (
 				D353F696214F47E800B95E69 /* Debug */,
 				D353F697214F47E800B95E69 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D353F6B9214F49DE00B95E69 /* Build configuration list for PBXNativeTarget "Integer Mutation Animated" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D353F6BA214F49DE00B95E69 /* Debug */,
+				D353F6BB214F49DE00B95E69 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
