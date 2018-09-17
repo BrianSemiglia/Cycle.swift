@@ -51,6 +51,14 @@
 		D353F6C6214F4AD400B95E69 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F658214F416000B95E69 /* RxCocoa.framework */; };
 		D353F6C7214F4AD400B95E69 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F655214F416000B95E69 /* RxSwift.framework */; };
 		D353F6C8214F4AD400B95E69 /* RxUIApplicationDelegate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F656214F416000B95E69 /* RxUIApplicationDelegate.framework */; };
+		D353F6E3214F4B3300B95E69 /* Timer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D353F6E0214F4B3300B95E69 /* Timer.swift */; };
+		D353F6E4214F4B3300B95E69 /* ShortcutItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = D353F6E1214F4B3300B95E69 /* ShortcutItems.swift */; };
+		D353F6E5214F4B3300B95E69 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D353F6E2214F4B3300B95E69 /* Info.plist */; };
+		D353F6E6214F4B3B00B95E69 /* Cycle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3549BB211DA389CD00C63030 /* Cycle.framework */; };
+		D353F6E7214F4B5400B95E69 /* Changeset.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F657214F416000B95E69 /* Changeset.framework */; };
+		D353F6E8214F4B5400B95E69 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F658214F416000B95E69 /* RxCocoa.framework */; };
+		D353F6E9214F4B5400B95E69 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F655214F416000B95E69 /* RxSwift.framework */; };
+		D353F6EA214F4B5400B95E69 /* RxUIApplicationDelegate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F656214F416000B95E69 /* RxUIApplicationDelegate.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -145,6 +153,10 @@
 		D353F6BF214F4AAE00B95E69 /* IntegerMutatingApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntegerMutatingApp.swift; sourceTree = "<group>"; };
 		D353F6C0214F4AAE00B95E69 /* ValueToggler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ValueToggler.swift; sourceTree = "<group>"; };
 		D353F6C1214F4AAE00B95E69 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D353F6CD214F4B1B00B95E69 /* Shortcut Items.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Shortcut Items.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D353F6E0214F4B3300B95E69 /* Timer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Timer.swift; sourceTree = "<group>"; };
+		D353F6E1214F4B3300B95E69 /* ShortcutItems.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShortcutItems.swift; sourceTree = "<group>"; };
+		D353F6E2214F4B3300B95E69 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -249,6 +261,18 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D353F6CA214F4B1B00B95E69 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D353F6E6214F4B3B00B95E69 /* Cycle.framework in Frameworks */,
+				D353F6E7214F4B5400B95E69 /* Changeset.framework in Frameworks */,
+				D353F6E8214F4B5400B95E69 /* RxCocoa.framework in Frameworks */,
+				D353F6E9214F4B5400B95E69 /* RxSwift.framework in Frameworks */,
+				D353F6EA214F4B5400B95E69 /* RxUIApplicationDelegate.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -277,6 +301,7 @@
 				D353F666214F450900B95E69 /* URL Action Outgoing.app */,
 				D353F687214F47E500B95E69 /* Integer Mutation.app */,
 				D353F6AA214F49DD00B95E69 /* Integer Mutation Animated.app */,
+				D353F6CD214F4B1B00B95E69 /* Shortcut Items.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -340,6 +365,7 @@
 		D353F648214F403100B95E69 /* Examples */ = {
 			isa = PBXGroup;
 			children = (
+				D353F6DF214F4B3300B95E69 /* Shortcut Items */,
 				D353F6BE214F4AAE00B95E69 /* Integer Mutation Animated */,
 				D353F69F214F48F700B95E69 /* Integer Mutation */,
 				D353F678214F452F00B95E69 /* URL Action Outgoing */,
@@ -386,6 +412,16 @@
 				D353F6C1214F4AAE00B95E69 /* Info.plist */,
 			);
 			path = "Integer Mutation Animated";
+			sourceTree = "<group>";
+		};
+		D353F6DF214F4B3300B95E69 /* Shortcut Items */ = {
+			isa = PBXGroup;
+			children = (
+				D353F6E0214F4B3300B95E69 /* Timer.swift */,
+				D353F6E1214F4B3300B95E69 /* ShortcutItems.swift */,
+				D353F6E2214F4B3300B95E69 /* Info.plist */,
+			);
+			path = "Shortcut Items";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -627,6 +663,24 @@
 			productReference = D353F6AA214F49DD00B95E69 /* Integer Mutation Animated.app */;
 			productType = "com.apple.product-type.application";
 		};
+		D353F6CC214F4B1B00B95E69 /* Shortcut Items */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D353F6DC214F4B1D00B95E69 /* Build configuration list for PBXNativeTarget "Shortcut Items" */;
+			buildPhases = (
+				D353F6C9214F4B1B00B95E69 /* Sources */,
+				D353F6CA214F4B1B00B95E69 /* Frameworks */,
+				D353F6CB214F4B1B00B95E69 /* Resources */,
+				D353F6EB214F4B6300B95E69 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Shortcut Items";
+			productName = "Shortcut Items";
+			productReference = D353F6CD214F4B1B00B95E69 /* Shortcut Items.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -688,6 +742,10 @@
 						CreatedOnToolsVersion = 9.4.1;
 						ProvisioningStyle = Automatic;
 					};
+					D353F6CC214F4B1B00B95E69 = {
+						CreatedOnToolsVersion = 9.4.1;
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = 3549BAFF1DA387DB00C63030 /* Build configuration list for PBXProject "Cycle" */;
@@ -714,6 +772,7 @@
 				D353F665214F450900B95E69 /* URL Action Outgoing */,
 				D353F686214F47E500B95E69 /* Integer Mutation */,
 				D353F6A9214F49DD00B95E69 /* Integer Mutation Animated */,
+				D353F6CC214F4B1B00B95E69 /* Shortcut Items */,
 			);
 		};
 /* End PBXProject section */
@@ -802,6 +861,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D353F6CB214F4B1B00B95E69 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D353F6E5214F4B3300B95E69 /* Info.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
@@ -869,6 +936,27 @@
 			shellScript = "/usr/local/bin/carthage copy-frameworks";
 		};
 		D353F6BD214F4A0900B95E69 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/RxSwift.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/RxCocoa.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/RxUIApplicationDelegate.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/Changeset.framework",
+			);
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxSwift.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxCocoa.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxUIApplicationDelegate.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Changeset.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/carthage copy-frameworks";
+		};
+		D353F6EB214F4B6300B95E69 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -976,6 +1064,15 @@
 			files = (
 				D353F6C3214F4AAE00B95E69 /* ValueToggler.swift in Sources */,
 				D353F6C2214F4AAE00B95E69 /* IntegerMutatingApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D353F6C9214F4B1B00B95E69 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D353F6E4214F4B3300B95E69 /* ShortcutItems.swift in Sources */,
+				D353F6E3214F4B3300B95E69 /* Timer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1611,6 +1708,56 @@
 			};
 			name = Release;
 		};
+		D353F6DD214F4B1D00B95E69 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = "Examples/Shortcut Items/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.briansemiglia.Shortcut-Items";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		D353F6DE214F4B1D00B95E69 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = "Examples/Shortcut Items/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.briansemiglia.Shortcut-Items";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1718,6 +1865,15 @@
 			buildConfigurations = (
 				D353F6BA214F49DE00B95E69 /* Debug */,
 				D353F6BB214F49DE00B95E69 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D353F6DC214F4B1D00B95E69 /* Build configuration list for PBXNativeTarget "Shortcut Items" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D353F6DD214F4B1D00B95E69 /* Debug */,
+				D353F6DE214F4B1D00B95E69 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
