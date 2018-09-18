@@ -27,7 +27,7 @@ open class CycledApplicationDelegate<T: IORouter>: UIResponder, UIApplicationDel
   
   public func application(
     _ application: UIApplication,
-    willFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil
+    willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil
   ) -> Bool {
     window = UIWindow(frame: UIScreen.main.bounds, root: cycle.root)
     window?.makeKeyAndVisible()
@@ -101,11 +101,11 @@ open class CycledApplicationDelegate<T: IORouter>: NSObject, NSApplicationDelega
 
   public func applicationWillFinishLaunching(_ notification: Notification) {
     main = NSStoryboard(
-      name: NSStoryboard.Name(rawValue: "Main"),
+      name: "Main",
       bundle: nil
     )
     .instantiateController(
-      withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "MainWindow")
+      withIdentifier: "MainWindow"
     )
     as? NSWindowController
     main?.window?.contentViewController = cycle.root
