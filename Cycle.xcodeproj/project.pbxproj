@@ -17,10 +17,19 @@
 		3549BB8B1DA38C0A00C63030 /* CycleSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3549BB8A1DA38C0A00C63030 /* CycleSpec.swift */; };
 		3549BB8C1DA38C0A00C63030 /* CycleSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3549BB8A1DA38C0A00C63030 /* CycleSpec.swift */; };
 		3549BB8D1DA38C0A00C63030 /* CycleSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3549BB8A1DA38C0A00C63030 /* CycleSpec.swift */; };
+		D33DAEEB215212B800545266 /* Cycle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3549BB211DA389CD00C63030 /* Cycle.framework */; };
+		D33DAEEC215212B800545266 /* Cycle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3549BB211DA389CD00C63030 /* Cycle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		D33DAEF0215212BC00545266 /* Cycle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3549BB211DA389CD00C63030 /* Cycle.framework */; };
+		D33DAEF1215212BC00545266 /* Cycle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3549BB211DA389CD00C63030 /* Cycle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		D33DAEF5215212C100545266 /* Cycle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3549BB211DA389CD00C63030 /* Cycle.framework */; };
+		D33DAEF6215212C100545266 /* Cycle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3549BB211DA389CD00C63030 /* Cycle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		D33DAEFA215212C600545266 /* Cycle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3549BB211DA389CD00C63030 /* Cycle.framework */; };
+		D33DAEFB215212C600545266 /* Cycle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3549BB211DA389CD00C63030 /* Cycle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		D33DAEFF215212CA00545266 /* Cycle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3549BB211DA389CD00C63030 /* Cycle.framework */; };
+		D33DAF00215212CA00545266 /* Cycle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3549BB211DA389CD00C63030 /* Cycle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D353F64F214F404B00B95E69 /* PushNotificationRegistration.swift in Sources */ = {isa = PBXBuildFile; fileRef = D353F64A214F404B00B95E69 /* PushNotificationRegistration.swift */; };
 		D353F650214F404B00B95E69 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D353F64B214F404B00B95E69 /* LaunchScreen.xib */; };
 		D353F651214F404B00B95E69 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D353F64D214F404B00B95E69 /* Images.xcassets */; };
-		D353F654214F413000B95E69 /* Cycle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3549BB211DA389CD00C63030 /* Cycle.framework */; };
 		D353F659214F416000B95E69 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F655214F416000B95E69 /* RxSwift.framework */; };
 		D353F65A214F416000B95E69 /* RxUIApplicationDelegate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F656214F416000B95E69 /* RxUIApplicationDelegate.framework */; };
 		D353F65B214F416000B95E69 /* Changeset.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F657214F416000B95E69 /* Changeset.framework */; };
@@ -32,15 +41,12 @@
 		D353F67E214F455600B95E69 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F658214F416000B95E69 /* RxCocoa.framework */; };
 		D353F67F214F455600B95E69 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F655214F416000B95E69 /* RxSwift.framework */; };
 		D353F680214F455600B95E69 /* RxUIApplicationDelegate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F656214F416000B95E69 /* RxUIApplicationDelegate.framework */; };
-		D353F681214F456600B95E69 /* Cycle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3549BB211DA389CD00C63030 /* Cycle.framework */; };
-		D353F699214F47F800B95E69 /* Cycle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3549BB211DA389CD00C63030 /* Cycle.framework */; };
 		D353F69B214F48C400B95E69 /* Changeset.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F657214F416000B95E69 /* Changeset.framework */; };
 		D353F69C214F48C400B95E69 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F658214F416000B95E69 /* RxCocoa.framework */; };
 		D353F69D214F48C400B95E69 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F655214F416000B95E69 /* RxSwift.framework */; };
 		D353F69E214F48C400B95E69 /* RxUIApplicationDelegate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F656214F416000B95E69 /* RxUIApplicationDelegate.framework */; };
 		D353F6A3214F48F700B95E69 /* IntegerMutatingApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D353F6A0214F48F700B95E69 /* IntegerMutatingApp.swift */; };
 		D353F6A4214F48F700B95E69 /* ValueToggler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D353F6A1214F48F700B95E69 /* ValueToggler.swift */; };
-		D353F6BC214F49E700B95E69 /* Cycle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3549BB211DA389CD00C63030 /* Cycle.framework */; };
 		D353F6C2214F4AAE00B95E69 /* IntegerMutatingApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D353F6BF214F4AAE00B95E69 /* IntegerMutatingApp.swift */; };
 		D353F6C3214F4AAE00B95E69 /* ValueToggler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D353F6C0214F4AAE00B95E69 /* ValueToggler.swift */; };
 		D353F6C5214F4AD400B95E69 /* Changeset.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F657214F416000B95E69 /* Changeset.framework */; };
@@ -49,7 +55,6 @@
 		D353F6C8214F4AD400B95E69 /* RxUIApplicationDelegate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F656214F416000B95E69 /* RxUIApplicationDelegate.framework */; };
 		D353F6E3214F4B3300B95E69 /* Timer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D353F6E0214F4B3300B95E69 /* Timer.swift */; };
 		D353F6E4214F4B3300B95E69 /* ShortcutItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = D353F6E1214F4B3300B95E69 /* ShortcutItems.swift */; };
-		D353F6E6214F4B3B00B95E69 /* Cycle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3549BB211DA389CD00C63030 /* Cycle.framework */; };
 		D353F6E7214F4B5400B95E69 /* Changeset.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F657214F416000B95E69 /* Changeset.framework */; };
 		D353F6E8214F4B5400B95E69 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F658214F416000B95E69 /* RxCocoa.framework */; };
 		D353F6E9214F4B5400B95E69 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D353F655214F416000B95E69 /* RxSwift.framework */; };
@@ -84,6 +89,41 @@
 			remoteGlobalIDString = 3549BB3A1DA389E800C63030;
 			remoteInfo = "Cycle-macOS";
 		};
+		D33DAEED215212B800545266 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3549BAFC1DA387DB00C63030 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3549BB201DA389CD00C63030;
+			remoteInfo = "Cycle-iOS";
+		};
+		D33DAEF2215212BC00545266 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3549BAFC1DA387DB00C63030 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3549BB201DA389CD00C63030;
+			remoteInfo = "Cycle-iOS";
+		};
+		D33DAEF7215212C100545266 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3549BAFC1DA387DB00C63030 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3549BB201DA389CD00C63030;
+			remoteInfo = "Cycle-iOS";
+		};
+		D33DAEFC215212C600545266 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3549BAFC1DA387DB00C63030 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3549BB201DA389CD00C63030;
+			remoteInfo = "Cycle-iOS";
+		};
+		D33DAF01215212CA00545266 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3549BAFC1DA387DB00C63030 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3549BB201DA389CD00C63030;
+			remoteInfo = "Cycle-iOS";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -113,6 +153,61 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D33DAEEF215212B800545266 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				D33DAEEC215212B800545266 /* Cycle.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D33DAEF4215212BD00545266 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				D33DAEF1215212BC00545266 /* Cycle.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D33DAEF9215212C100545266 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				D33DAEF6215212C100545266 /* Cycle.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D33DAEFE215212C600545266 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				D33DAEFB215212C600545266 /* Cycle.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D33DAF03215212CA00545266 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				D33DAF00215212CA00545266 /* Cycle.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -227,7 +322,7 @@
 				D353F659214F416000B95E69 /* RxSwift.framework in Frameworks */,
 				D353F65C214F416000B95E69 /* RxCocoa.framework in Frameworks */,
 				D353F65A214F416000B95E69 /* RxUIApplicationDelegate.framework in Frameworks */,
-				D353F654214F413000B95E69 /* Cycle.framework in Frameworks */,
+				D33DAEEB215212B800545266 /* Cycle.framework in Frameworks */,
 				D353F65B214F416000B95E69 /* Changeset.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -239,7 +334,7 @@
 				D353F67D214F455600B95E69 /* Changeset.framework in Frameworks */,
 				D353F67E214F455600B95E69 /* RxCocoa.framework in Frameworks */,
 				D353F67F214F455600B95E69 /* RxSwift.framework in Frameworks */,
-				D353F681214F456600B95E69 /* Cycle.framework in Frameworks */,
+				D33DAEF0215212BC00545266 /* Cycle.framework in Frameworks */,
 				D353F680214F455600B95E69 /* RxUIApplicationDelegate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -248,10 +343,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D353F699214F47F800B95E69 /* Cycle.framework in Frameworks */,
 				D353F69B214F48C400B95E69 /* Changeset.framework in Frameworks */,
 				D353F69C214F48C400B95E69 /* RxCocoa.framework in Frameworks */,
 				D353F69D214F48C400B95E69 /* RxSwift.framework in Frameworks */,
+				D33DAEF5215212C100545266 /* Cycle.framework in Frameworks */,
 				D353F69E214F48C400B95E69 /* RxUIApplicationDelegate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -260,10 +355,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D353F6BC214F49E700B95E69 /* Cycle.framework in Frameworks */,
 				D353F6C5214F4AD400B95E69 /* Changeset.framework in Frameworks */,
 				D353F6C6214F4AD400B95E69 /* RxCocoa.framework in Frameworks */,
 				D353F6C7214F4AD400B95E69 /* RxSwift.framework in Frameworks */,
+				D33DAEFA215212C600545266 /* Cycle.framework in Frameworks */,
 				D353F6C8214F4AD400B95E69 /* RxUIApplicationDelegate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -272,10 +367,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D353F6E6214F4B3B00B95E69 /* Cycle.framework in Frameworks */,
 				D353F6E7214F4B5400B95E69 /* Changeset.framework in Frameworks */,
 				D353F6E8214F4B5400B95E69 /* RxCocoa.framework in Frameworks */,
 				D353F6E9214F4B5400B95E69 /* RxSwift.framework in Frameworks */,
+				D33DAEFF215212CA00545266 /* Cycle.framework in Frameworks */,
 				D353F6EA214F4B5400B95E69 /* RxUIApplicationDelegate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -609,10 +704,12 @@
 				D353F633214F3FFF00B95E69 /* Frameworks */,
 				D353F634214F3FFF00B95E69 /* Resources */,
 				D353F65D214F417900B95E69 /* ShellScript */,
+				D33DAEEF215212B800545266 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				D33DAEEE215212B800545266 /* PBXTargetDependency */,
 			);
 			name = "Push Notification Registration";
 			productName = "Push Notification Registration";
@@ -627,10 +724,12 @@
 				D353F663214F450900B95E69 /* Frameworks */,
 				D353F664214F450900B95E69 /* Resources */,
 				D353F682214F457900B95E69 /* ShellScript */,
+				D33DAEF4215212BD00545266 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				D33DAEF3215212BC00545266 /* PBXTargetDependency */,
 			);
 			name = "URL Action Outgoing";
 			productName = "URL Action Outgoing";
@@ -645,10 +744,12 @@
 				D353F684214F47E500B95E69 /* Frameworks */,
 				D353F685214F47E500B95E69 /* Resources */,
 				D353F69A214F481D00B95E69 /* ShellScript */,
+				D33DAEF9215212C100545266 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				D33DAEF8215212C100545266 /* PBXTargetDependency */,
 			);
 			name = "Integer Mutation";
 			productName = "Integer Mutation";
@@ -663,10 +764,12 @@
 				D353F6A7214F49DD00B95E69 /* Frameworks */,
 				D353F6A8214F49DD00B95E69 /* Resources */,
 				D353F6BD214F4A0900B95E69 /* ShellScript */,
+				D33DAEFE215212C600545266 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				D33DAEFD215212C600545266 /* PBXTargetDependency */,
 			);
 			name = "Integer Mutation Animated";
 			productName = "Integer Mutation Animated";
@@ -681,10 +784,12 @@
 				D353F6CA214F4B1B00B95E69 /* Frameworks */,
 				D353F6CB214F4B1B00B95E69 /* Resources */,
 				D353F6EB214F4B6300B95E69 /* ShellScript */,
+				D33DAF03215212CA00545266 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				D33DAF02215212CA00545266 /* PBXTargetDependency */,
 			);
 			name = "Shortcut Items";
 			productName = "Shortcut Items";
@@ -1107,6 +1212,31 @@
 			target = 3549BB3A1DA389E800C63030 /* Cycle-macOS */;
 			targetProxy = 3549BB851DA38B0000C63030 /* PBXContainerItemProxy */;
 		};
+		D33DAEEE215212B800545266 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3549BB201DA389CD00C63030 /* Cycle-iOS */;
+			targetProxy = D33DAEED215212B800545266 /* PBXContainerItemProxy */;
+		};
+		D33DAEF3215212BC00545266 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3549BB201DA389CD00C63030 /* Cycle-iOS */;
+			targetProxy = D33DAEF2215212BC00545266 /* PBXContainerItemProxy */;
+		};
+		D33DAEF8215212C100545266 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3549BB201DA389CD00C63030 /* Cycle-iOS */;
+			targetProxy = D33DAEF7215212C100545266 /* PBXContainerItemProxy */;
+		};
+		D33DAEFD215212C600545266 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3549BB201DA389CD00C63030 /* Cycle-iOS */;
+			targetProxy = D33DAEFC215212C600545266 /* PBXContainerItemProxy */;
+		};
+		D33DAF02215212CA00545266 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3549BB201DA389CD00C63030 /* Cycle-iOS */;
+			targetProxy = D33DAF01215212CA00545266 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -1246,6 +1376,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -1270,6 +1401,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -1580,6 +1712,7 @@
 		D353F645214F400100B95E69 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -1606,6 +1739,7 @@
 		D353F646214F400100B95E69 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -1632,6 +1766,7 @@
 		D353F675214F450B00B95E69 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -1658,6 +1793,7 @@
 		D353F676214F450B00B95E69 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -1684,6 +1820,7 @@
 		D353F696214F47E800B95E69 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -1710,6 +1847,7 @@
 		D353F697214F47E800B95E69 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -1736,6 +1874,7 @@
 		D353F6BA214F49DE00B95E69 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -1762,6 +1901,7 @@
 		D353F6BB214F49DE00B95E69 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -1788,6 +1928,7 @@
 		D353F6DD214F4B1D00B95E69 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -1814,6 +1955,7 @@
 		D353F6DE214F4B1D00B95E69 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
