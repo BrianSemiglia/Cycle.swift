@@ -21,7 +21,7 @@ Pod::Spec.new do |s|
   s.swift_version = "4.2"
   s.default_subspec = "Core"
   s.subspec "Core" do |ss|
-    ss.source_files  = "Sources/**/*.swift"
+    ss.source_files  = "Sources/**/*.{h,m,swift}"
     ss.framework  = "Foundation"
   end
   s.dependency 'RxSwift',   '~> 4.3.0'
