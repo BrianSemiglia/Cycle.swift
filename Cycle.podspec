@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'Cycle'
-  s.version          = '0.0.16'
+  s.version          = '0.0.17'
   s.summary          = 'An experiment in unidirectional-data-flow inspired by Cycle.js.'
   s.description      = 'Cycle provides a means of writing an app as a filter over a stream of external events.'
   s.homepage         = 'https://github.com/BrianSemiglia/Cycle.swift'
