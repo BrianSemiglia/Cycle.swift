@@ -12,7 +12,7 @@ Pod::Spec.new do |s|
   }
   s.social_media_url = 'https://twitter.com/brians_'
   s.platforms = {
-    :ios => "9.0",
+    :ios => "8.0",
     :osx => "10.10",
     :tvos => "9.0",
     :watchos => "2.0"
