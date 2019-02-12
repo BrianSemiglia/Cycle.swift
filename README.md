@@ -46,7 +46,7 @@ The procedural rendering of those timelines can be visualized like so:
 
 ## Anatomy In-Depth
 ### Frame
-The `Frame` is simply a struct representing the state of application at a given moment. Its value can store anything that you might expect objects to normally maintain such as view-sizes/positions/colors, navigation-traversal, item-selections, etc. Ideally, the storage of values that can be derived from other values should be avoided. If performance is a concern there is the potential for the caching/memoization of values due to the mostly-referentially-transparent nature of event/frame-filters.  
+The `Frame` is simply a struct representing the state of application at a given moment. Its value can store anything that you might expect objects to normally maintain such as view-sizes/positions/colors, navigation-traversal, item-selections, etc. Ideally, the storage of values that can be derived from other values should be avoided. If performance is a concern, the output of event/frame-filters can be [memoized](https://github.com/BrianSemiglia/RxCacheMap).
   
 ### Frame-Filter
 A frame-filter function allows for applying changes to a received Frame before being rendered. There are two common filters:
