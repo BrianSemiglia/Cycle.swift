@@ -16,6 +16,7 @@ final class ValueToggler: NSObject {
         struct Button: Equatable {
             enum State: Equatable {
                 case enabled
+                case disabled
                 case highlighted
             }
             var state: State
@@ -76,10 +77,16 @@ final class ValueToggler: NSObject {
                     latest.increment.title,
                     for: .normal
                 )
+                self.increment.isEnabled =
+                    latest.increment.state == .enabled ||
+                    latest.increment.state == .highlighted
                 self.decrement.setTitle(
                     latest.decrement.title,
                     for: .normal
                 )
+                self.decrement.isEnabled =
+                    latest.decrement.state == .enabled ||
+                    latest.decrement.state == .highlighted
                 self.label.text = latest.total
             })
             .disposed(by:cleanup)

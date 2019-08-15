@@ -69,13 +69,16 @@ struct MutatingLens<A, B> {
     }
     
     func mapLeft(
-        _ other: MutatingLens<A, B>,
         _ f: @escaping (B, A) -> A
     ) -> MutatingLens<A, B> { return
         MutatingLens<A, B>(
             value: value,
             get: { _ in self.get },
-            set: f
+            set: { b, a in
+                self.set.last.map {
+                    [f(b, $0)]
+                } ?? []
+            }
         )
     }
     
