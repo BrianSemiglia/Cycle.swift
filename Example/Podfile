@@ -1,0 +1,18 @@
+use_frameworks!
+platform :ios, '10.0'
+
+target 'Integer Mutation' do
+  pod 'Cycle', :path => '../'
+end
+
+target 'Integer Mutation Animated' do
+  pod 'Cycle', :path => '../'
+end
+
+target 'Cycle_Tests' do
+  pod 'Cycle', :path => '../'
+  pod 'SnapshotTesting'
+  pod 'RxBlocking'
+  pod 'RxTest'
+  pod 'RxExpect'
+end

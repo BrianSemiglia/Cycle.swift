@@ -1,1 +1,0 @@
-carthage bootstrap --no-use-binaries --cache-builds

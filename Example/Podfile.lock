@@ -1,0 +1,54 @@
+PODS:
+  - Cycle (0.0.19):
+    - RxCocoa (~> 5.0)
+    - RxSwift (~> 5.0)
+  - RxBlocking (5.0.1):
+    - RxSwift (~> 5)
+  - RxCocoa (5.0.1):
+    - RxRelay (~> 5)
+    - RxSwift (~> 5)
+  - RxExpect (2.0.0):
+    - RxCocoa (~> 5.0)
+    - RxSwift (~> 5.0)
+    - RxTest (~> 5.0)
+  - RxRelay (5.0.1):
+    - RxSwift (~> 5)
+  - RxSwift (5.0.1)
+  - RxTest (5.0.1):
+    - RxSwift (~> 5)
+  - SnapshotTesting (1.6.0)
+
+DEPENDENCIES:
+  - Cycle (from `../`)
+  - RxBlocking
+  - RxExpect
+  - RxTest
+  - SnapshotTesting
+
+SPEC REPOS:
+  trunk:
+    - RxBlocking
+    - RxCocoa
+    - RxExpect
+    - RxRelay
+    - RxSwift
+    - RxTest
+    - SnapshotTesting
+
+EXTERNAL SOURCES:
+  Cycle:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  Cycle: 4592e503b14f58408e4b5a75969434996ebf563d
+  RxBlocking: c5e090f42d046df8b0e7752742510f349963710f
+  RxCocoa: e741b9749968e8a143e2b787f1dfbff2b63d0a5c
+  RxExpect: 0685c9003c6d38532d5b101367eaf86b3adda81a
+  RxRelay: 89d54507f4fd4d969e6ec1d4bd7f3673640b4640
+  RxSwift: e2dc62b366a3adf6a0be44ba9f405efd4c94e0c4
+  RxTest: 0132f952a61da82d5233abedaa559df91e5330e5
+  SnapshotTesting: 9f478335073a830eafb7dc1fcd526c5e90143991
+
+PODFILE CHECKSUM: 301dd6391ef69ad96b401023648a74ebe7159bc6
+
+COCOAPODS: 1.8.4

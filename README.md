@@ -95,161 +95,71 @@ The flip-book model breaks a bit when it comes to the uncertain future of an app
 
 ## Interface
 ```swift
-public protocol IORouter {
-  /* 
-    Defines type of application model.
-  */
-  associatedtype Frame
-  
-  /*
-    Defines initial values of application model.
-  */
-  static var seed: Frame { get }
 
-  /* 
-    Defines drivers that handle frames, produce events. Requires two default drivers: 
+// Common pattern:
+MutatingLens<A, B>(
+    get: (A) -> B,
+    set: (B, A) -> A
+)
 
-      1. let application: UIApplicationDelegateProviding - can serve as UIApplicationDelegate
-      2. let screen: ScreenDrivable - can provide a root UIViewController
+// Expressed more concretely:
+MutatingLens<Frame, Driver>(
+    // Given a frame, produce a driver that has rendered it
+    get: (Frame) -> Driver,
+    // Given a driver with a delta and a frame, produce a new frame
+    set: (Driver, Frame) -> Frame
+)
 
-    A default UIApplicationDelegateProviding driver, RxUIApplicationDelegate, is included with Cycle.
-  */
-  associatedtype Drivers: UIApplicationDelegateProviding, ScreenDrivable
+// In practice:
+MutatingLens<Observable<Global.State>, Driver>(
+    get: { states -> Driver in
+        Driver().rendering(
+            model: states
+        )
+    },
+    set: { driver, states -> Observable<Global.State> in
+        driver
+            .events()
+            .tupledWithLatestFrom(states)
+            .map(eventFilter)
+    }
+)
 
-  /*
-    Instantiates drivers with initial model. Necessary to for drivers that require initial values.
-  */
-  func driversFrom(seed: Frame) -> Drivers
+// Means of feeding output of lens to its input
+let cycle = CycledLens<Global.State, Frame>(lens: { source in ... })
 
-  /*
-    Returns a stream of Model created by rendering the incoming stream of frames to drivers and then capturing and transforming their events into the Model type. See example for intended implementation.
-  */
-  func effectsOfEventsCapturedAfterRendering(
-    incoming: Observable<Frame>,
-    to drivers: Drivers
-  ) -> Observable<Frame>
-}
+// Combine multiple lenses to form an application
+let lens = CycledLens<Driver, Global.State>(
+    lens: { source in
+        MutatingLens.zip(
+            source.networkLens(),
+            source.persistenceLens(),
+            source.screenLens(),
+            source.audioLens()
+        )
+    }
+)
 ```
-
-## Example
-1. Subclass CycledApplicationDelegate and provide an IORouter.
-  ``` swift
-  @UIApplicationMain class Example: CycledApplicationDelegate<MyRouter> {
-    init() {
-      super.init(router: MyRouter())
-    }
-  }
-
-  struct MyRouter: IORouter {
-
-    static let seed = AppModel()
-
-    struct AppModel {
-      let network = Network.Model()
-      let screen = Screen.Model()
-      let application = RxUIApplicationDelegate.Model()
-    }
-    
-    struct Drivers: UIApplicationDelegateProviding, ScreenDrivable {
-      let network: Network
-      let screen: Screen // Anything that provides a 'root' UIViewController
-      let application: RxUIApplicationDelegate // Anything that conforms to UIApplicationDelegate
-    }
-
-    func driversFrom(seed: AppModel) -> Drivers { return
-      Drivers(
-        network = Network(model: intitial.network),
-        screen = Screen(model: intitial.screen),
-        application = RxUIApplicationDelegate(model: initial.application)
-      )
-    }
-
-    func effectsOfEventsCapturedAfterRendering(
-      incoming: Observable<AppModel>,
-      to drivers: Drivers
-    ) -> Observable<AppModel> {
-
-      let network = drivers
-        .network
-        .eventsCapturedAfterRendering(incoming.map { $0.network })
-        .withLatestFrom(incoming) { ($0.0, $0.1) }
-        .reducingFuctionOfYourChoice()
-
-      let screen = drivers
-        .screen
-        .eventsCapturedAfterRendering(incoming.map { $0.screen })
-        .withLatestFrom(incoming) { ($0.0, $0.1) }
-        .reduced()
-
-      let application = drivers
-        .application
-        .eventsCapturedAfterRendering(incoming.map { $0.application })
-        .withLatestFrom(incoming) { ($0.0, $0.1) }
-        .reduced()
-
-      return Observable.merge([
-        network,
-        screen,
-        application
-      ])
-    }
-
-  }
-  ```
   
 2. Define event-filters.
   ```swift
-  extension ObservableType where E == (Network.Model, AppModel) {
-    func reducingFuctionOfYourChoice() -> Observable<AppModel> { return
-      map { event, context in
-        var new = context
-        switch event.state {
-          case .idle:
-            new.screen.button.color = .blue
-          case .awaitingStart, .awaitingResponse:
-            new.screen.button.color = .grey
-          default: 
-            break
-        }
-        return new
-      }
+  func eventFilter(_ input: (event: Driver.Event, frame: Global.State)) -> Global.State {
+    var new = input.frame
+    switch input.event {
+      case .idle:
+        new.screen.button.color = .blue
+      case .awaitingStart, .awaitingResponse:
+        new.screen.button.color = .grey
+      default: 
+        break
     }
-  }
-
-  extension ObservableType where E == (Screen.Model, AppModel) {
-    func reduced() -> Observable<AppModel> { return
-      map { event, context in
-        var new = context
-        switch event.button.state {
-          case .highlighted:
-            new.network.state = .awaitingStart
-          default: 
-            break
-        }
-        return new
-      }
-    }
-  }
-
-  extension ObservableType where E == (RxUIApplicationDelegate.Model, AppModel) {
-    func reduced() -> Observable<AppModel> { return
-      map { event, context in
-        var new = context
-        switch event.session.state {
-          case .launching:
-            new.screen = Screen.Model.downloadView
-          default: 
-            break
-        }
-        return new
-      }
-    }
+    return new
   }
   ```
   
-3. Define drivers that, given a stream of effect-models, can produce a stream of event-models.
+3. Define a driver that given a stream of effect-models, can produce a stream of event-models.
   ```swift
-  class MyDriver {
+  final class MyDriver {
 
     struct Model {
       var state: State
@@ -263,31 +173,24 @@ public protocol IORouter {
       case receiving
     }
 
-    fileprivate let output: BehaviorSubject<Model>
+    let output: Observable<Event>
+    private let input: Observable<Model>
+    private let cleanup = DisposeBag()
     
-    // Pull-based interfaces (e.g. UITableViews) require retaining state.
-    // State retention should be made as minimal as possible and well-guarded.
-    fileprivate let model: Model
-
-    public init(initial: Model) {
-      model = initial
-      output = BehaviorSubject<Model>(value: initial)
-    }
-
-    public func eventsCapturedAfterRendering(_ input: Observable<Model>) -> Observable<Event> { 
-      input
-        .subscribe(next: self.render)
+    init(initial: Model, subsequent: Observable<Model>) {
+      subsequent
+        .startWith(initial)
+        .bind(to: self.render)
         .disposed(by: cleanup)
-      return self.output
     }
 
-    func render(model: Model) {    
+    private func render(model: Model) {    
       if case .sending = model.state {
         // Perform side-effects...
       }
     }
 
-    func didReceiveEvent() {
+    private func didReceiveEvent() {
       output.on(.next(.receiving))
     }
 
