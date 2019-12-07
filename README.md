@@ -179,12 +179,26 @@ A sample project of the infamous 'Counter' app is included.
 In most scenarios, an event will produce a single frame  `Event -> Frame`. However, animated responses have a transformation signature of `Event -> [Frame]`. This can be handled by feeding the `[Frame]` into a sampled stream which then outputs an `[Frame]` every _n_ seconds based on the desired frame-rate. That `Frame` array can then be fed to a frame-filter which strips out all but the first frame before being deliver to the drivers. The remaining frames are sent back into the stream to be rendered on the next pass. The following code provides an implementation of this:
 
   ```swift
-  CycledLens<Driver, [Global.State]>(
+  CycledLens<View, [Global.State]>(
     lens: { (source: Observable<[Global.State]>) in
         MutatingLens.zip(
-            // Renders head of animation. Produces [Global.Frame] on events.
-            source.compactMap { $0.head }.screenLens(),
-            
+            source.lens(
+                get: { state -> View in
+                    // Renders head of animation.
+                    View().rendering(
+                        model: state
+                            .compactMap { $0.head }
+                            .map(globalStateToViewModel)
+                    )
+                },
+                set: { view, state -> Observable<[Global.State]> in
+                    // Produces animation of [Global.Frame].
+                    view
+                        .events()
+                        .tupledWithLatestFrom(state)
+                        .map(animatedState)
+                }
+            ),
             // Sends remaining animation to lenses after delay
             source.emittingTail(every: .milliseconds(1000 / 60))
         )
