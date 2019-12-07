@@ -150,15 +150,14 @@ Drivers render a stream of effect-models and produce a stream of event-models.
       case receiving
     }
 
-    let output: Observable<Event>
+    public  let output: Observable<Event>
     private let input: Observable<Model>
-    private let cleanup = DisposeBag()
     
     init(initial: Model, subsequent: Observable<Model>) {
       subsequent
         .startWith(initial)
         .bind(to: self.render)
-        .disposed(by: cleanup)
+        .disposed(by: ...)
     }
 
     private func render(model: Model) {    
