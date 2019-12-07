@@ -134,7 +134,7 @@ CycledLens<Driver, Global.State>(
 ```
   
 #### Driver
-Driver renders a stream of effect-models and produces a stream of event-models.
+Drivers render a stream of effect-models and produce a stream of event-models.
   ```swift
   final class MyDriver {
 
@@ -182,8 +182,10 @@ In most scenarios, an event will produce a single frame  `Event -> Frame`. Howev
   CycledLens<Driver, [Global.State]>(
     lens: { (source: Observable<[Global.State]>) in
         MutatingLens.zip(
-            source.compactMap { $0.head }.screenLens(), // Renders head of animation. Produces [Global.Frame] on events.
-            source.emittingTail(every: .milliseconds(1000 / 60)) // Sends remaining animation to lenses after delay
+            // Renders head of animation. Produces [Global.Frame] on events.
+            source.compactMap { $0.head }.screenLens(),
+            // Sends remaining animation to lenses after delay
+            source.emittingTail(every: .milliseconds(1000 / 60))
         )
     }
   )
