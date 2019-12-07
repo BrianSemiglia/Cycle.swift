@@ -138,17 +138,8 @@ Drivers render a stream of effect-models and produce a stream of event-models.
   ```swift
   final class MyDriver {
 
-    struct Model {
-      var state: State
-      enum State {
-        case idle
-        case sending
-      }
-    }
-    
-    enum Event {
-      case receiving
-    }
+    struct Model {}
+    enum Event {}
 
     public  let output: Observable<Event>
     private let input: Observable<Model>
@@ -165,7 +156,7 @@ Drivers render a stream of effect-models and produce a stream of event-models.
     }
 
     private func didReceiveEvent() {
-      output.on(.next(.receiving))
+      output.on(.next(Event.case))
     }
 
   }
