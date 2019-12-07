@@ -179,38 +179,14 @@ A sample project of the infamous 'Counter' app is included.
 In most scenarios, an event will produce a single frame  `Event -> Frame`. However, animated responses have a transformation signature of `Event -> [Frame]`. This can be handled by feeding the `[Frame]` into a sampled stream which then outputs an `[Frame]` every _n_ seconds based on the desired frame-rate. That `Frame` array can then be fed to a frame-filter which strips out all but the first frame before being deliver to the drivers. The remaining frames are sent back into the stream to be rendered on the next pass. The following code provides an implementation of this:
 
   ```swift
-  func effectsOfEventsCapturedAfterRendering(
-    incoming: Observable<[Frame]>,
-    to drivers: Drivers
-  ) -> Observable<[Frame]> {
-
-    // Incoming models are rated-limited to 1/60th of a second
-    let screenSynced = incoming.sample(
-      Observable<Int>.interval(
-        1.0 / 60.0,
-        scheduler: MainScheduler.instance
-      )
-    )
-
-    return Observable
-      .merge([
-        drivers
-          .screen
-          .eventsCapturedAfterRendering(screenSynced.map { $0.first! })
-          // The state provided to the event-filter comes from the original,
-          // non-rate-limited, incoming stream to ensure that the data 
-          // provided isn't slightly stale the way data provided by the 
-          // screenSynced stream might be.
-          .withLatestFrom(incoming) { ($0.0, $0.1) }
-          .animatedReducer()
-        ,
-        // The rest of the frames are sent back into the stream and the cycle repeats.
-        screenSynced
-          .withLatestFrom(incoming)
-          .filter { $0.count > 1 }
-          .map { $0.tail }
-    ])
-  }
+  CycledLens<Driver, [Global.State]>(
+    lens: { (source: Observable<[Global.State]>) in
+        MutatingLens.zip(
+            source.compactMap { $0.head }.screenLens(), // Renders head of animation. Produces [Global.Frame] on events.
+            source.emittingTail(every: .milliseconds(1000 / 60)) // Sends remaining animation to lenses after delay
+        )
+    }
+  )
   ```
 
 By sending the rest of the anticipated `Frames` back into the stream, your application has the option of re-evaluating animations based on new events during playback. Animations can thus be removed, suspended, or changed in mid-flight. The following pseudo `Event -> [Frame]` timelines are examples of ways that animations can be altered as they progress:
