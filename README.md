@@ -184,6 +184,7 @@ In most scenarios, an event will produce a single frame  `Event -> Frame`. Howev
         MutatingLens.zip(
             // Renders head of animation. Produces [Global.Frame] on events.
             source.compactMap { $0.head }.screenLens(),
+            
             // Sends remaining animation to lenses after delay
             source.emittingTail(every: .milliseconds(1000 / 60))
         )
