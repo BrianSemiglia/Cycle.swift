@@ -96,9 +96,8 @@ The flip-book model breaks a bit when it comes to the uncertain future of an app
 ## Implementation
 
 #### MutableLens
+A `MutableLens` houses a `Driver` and the transformations necessary to inject the latest data `Frame -> Driver` and reconsile the latest events `Driver -> Event + Frame -> NewFrame`.
 ```swift
-// A `MutableLens` houses a `Driver` and the transformations necessary to inject the latest data `Frame -> Driver` and reconsile the latest events `Driver -> Event + Frame -> NewFrame`.
-
 MutatingLens<Observable<Global.State>, Driver>(
     get: { (states: Observable<Global.State>) -> Driver in
         Driver().rendering(
