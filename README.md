@@ -184,14 +184,14 @@ In most scenarios, an event will produce a single frame  `Event -> Frame`. Howev
         MutatingLens.zip(
             source.lens(
                 get: { state -> View in
-                    // Renders head of animation.
+                    // Renders first frame of animation.
                     View().rendering(
                         model: state
                             .compactMap { $0.head }
                             .map(globalStateToViewModel)
                     )
                 },
-                set: { view, state -> Observable<[Global.State]> in
+                set: { view, state in
                     // Produces animation of [Global.Frame].
                     view
                         .events()
