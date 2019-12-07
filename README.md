@@ -166,7 +166,7 @@ A sample project of the infamous 'Counter' app is included.
 
 ## Animations
 
-In most scenarios, an event will produce a single frame  `Event -> Frame`. However, animated responses have a transformation signature of `Event -> [Frame]`. This can be handled by feeding the `[Frame]` into a sampled stream which then outputs an `[Frame]` every _n_ seconds based on the desired frame-rate. That `Frame` array can then be fed to a frame-filter which strips out all but the first frame before being deliver to the drivers. The remaining frames are sent back into the stream to be rendered on the next pass. The following code provides an implementation of this:
+In most scenarios, an event will produce a single frame  `Event -> Frame`. However, animated responses have a transformation signature of `Event -> [Frame]`. This can be handled by feeding the `[Frame]` into a sampled stream which then outputs an `[Frame]` every _n_ seconds based on the desired frame-rate. That `Frame` array can then be fed to a frame-filter which strips out all but the first frame before being deliver to the drivers. The remaining frames are sent back into the stream to be rendered on the next pass.
 
   ```swift
   CycledLens<View, [Global.State]>(
