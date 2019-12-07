@@ -93,44 +93,37 @@ Frames in an animation are easy to understand as values, but they can also be un
 ### Live Broadcast
 The flip-book model breaks a bit when it comes to the uncertain future of an application’s timeline. Each frame of an animation is usually known before playback but because drivers provide a finite set of possible events, that uncertainty can be constrained and given the means to produce the next frame for every action.
 
-## Interface
+## Implementation
+
+#### MutableLens
 ```swift
+// A `MutableLens` houses a `Driver` and the transformations necessary to inject the latest data `Frame -> Driver` and reconsile the latest events `Driver -> Event + Frame -> NewFrame`.
 
-// Common pattern:
-MutatingLens<A, B>(
-    get: (A) -> B,
-    set: (B, A) -> A
-)
-
-// Expressed more concretely:
-MutatingLens<Frame, Driver>(
-    // Given a frame, produce a driver that has rendered it
-    get: (Frame) -> Driver,
-    // Given a driver with a delta and a frame, produce a new frame
-    set: (Driver, Frame) -> Frame
-)
-
-// In practice:
 MutatingLens<Observable<Global.State>, Driver>(
-    get: { states -> Driver in
+    get: { (states: Observable<Global.State>) -> Driver in
         Driver().rendering(
-            model: states
+            model: states.map(
+              globalStateToDriverModel // Frame-Filter
+            )
         )
     },
     set: { driver, states -> Observable<Global.State> in
         driver
             .events()
             .tupledWithLatestFrom(states)
-            .map(eventFilter)
+            .map(
+              driverEventToGlobalState // Event-Filter
+            )
     }
 )
+```
 
-// Means of feeding output of lens to its input
-let cycle = CycledLens<Global.State, Frame>(lens: { source in ... })
+#### CycledLens
+`CycledLens` subscribes a lens' output to its input allowing it to render changes produces by its events. By providing a common interface, `MutableLenses` can be composed using the `zip` operator. Zipping produces a single `MutableLens` that provides each of its internal lenses with latest output of themselves and their sibling `Lenses`.
 
-// Combine multiple lenses to form an application
-let lens = CycledLens<Driver, Global.State>(
-    lens: { source in
+```swift
+CycledLens<Driver, Global.State>(
+    lens: { (source: Observable<Global.State>) in
         MutatingLens.zip(
             source.networkLens(),
             source.persistenceLens(),
@@ -141,23 +134,8 @@ let lens = CycledLens<Driver, Global.State>(
 )
 ```
   
-2. Define event-filters.
-  ```swift
-  func eventFilter(_ input: (event: Driver.Event, frame: Global.State)) -> Global.State {
-    var new = input.frame
-    switch input.event {
-      case .idle:
-        new.screen.button.color = .blue
-      case .awaitingStart, .awaitingResponse:
-        new.screen.button.color = .grey
-      default: 
-        break
-    }
-    return new
-  }
-  ```
-  
-3. Define a driver that given a stream of effect-models, can produce a stream of event-models.
+#### Driver
+Driver renders a stream of effect-models and produces a stream of event-models.
   ```swift
   final class MyDriver {
 
@@ -185,9 +163,7 @@ let lens = CycledLens<Driver, Global.State>(
     }
 
     private func render(model: Model) {    
-      if case .sending = model.state {
         // Perform side-effects...
-      }
     }
 
     private func didReceiveEvent() {
