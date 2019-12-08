@@ -6,7 +6,7 @@
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 
 ## Overview
-Cycle provides a means of writing an application as a function that reduces a stream of events to a stream of effects. The stream of effects can be thought of as a reel of film that can be fed to hardware to be projected. The approach allows for consistant execution and greater observability-of/control-over state. [CycleMonitor](https://github.com/BrianSemiglia/CycleMonitor) is a companion development tool that can be used to achieve that observability and control over your application.
+Cycle provides a means of writing an application as a function that reduces a stream of events to a stream of effects. The stream of effects can be thought of as a reel of film that can be fed to hardware to be projected. The approach allows for behavior that is more deterministic, easily controlled and observable. [CycleMonitor](https://github.com/BrianSemiglia/CycleMonitor) is a companion development tool that can be used to achieve that observability and control over your application.
 
 ### Anatomy
 Label | Purpose
@@ -94,46 +94,42 @@ Frames in an animation are easy to understand as values, but they can also be un
 The flip-book model breaks a bit when it comes to the uncertain future of an application’s timeline. Each frame of an animation is usually known before playback but because drivers provide a finite set of possible events, that uncertainty can be constrained and given the means to produce the next frame for every action.
 
 ## Implementation
+### CycledLens
+A finished application might look something like this:
+```swift
+let application = CycledLens<(Network, Persistence, Bluetooth, View, Audio), Global.State>(
+    lens: { states in
+        MutatingLens.zip(
+            states.networkLens(),
+            states.persistenceLens(),
+            states.bluetoothLens(),
+            states.viewLens(),
+            states.audioLens()
+        )
+    }
+)
+```
+A `CycledLens` subscribes a lens' output to its input allowing it to render changes produces by its events. By providing a common interface, `MutableLenses` can be composed using the `zip` operator. Zipping produces a single `MutableLens` that provides each of its internal lenses with latest global state and coalesces their events assuming they share a `type`.
 
-#### MutableLens
-A `MutableLens` houses a `Driver` and the transformations necessary to inject the latest data `Frame -> Driver` and reconsile the latest events `Driver -> Event + Frame -> NewFrame`.
+### MutableLens
+A `MutableLens` houses a `Driver` and the transformations necessary to render the latest data `Frame -> Driver.Model` and reconsile the latest events `Driver.Event + Frame -> NewFrame`.
 ```swift
 MutatingLens<Observable<Global.State>, Driver>(
     get: { (states: Observable<Global.State>) -> Driver in
         Driver().rendering(
-            model: states.map(
-              globalStateToDriverModel // Frame-Filter
-            )
+            model: states.map(globalStateToDriverModel) // Frame-Filter
         )
     },
     set: { driver, states -> Observable<Global.State> in
         driver
             .events()
             .tupledWithLatestFrom(states)
-            .map(
-              driverEventToGlobalState // Event-Filter
-            )
-    }
-)
-```
-
-#### CycledLens
-`CycledLens` subscribes a lens' output to its input allowing it to render changes produces by its events. By providing a common interface, `MutableLenses` can be composed using the `zip` operator. Zipping produces a single `MutableLens` that provides each of its internal lenses with latest output of themselves and their sibling `Lenses`.
-
-```swift
-CycledLens<Driver, Global.State>(
-    lens: { (source: Observable<Global.State>) in
-        MutatingLens.zip(
-            source.networkLens(),
-            source.persistenceLens(),
-            source.screenLens(),
-            source.audioLens()
-        )
+            .map(driverEventToGlobalState) // Event-Filter
     }
 )
 ```
   
-#### Driver
+### Driver
 Drivers render a stream of effect-models and produce a stream of event-models.
   ```swift
   final class MyDriver {
@@ -177,7 +173,7 @@ In most scenarios, an event will produce a single frame  `Event -> Frame`. Howev
                     // Renders first frame of animation.
                     View().rendering(
                         model: state
-                            .compactMap { $0.head }
+                            .compactMap { $0.first }
                             .map(globalStateToViewModel)
                     )
                 },
