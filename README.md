@@ -56,7 +56,7 @@ A frame-filter function allows for applying changes to a received Frame before b
 - An equality check to prevent unnecessary renderings. If a desired frame has already been rendered, a model can be created with some sort of no-op value instead. In order to access the previous _n_ frames for this equality check, the `scan` Rx operator can be used. It would also make sense that `Drivers` be the providers of this sort of filter as the implementation of the filter would depend of the `private` implementation of the `Driver`. Either way, this sort of filter would provide a deterministic function for `Driver` state management.
 
 ### Driver
-Drivers are stateless objects that simply receive a value, render it to hardware and output `Event` values as they are experienced by hardware. They ideally have two public functions `init(input: RxSwift.Observable<Driver.Model>)` and `func output() -> RxSwift.Observable<Driver.Event>`. They also ideally have no concept of what is beyond their interface, avoiding references to global singletons and having a model that they have autonomy over [Dependency Inversion Principle](https://en.wikipedia.org/wiki/Dependency_inversion_principle).
+Drivers are stateless objects that simply receive a value, render it to hardware and output `Event` values as they are experienced by hardware. They ideally have two public functions `init(initial: Driver.Model, subsequent: RxSwift.Observable<Driver.Model>)` and `func output() -> RxSwift.Observable<Driver.Event>`. They also ideally have no concept of what is beyond their interface, avoiding references to global singletons and having a model that they have autonomy over [Dependency Inversion Principle](https://en.wikipedia.org/wiki/Dependency_inversion_principle).
 
 ### Event
 Events are simple enum values that may also contain associated values received by hardware. Events are ideally defined and owned by a `Driver` as opposed to being defined at the application level ([Dependency Inversion](https://en.wikipedia.org/wiki/Dependency_inversion_principle)).
@@ -154,7 +154,6 @@ Drivers render a stream of effect-models and produce a stream of event-models.
     private func didReceiveEvent() {
       output.on(.next(Event.case))
     }
-
   }
   ```
 
@@ -166,27 +165,27 @@ In most scenarios, an event will produce a single frame  `Event -> Frame`. Howev
 
   ```swift
   CycledLens<View, [Global.State]>(
-    lens: { (source: Observable<[Global.State]>) in
+    lens: { (states: Observable<[Global.State]>) in
         MutatingLens.zip(
-            source.lens(
+            states.lens(
                 get: { state -> View in
                     // Renders first frame of animation.
                     View().rendering(
-                        model: state
+                        model: states
                             .compactMap { $0.first }
                             .map(globalStateToViewModel)
                     )
                 },
-                set: { view, state in
+                set: { view, states in
                     // Produces animation of [Global.Frame].
                     view
                         .events()
-                        .tupledWithLatestFrom(state)
+                        .tupledWithLatestFrom(states)
                         .map(animatedState)
                 }
             ),
             // Sends remaining animation to lenses after delay
-            source.emittingTail(every: .milliseconds(1000 / 60))
+            states.emittingTail(every: .milliseconds(1000 / 60))
         )
     }
   )
