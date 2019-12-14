@@ -9,28 +9,21 @@
 Cycle provides a means of writing an application as a function that reduces a stream of events to a stream of effects. The stream of effects can be thought of as a reel of film that can be fed to hardware to be projected. The approach allows for behavior that is more deterministic, easily controlled and observable. [CycleMonitor](https://github.com/BrianSemiglia/CycleMonitor) is a companion development tool that can be used to achieve that observability and control over your application.
 
 ### Anatomy
-Label | Purpose
------ | -------
-Frame | A struct representing the state of the entire application at a given moment  
-Frame Filter | A function that converts frames to driver-specific models that have been stripped of redundancies  
-Driver | An isolated, stateless object that renders frames to hardware and deliver events  
-Event | A driver-specific enum expressing events experienced by drivers  
-Event Filter | A function that produces frames based on an input event
+Label | Signature | Purpose
+----- | ------- | -------
+Frame | `Void -> Frame` | A struct representing the state of the entire application at a given moment  
+Frame Filter | `Frame -> Driver.Model` | A function that converts frames to driver-specific models that have been stripped of redundancies  
+Driver | `Driver.Model -> Void -> Driver.Event` | An isolated, stateless object that renders frames to hardware and deliver events  
+Event | `Void -> Event` | A driver-specific enum expressing events experienced by drivers  
+Event Filter | `(Event, Frame) -> Frame` | A function that produces frames based on an input event and a previous state
 
-### Composition
-1. `Frames` arrive as inputs to the main function.
-2. `Frames` are routed to frame-filter functions that produce models specific to `Drivers`.
-3. `Models` are fed to each `Driver` to be rendered to hardware.
-4. `Drivers` deliver `Events` as they arrive.
-5. The `Event` along with the previous _n_ `Frames` are fed to a event-filter to produce a new `Frame`.
-6. The new `Frame` is input to another execution of the main function and a cycle is produced.
-
+### Example
 ```
-frame ---------> driver ----------> event + previous frames --> new frame
+frame --------> driver.model --> driver ----------> event + previous_frames -> new frame
          
-Network.Model -> Network                    Network.Model       Network.Model
-Screen.Model  -> Screen  -> Network.Event + Screen.Model   ---> Screen.Model
-Session.Model -> Session                    Session.Model       Session.Model
+                Network.Model -> Network                    [Network.Model]
+Global.Model -> Screen.Model  -> Screen  -> Network.Event + [Screen.Model]  -> Global.Model
+                Session.Model -> Session                    [Session.Model]
 ```
 
 ### Concept
