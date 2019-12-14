@@ -19,11 +19,11 @@ Event Filter | `(Event, Frame) -> Frame` | A function that produces frames based
 
 ### Example
 ```
-frame --------> driver.model --> driver ----------> event + previous_frames -> new frame
+frame --------> driver.model --> driver ----------> event + previous_frame -> new frame
          
-                Network.Model -> Network                    [Network.Model]
-Global.Model -> Screen.Model  -> Screen  -> Network.Event + [Screen.Model]  -> Global.Model
-                Session.Model -> Session                    [Session.Model]
+                Network.Model -> Network                    Network.Model
+Global.Model -> Screen.Model  -> Screen  -> Network.Event + Screen.Model  --> Global.Model
+                Session.Model -> Session                    Session.Model
 ```
 
 ### Concept
