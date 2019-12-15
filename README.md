@@ -9,13 +9,13 @@
 Cycle provides a means of writing an application as a function that reduces a stream of events to a stream of effects. The stream of effects can be thought of as a reel of film that can be fed to hardware to be projected. The approach allows for behavior that is more deterministic, easily controlled and observable. [CycleMonitor](https://github.com/BrianSemiglia/CycleMonitor) is a companion development tool that can be used to achieve that observability and control over your application.
 
 ### Anatomy
-Label | Signature | Purpose
------ | ------- | -------
-Frame | `Void -> Frame` | A struct representing the state of the entire application at a given moment  
-Frame Filter | `Frame -> Driver.Model` | A function that converts frames to driver-specific models that have been stripped of redundancies  
-Driver | `Driver.Model -> Void -> Driver.Event` | An isolated, stateless object that renders frames to hardware and deliver events  
-Event | `Void -> Event` | A driver-specific enum expressing events experienced by drivers  
-Event Filter | `(Event, Frame) -> Frame` | A function that produces frames based on an input event and a previous state
+Signature | Purpose
+------- | -------
+`Frame` | A struct representing the state of the entire application at a given moment  
+`Frame -> Driver.Model` | A function that converts frames to driver-specific models that have been stripped of redundancies  
+`Driver.Model -> Void -> Driver.Event` | An isolated, stateless object that renders frames to hardware and deliver events  
+`Event` | A driver-specific enum expressing events experienced by drivers  
+`(Event, Frame) -> Frame` | A function that produces frames based on an input event and a previous state
 
 ### Example
 ```
