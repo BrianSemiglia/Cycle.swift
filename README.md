@@ -12,19 +12,12 @@ Cycle provides a means of writing an application as a function that reduces a st
 Signature | Purpose
 ------- | -------
 `Frame` | A struct representing the state of the entire application at a given moment  
-`Frame -> Driver.Model` | A function that converts frames to driver-specific models that have been stripped of redundancies  
-`Driver.Model -> Void -> Driver.Event` | An isolated, stateless object that renders frames to hardware and deliver events  
-`Event` | A driver-specific enum expressing events experienced by drivers  
+`Frame -> Driver.Model` | A function that converts frames to driver-specific models 
+`Driver.Model -> Driver.Event` | An isolated, stateless object that renders frames to hardware and deliver events  
+`Event` | A driver-specific enum expressing events experienced by drivers 
 `(Event, Frame) -> Frame` | A function that produces frames based on an input event and a previous state
 
-### Example
-```
-frame --------> driver.model --> driver ----------> event + previous_frame -> new frame
-         
-                Network.Model -> Network                    Network.Model
-Global.Model ->  Screen.Model -> Screen  -> Network.Event +  Screen.Model  --> Global.Model
-                Session.Model -> Session                    Session.Model
-```
+Combined they form a transformation of `Frame -> Driver.Model -> SideEffect -> Driver.Event + Frame -> repeat`. This transformation is encapsulated to a type: `Lens`. A cycled application is a collection of `Lenses`. The results is an application formed of homogenous parts that are free from needing to define custom scaffolding necessary to propogate values to and from their parent context.
 
 ### Concept
 The goal is to produce an application that has clear and uniform boundaries between the declarative and procedural. The declarative side can be understood as a timeline of `Frames` based on the incoming timeline of `Events` which when intertwined can be visualized as such:
