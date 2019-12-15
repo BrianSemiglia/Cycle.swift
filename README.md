@@ -17,7 +17,8 @@ Signature | Purpose
 `Event` | A driver-specific enum expressing events experienced by drivers 
 `(Event, Frame) -> Frame` | A function that produces frames based on an input event and a previous state
 
-Combined they form a transformation of `Frame -> Driver.Model -> SideEffect -> Driver.Event + Frame -> repeat`. This transformation is encapsulated to a type: `Lens`. A cycled application is a collection of `Lenses`. The results is an application formed of homogenous parts that are free from needing to define custom scaffolding necessary to propogate values to and from their parent context.
+### Composition
+Combined they form a transformation of `Frame -> Driver.Model -> SideEffect -> Driver.Event + Frame -> repeat`. This transformation is encapsulated to a type: `Lens`. A cycled application is a collection of `Lenses`. The result is an application formed of homogenous parts that are free from needing to define custom scaffolding necessary to propogate values to and from their parent context.
 
 ### Concept
 The goal is to produce an application that has clear and uniform boundaries between the declarative and procedural. The declarative side can be understood as a timeline of `Frames` based on the incoming timeline of `Events` which when intertwined can be visualized as such:
