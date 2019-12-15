@@ -13,7 +13,7 @@ Signature | Purpose
 ------- | -------
 `Frame` | A struct representing the state of the entire application at a given moment  
 `Frame -> Driver.Model` | A function that converts frames to driver-specific models 
-`Driver.Model -> Driver.Event` | An isolated, stateless object that renders frames to hardware and deliver events  
+`Driver.Model -> Driver.Event` | An object that renders frames to hardware and deliver events  
 `Event` | A driver-specific enum expressing events experienced by drivers 
 `(Event, Frame) -> Frame` | A function that produces frames based on an input event and a previous state
 
