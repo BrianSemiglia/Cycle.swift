@@ -43,7 +43,12 @@ A frame-filter function allows for applying changes to a received Frame before b
 - An equality check to prevent unnecessary renderings. If a desired frame has already been rendered, a model can be created with some sort of no-op value instead. In order to access the previous _n_ frames for this equality check, the `scan` Rx operator can be used. It would also make sense that `Drivers` be the providers of this sort of filter as the implementation of the filter would depend of the `private` implementation of the `Driver`. Either way, this sort of filter would provide a deterministic function for `Driver` state management.
 
 ### Driver
-Drivers are stateless objects that simply receive a value, render it to hardware and output `Event` values as they are experienced by hardware. They ideally have two public functions `init(initial: Driver.Model, subsequent: RxSwift.Observable<Driver.Model>)` and `func output() -> RxSwift.Observable<Driver.Event>`. They also ideally have no concept of what is beyond their interface, avoiding references to global singletons and having a model that they have autonomy over [Dependency Inversion Principle](https://en.wikipedia.org/wiki/Dependency_inversion_principle).
+Drivers are stateless objects that simply receive a value, render it to hardware and output `Event` values as they are experienced by hardware. They ideally have two public functions 
+
+1. `init(initial: Driver.Model, subsequent: RxSwift.Observable<Driver.Model>)` 
+2. `func output() -> RxSwift.Observable<Driver.Event>`. 
+
+They also ideally have no concept of what is beyond their interface, avoiding references to global singletons and having a model that they have autonomy over [Dependency Inversion Principle](https://en.wikipedia.org/wiki/Dependency_inversion_principle).
 
 ### Event
 Events are simple enum values that may also contain associated values received by hardware. Events are ideally defined and owned by a `Driver` as opposed to being defined at the application level ([Dependency Inversion](https://en.wikipedia.org/wiki/Dependency_inversion_principle)).
