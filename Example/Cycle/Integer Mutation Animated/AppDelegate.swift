@@ -40,7 +40,6 @@ import RxSwift
 //                            .map(incrementingByAppendingAnimation)
                          // .map(incrementingByDisablingControlsUntilAnimationEnd)
                           .map(incrementingByReplacingPendingAnimation)
-                        .debug()
                     }
                 )
                 .visualize(name: "toggler")
