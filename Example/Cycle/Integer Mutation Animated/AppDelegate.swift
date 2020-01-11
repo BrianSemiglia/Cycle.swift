@@ -37,9 +37,10 @@ import RxSwift
                         toggler
                             .events()
                             .tupledWithLatestFrom(state)
-                            .map(incrementingByAppendingAnimation)
+//                            .map(incrementingByAppendingAnimation)
                          // .map(incrementingByDisablingControlsUntilAnimationEnd)
-                         // .map(incrementingByReplacingPendingAnimation)
+                          .map(incrementingByReplacingPendingAnimation)
+                        .debug()
                     }
                 )
                 .map { state, toggler in
@@ -54,7 +55,7 @@ import RxSwift
                 return MutatingLens.zip(
                     toggler,
                     source.emittingTail(
-                        every: .milliseconds(1000 / 60)
+                        every: .milliseconds(10000 / 60)
                     )
                 )
             }

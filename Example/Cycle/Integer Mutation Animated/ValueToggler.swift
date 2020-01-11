@@ -114,7 +114,7 @@ extension ValueToggler.Model {
 private extension UIViewController {
     static var empty: UIViewController {
         let x = UIViewController()
-        x.view.backgroundColor = .white
+        x.view.backgroundColor = .systemBackground
         return x
     }
 }
