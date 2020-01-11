@@ -65,7 +65,7 @@ import RxSwift
                 return MutatingLens.zip(
                     toggler,
                     source.emittingTail(
-                        every: .milliseconds(10000 / 60)
+                        every: .milliseconds(100000 / 60)
                     )
                 )
             }
