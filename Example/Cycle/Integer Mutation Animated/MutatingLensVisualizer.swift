@@ -73,15 +73,27 @@ extension MutatingLensVisualizer.ViewModel {
 
 }
 
-extension MutatingLens where A: ObservableType, B: ObservableType {
+extension MutatingLens {
 
-    func visualize(_ input: Self) -> MutatingLens {
-        let i = input.get
-        let o = input.set
-        let l = MutatingLens(value: i, get: <#T##(ObservableType) -> ObservableType#>)
+    func visualize<T>(name: String, input: MutatingLens) -> MutatingLens<A, MutatingLensVisualizer> where A: ObservableType, A.Element == T {
+        MutatingLens<A, MutatingLensVisualizer>.init(
+            value: input.value,
+            get: ({ (state: A) -> MutatingLensVisualizer in
+                MutatingLensVisualizer.visualize(
+                    input: state,
+                    output: Observable<T>.never(),
+                    name: name
+                )
+            }),
+            set: { (visualizer: MutatingLensVisualizer, state: A) in state }
+        )
     }
 
-    func visualize<Input, Output>(input: Observable<Input>, output: Observable<Output>, name: String) -> MutatingLensVisualizer {
+}
+
+extension MutatingLensVisualizer {
+
+    static func visualize<Input: ObservableType, Output: ObservableType>(input: Input, output: Output, name: String) -> MutatingLensVisualizer {
         MutatingLensVisualizer(name: name).rendering(
             Observable.merge(
                 input.map { _ in MutatingLensVisualizer.ViewModel.activeInput() },
