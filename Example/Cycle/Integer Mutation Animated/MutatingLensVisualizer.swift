@@ -60,11 +60,11 @@ class MutatingLensVisualizer: UIView {
 extension MutatingLensVisualizer.ViewModel {
 
     static func activeEvent() -> Self {
-        .init(inColor: .gray, outColor: .random())
+        .init(inColor: .gray, outColor: .red)
     }
 
     static func activeInput() -> Self {
-        .init(inColor: .random(), outColor: .gray)
+        .init(inColor: .red, outColor: .gray)
     }
 
     static func idle() -> Self {
