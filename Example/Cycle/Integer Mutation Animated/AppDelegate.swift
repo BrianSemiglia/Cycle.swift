@@ -43,8 +43,19 @@ import RxSwift
                         .debug()
                     }
                 )
-                .map { state, toggler in
-                    toggler.root
+                .visualize(name: "toggler")
+                .map { state, tuple -> UIViewController in
+                    let vc = tuple.0.root
+                    let visualizer = tuple.1
+                    visualizer.backgroundColor = #colorLiteral(red: 0.1215686277, green: 0.01176470611, blue: 0.4235294163, alpha: 1)
+                    vc.view.addSubview(visualizer)
+                    visualizer.translatesAutoresizingMaskIntoConstraints = false
+                    NSLayoutConstraint.activate([
+                        visualizer.leadingAnchor.constraint(equalTo: vc.view.leadingAnchor),
+                        visualizer.trailingAnchor.constraint(equalTo: vc.view.trailingAnchor),
+                        visualizer.bottomAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.bottomAnchor),
+                    ])
+                    return vc
                 }
                 .prefixed(
                     with: .just([

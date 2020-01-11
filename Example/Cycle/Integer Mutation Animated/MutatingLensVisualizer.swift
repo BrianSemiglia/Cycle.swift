@@ -36,7 +36,7 @@ class MutatingLensVisualizer: UIView {
 
         let stack = UIStackView(arrangedSubviews: [inView, centerLabel, outView])
         stack.axis = .vertical
-        stack.alignment = .leading
+        stack.alignment = .center
         stack.spacing = 10
 
         centerLabel.text = name
@@ -60,11 +60,11 @@ class MutatingLensVisualizer: UIView {
 extension MutatingLensVisualizer.ViewModel {
 
     static func activeEvent() -> Self {
-        .init(inColor: .gray, outColor: .red)
+        .init(inColor: .gray, outColor: .random())
     }
 
     static func activeInput() -> Self {
-        .init(inColor: .red, outColor: .gray)
+        .init(inColor: .random(), outColor: .gray)
     }
 
     static func idle() -> Self {
@@ -73,11 +73,17 @@ extension MutatingLensVisualizer.ViewModel {
 
 }
 
+extension UIColor {
+    static func random() -> UIColor {
+        UIColor(hue: .random(in: 0...1), saturation: .random(in: 0.8...1), brightness: 1, alpha: 1)
+    }
+}
+
 extension MutatingLens {
 
-    func visualize<T>(name: String, input: MutatingLens) -> MutatingLens<A, MutatingLensVisualizer> where A: ObservableType, A.Element == T {
-        MutatingLens<A, MutatingLensVisualizer>(
-            value: input.value,
+    func visualize<T>(name: String) -> MutatingLens<A, (B, MutatingLensVisualizer)> where A: ObservableType, A.Element == T {
+        MutatingLens.zip(self, MutatingLens<A, MutatingLensVisualizer>(
+            value: value,
             get: ({ (state: A) -> MutatingLensVisualizer in
                 MutatingLensVisualizer.visualize(
                     input: state,
@@ -86,7 +92,7 @@ extension MutatingLens {
                 )
             }),
             set: { (visualizer: MutatingLensVisualizer, state: A) in state }
-        )
+        ))
     }
 
 }
@@ -112,6 +118,7 @@ private extension MutatingLensVisualizer {
         let label = UILabel()
         label.text = name
         label.textColor = .white
+        label.textAlignment = .center
         view.addSubview(label)
         label.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -119,6 +126,7 @@ private extension MutatingLensVisualizer {
             label.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             label.topAnchor.constraint(equalTo: view.topAnchor),
             label.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            label.widthAnchor.constraint(equalTo: label.heightAnchor),
         ])
         view.backgroundColor = color
         return view
