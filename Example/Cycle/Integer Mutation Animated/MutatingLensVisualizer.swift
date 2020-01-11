@@ -76,7 +76,7 @@ extension MutatingLensVisualizer.ViewModel {
 extension MutatingLens {
 
     func visualize<T>(name: String, input: MutatingLens) -> MutatingLens<A, MutatingLensVisualizer> where A: ObservableType, A.Element == T {
-        MutatingLens<A, MutatingLensVisualizer>.init(
+        MutatingLens<A, MutatingLensVisualizer>(
             value: input.value,
             get: ({ (state: A) -> MutatingLensVisualizer in
                 MutatingLensVisualizer.visualize(
