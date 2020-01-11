@@ -10,7 +10,7 @@ import Foundation
 
 public struct MutatingLens<A, B> {
 
-    private let value: A
+    public let value: A
     public let get: B
     public let set: [A]
 
