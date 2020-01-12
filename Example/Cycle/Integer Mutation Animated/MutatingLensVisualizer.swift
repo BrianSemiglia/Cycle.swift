@@ -115,32 +115,46 @@ extension MutatingLensVisualizer {
         name: String
     ) -> MutatingLensVisualizer {
         MutatingLensVisualizer(name: name).rendering(
-            Observable.merge(
-                input.flatMap { _ in
-                    Observable
-                        .just(.activeInput())
-                        .concat(
-                            Observable
-                                .just(.idle())
-                                .delay(.milliseconds(250), scheduler: MainScheduler())
-                        )
-                },
-                output.flatMap { _ in
-                    Observable
-                        .just(.activeEvent())
-                        .concat(
-                            Observable
-                                .just(.idle())
-                                .delay(.milliseconds(250), scheduler: MainScheduler())
-                        )
-                }
-            ),
+            Observable
+                .merge(
+                    input.flatMap { _ in
+                        Observable
+                            .just(.activeInput())
+                            .concat(
+                                Observable
+                                    .just(.idle())
+                                    .delay(.milliseconds(250), scheduler: MainScheduler())
+                            )
+                    },
+                    output.flatMap { _ in
+                        Observable
+                            .just(.activeEvent())
+                            .concat(
+                                Observable
+                                    .just(.idle())
+                                    .delay(.milliseconds(250), scheduler: MainScheduler())
+                            )
+                    }
+                )
+                .pacedBy(delay: .milliseconds(500))
+            ,
             f: { visualizer, newModel in
                 visualizer.model = newModel
             }
         )
     }
 
+}
+
+extension ObservableType {
+  func pacedBy(delay: RxTimeInterval) -> Observable<Element> {
+    concatMap {
+        Observable
+            .empty()
+            .delay(delay, scheduler: MainScheduler.instance)
+            .startWith($0)
+    }
+  }
 }
 
 private extension MutatingLensVisualizer {
