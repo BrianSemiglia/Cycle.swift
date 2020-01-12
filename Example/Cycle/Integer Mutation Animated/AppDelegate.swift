@@ -21,7 +21,7 @@ import RxSwift
     ) -> Bool {
 
         let lens = CycledLens<
-            (UIViewController, Animator<ValueToggler.Model>),
+            (UIViewController, Animator<ValueToggler.Model>, UIView),
             [ValueToggler.Model]
         >(
             lens: { source in
@@ -37,23 +37,15 @@ import RxSwift
                         toggler
                             .events()
                             .tupledWithLatestFrom(state)
-//                            .map(incrementingByAppendingAnimation)
-                         // .map(incrementingByDisablingControlsUntilAnimationEnd)
-                          .map(incrementingByReplacingPendingAnimation)
+                            // .map(incrementingByAppendingAnimation)
+                            // .map(incrementingByDisablingControlsUntilAnimationEnd)
+                            .map(incrementingByReplacingPendingAnimation)
                     }
                 )
-                .visualize(name: "toggler")
-                .map { state, tuple -> UIViewController in
-                    let vc = tuple.0.root
-                    let visualizer = tuple.1
-                    visualizer.backgroundColor = #colorLiteral(red: 0.1215686277, green: 0.01176470611, blue: 0.4235294163, alpha: 1)
-                    vc.view.addSubview(visualizer)
-                    visualizer.translatesAutoresizingMaskIntoConstraints = false
-                    NSLayoutConstraint.activate([
-                        visualizer.leadingAnchor.constraint(equalTo: vc.view.leadingAnchor),
-                        visualizer.trailingAnchor.constraint(equalTo: vc.view.trailingAnchor),
-                        visualizer.bottomAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.bottomAnchor),
-                    ])
+                .map { state, toggle -> UIViewController in
+                    toggle.backgroundColor = .white
+                    let vc = UIViewController()
+                    vc.view = toggle
                     return vc
                 }
                 .prefixed(
@@ -61,12 +53,12 @@ import RxSwift
                         ValueToggler.Model.empty
                     ])
                 )
-
-                return MutatingLens.zip(
-                    toggler,
-                    source.emittingTail(
-                        every: .milliseconds(100000 / 60)
-                    )
+                
+                return NSObject.zip(
+                    toggler.visualize(name: "toggler"),
+                    source
+                        .emittingTail(every: .milliseconds(10000 / 60))
+                        .visualize(name: "animator")
                 )
             }
         )
@@ -74,6 +66,23 @@ import RxSwift
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.makeKeyAndVisible()
         window?.rootViewController = lens.receiver.0
+        
+        let visualizer = lens.receiver.2
+        visualizer.backgroundColor = #colorLiteral(red: 0.1215686277, green: 0.01176470611, blue: 0.4235294163, alpha: 1)
+        window?.rootViewController?.view.addSubview(visualizer)
+        visualizer.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            visualizer.leadingAnchor.constraint(
+                equalTo: window!.rootViewController!.view.leadingAnchor
+            ),
+            visualizer.trailingAnchor.constraint(
+                equalTo: window!.rootViewController!.view.trailingAnchor
+            ),
+            visualizer.bottomAnchor.constraint(
+                equalTo: window!.rootViewController!.view.safeAreaLayoutGuide.bottomAnchor
+            ),
+        ])
+        
         self.lens = lens
 
         return true

@@ -103,6 +103,7 @@ public extension MutatingLens {
             )
         )
     }
+}
 
 public extension NSObject {
     static func zipVisualized<X, Y, Z>(

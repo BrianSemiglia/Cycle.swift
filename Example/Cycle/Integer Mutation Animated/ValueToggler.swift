@@ -10,7 +10,7 @@ import UIKit
 import RxCocoa
 import RxSwift
 
-final class ValueToggler: NSObject {
+final class ValueToggler: UIView {
     
     struct Model: Equatable {
         struct Button: Equatable {
@@ -59,15 +59,18 @@ final class ValueToggler: NSObject {
     )
     
     var cleanup = DisposeBag()
-    let root = UIViewController.empty
     
-    override init() {
+    @available(*, unavailable) required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    init() {
         increment.backgroundColor = .gray
         decrement.backgroundColor = .red
-        root.view.addSubview(label)
-        root.view.addSubview(increment)
-        root.view.addSubview(decrement)
-        super.init()
+        super.init(frame: .zero)
+        addSubview(label)
+        addSubview(increment)
+        addSubview(decrement)
     }
   
     func rendering(model input: Observable<Model>) -> ValueToggler {
