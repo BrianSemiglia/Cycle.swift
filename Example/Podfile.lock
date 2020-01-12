@@ -40,7 +40,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  Cycle: 87a7dc8bad8ef5fe175e01a950f8968ffc9c0da0
+  Cycle: fbf065e610bfe333916582dd3c9f18cf74473feb
   RxBlocking: c5e090f42d046df8b0e7752742510f349963710f
   RxCocoa: e741b9749968e8a143e2b787f1dfbff2b63d0a5c
   RxExpect: 0685c9003c6d38532d5b101367eaf86b3adda81a

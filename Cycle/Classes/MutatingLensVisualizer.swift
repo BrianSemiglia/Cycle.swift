@@ -7,10 +7,9 @@
 //
 
 import UIKit
-import Cycle
 import RxSwift
 
-class MutatingLensVisualizer: UIView {
+final public class MutatingLensVisualizer: UIView {
 
     struct ViewModel {
         var inColor: UIColor
@@ -87,7 +86,7 @@ extension UIColor {
     }
 }
 
-extension MutatingLens {
+public extension MutatingLens {
 
     func visualize<T>(name: String) -> MutatingLens<A, (B, MutatingLensVisualizer)> where A == Observable<T> {
         MutatingLens.zip(

@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		49B140A4CE3585324E0273CE /* Pods_Integer_Mutation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E47239C96FFB80919EA1E46 /* Pods_Integer_Mutation.framework */; };
 		5A359C07119A4B4AD8DF18E7 /* Pods_Cycle_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22DC81DAA50022429D87BA17 /* Pods_Cycle_Tests.framework */; };
-		5B50338A23CA588E008459F8 /* MutatingLensVisualizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B50338923CA588E008459F8 /* MutatingLensVisualizer.swift */; };
 		D311B6B323923BDD006FB67D /* LensTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D311B6B223923BDD006FB67D /* LensTests.swift */; };
 		D311B6B723923D5E006FB67D /* UIView+Reactive.swift in Sources */ = {isa = PBXBuildFile; fileRef = D311B6B523923D5E006FB67D /* UIView+Reactive.swift */; };
 		D311B6D223924B24006FB67D /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D311B6CE23924B23006FB67D /* LaunchScreen.xib */; };
@@ -38,7 +37,6 @@
 		22DC81DAA50022429D87BA17 /* Pods_Cycle_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Cycle_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3BE1743E33DF3A4752FDCDE6 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		48B2208FB5231D038BB30411 /* Pods_Integer_Mutation_Animated.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Integer_Mutation_Animated.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		5B50338923CA588E008459F8 /* MutatingLensVisualizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutatingLensVisualizer.swift; sourceTree = "<group>"; };
 		5D233564CBBA80E47BBB665B /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		607FACD01AFB9204008FA782 /* Integer Mutation Animated.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Integer Mutation Animated.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACE51AFB9204008FA782 /* Cycle_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Cycle_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -175,7 +173,6 @@
 				D311B6CE23924B23006FB67D /* LaunchScreen.xib */,
 				D311B6CF23924B23006FB67D /* AppDelegate.swift */,
 				D311B6D023924B23006FB67D /* ValueToggler.swift */,
-				5B50338923CA588E008459F8 /* MutatingLensVisualizer.swift */,
 				D311B6D123924B23006FB67D /* Info.plist */,
 			);
 			name = "Integer Mutation Animated";
@@ -480,7 +477,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D311B6D423924B24006FB67D /* ValueToggler.swift in Sources */,
-				5B50338A23CA588E008459F8 /* MutatingLensVisualizer.swift in Sources */,
 				D311B6D323924B24006FB67D /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
