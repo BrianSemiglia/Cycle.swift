@@ -86,7 +86,7 @@ extension UIColor {
 
 extension MutatingLens {
 
-    func visualize<T>(name: String) -> MutatingLens<A, (B, MutatingLensVisualizer)> where A: ObservableType, A.Element == T {
+    func visualize<T>(name: String) -> MutatingLens<A, (B, MutatingLensVisualizer)> where A == Observable<T> {
         MutatingLens.zip(
             self,
             MutatingLens<A, MutatingLensVisualizer>(
@@ -94,11 +94,10 @@ extension MutatingLens {
                 get: { state in
                     .visualize(
                         input: state,
-                        output: Observable<T>.never(),
+                        output: Observable.merge(self.set),
                         name: name
                     )
-                },
-                set: { visualizer, state in state }
+                }
             )
         )
     }
@@ -123,7 +122,15 @@ extension MutatingLensVisualizer {
                                 .delay(.milliseconds(250), scheduler: MainScheduler())
                         )
                 },
-                output.map { _ in .activeEvent() }
+                output.flatMap { _ in
+                    Observable
+                        .just(.activeEvent())
+                        .concat(
+                            Observable
+                                .just(.idle())
+                                .delay(.milliseconds(250), scheduler: MainScheduler())
+                        )
+                }
             ),
             f: { visualizer, newModel in
                 visualizer.model = newModel
