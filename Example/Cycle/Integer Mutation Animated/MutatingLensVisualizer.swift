@@ -27,7 +27,10 @@ class MutatingLensVisualizer: UIView {
 
     var model: ViewModel = .idle() {
         didSet {
-            render(newModel: model, oldModel: oldValue)
+            render(
+                newModel: model,
+                oldModel: oldValue
+            )
         }
     }
 
