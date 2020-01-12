@@ -102,13 +102,14 @@ extension MutatingLensVisualizer {
     static func visualize<Input: ObservableType, Output: ObservableType>(input: Input, output: Output, name: String) -> MutatingLensVisualizer {
         MutatingLensVisualizer(name: name).rendering(
             Observable.merge(
-                // TODO: flashing to .activeInput() and back to .idle() is only
-                // working for the first event, and then the stream is probably
-                // completing.
                 input.flatMap { _ in
-                    Observable.just(.activeInput())
-                        .concat(Observable<Int>.interval(.milliseconds(500), scheduler: MainScheduler())
-                            .map { _ in .idle() }).concat(Observable.never())
+                    Observable
+                        .just(.activeInput())
+                        .concat(
+                            Observable
+                                .just(.idle())
+                                .delay(.milliseconds(250), scheduler: MainScheduler())
+                        )
                 },
                 output.map { _ in .activeEvent() }
             ), f: { (visualizer, newModel) in
