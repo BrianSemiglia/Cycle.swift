@@ -75,31 +75,43 @@ extension MutatingLensVisualizer.ViewModel {
 
 extension UIColor {
     static func random() -> UIColor {
-        UIColor(hue: .random(in: 0...1), saturation: .random(in: 0.8...1), brightness: 1, alpha: 1)
+        UIColor(
+            hue: .random(in: 0...1),
+            saturation: .random(in: 0.8...1),
+            brightness: 1,
+            alpha: 1
+        )
     }
 }
 
 extension MutatingLens {
 
     func visualize<T>(name: String) -> MutatingLens<A, (B, MutatingLensVisualizer)> where A: ObservableType, A.Element == T {
-        MutatingLens.zip(self, MutatingLens<A, MutatingLensVisualizer>(
-            value: value,
-            get: ({ (state: A) -> MutatingLensVisualizer in
-                MutatingLensVisualizer.visualize(
-                    input: state,
-                    output: Observable<T>.never(),
-                    name: name
-                )
-            }),
-            set: { (visualizer: MutatingLensVisualizer, state: A) in state }
-        ))
+        MutatingLens.zip(
+            self,
+            MutatingLens<A, MutatingLensVisualizer>(
+                value: value,
+                get: { state in
+                    .visualize(
+                        input: state,
+                        output: Observable<T>.never(),
+                        name: name
+                    )
+                },
+                set: { visualizer, state in state }
+            )
+        )
     }
 
 }
 
 extension MutatingLensVisualizer {
 
-    static func visualize<Input: ObservableType, Output: ObservableType>(input: Input, output: Output, name: String) -> MutatingLensVisualizer {
+    static func visualize<Input: ObservableType, Output: ObservableType>(
+        input: Input,
+        output: Output,
+        name: String
+    ) -> MutatingLensVisualizer {
         MutatingLensVisualizer(name: name).rendering(
             Observable.merge(
                 input.flatMap { _ in
@@ -112,9 +124,11 @@ extension MutatingLensVisualizer {
                         )
                 },
                 output.map { _ in .activeEvent() }
-            ), f: { (visualizer, newModel) in
+            ),
+            f: { visualizer, newModel in
                 visualizer.model = newModel
-        })
+            }
+        )
     }
 
 }
