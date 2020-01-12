@@ -150,9 +150,8 @@ extension ObservableType {
   func pacedBy(delay: RxTimeInterval) -> Observable<Element> {
     concatMap {
         Observable
-            .empty()
+            .just($0)
             .delay(delay, scheduler: MainScheduler.instance)
-            .startWith($0)
     }
   }
 }
