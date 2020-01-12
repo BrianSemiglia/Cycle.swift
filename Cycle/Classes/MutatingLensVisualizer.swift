@@ -104,10 +104,53 @@ public extension MutatingLens {
         )
     }
 
+public extension NSObject {
+    static func zipVisualized<X, Y, Z>(
+        _ first: MutatingLens<Observable<X>, Y>,
+        _ second: MutatingLens<Observable<X>, Z>
+    ) -> MutatingLens<Observable<X>, (Y, Z, UIView)> {
+        MutatingLens
+            .zip(
+                first.visualize(name: "first"),
+                second.visualize(name: "second")
+            )
+            .map { states, receivers -> (Y, Z, UIView) in
+                let stack = UIStackView(
+                    arrangedSubviews: [
+                        receivers.0.1,
+                        receivers.1.1
+                    ]
+                )
+                let first = receivers.0.0
+                let second = receivers.1.0
+                return (first, second, stack)
+            }
+    }
+    
+    static func zip<X, Y, Z>(
+        _ first: MutatingLens<Observable<X>, (Y, MutatingLensVisualizer)>,
+        _ second: MutatingLens<Observable<X>, (Z, MutatingLensVisualizer)>
+    ) -> MutatingLens<Observable<X>, (Y, Z, UIView)> {
+        MutatingLens
+            .zip(
+                first,
+                second
+            )
+            .map { states, receivers -> (Y, Z, UIView) in
+                let stack = UIStackView(
+                    arrangedSubviews: [
+                        receivers.0.1,
+                        receivers.1.1
+                    ]
+                )
+                let first = receivers.0.0
+                let second = receivers.1.0
+                return (first, second, stack)
+            }
+    }
 }
 
 extension MutatingLensVisualizer {
-
     static func visualize<Input: ObservableType, Output: ObservableType>(
         input: Input,
         output: Output,
