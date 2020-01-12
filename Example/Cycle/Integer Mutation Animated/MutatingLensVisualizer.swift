@@ -123,7 +123,7 @@ extension MutatingLensVisualizer {
                             .concat(
                                 Observable
                                     .just(.idle())
-                                    .delay(.milliseconds(250), scheduler: MainScheduler())
+                                    .delay(.milliseconds(25), scheduler: MainScheduler())
                             )
                     },
                     output.flatMap { _ in
@@ -132,11 +132,11 @@ extension MutatingLensVisualizer {
                             .concat(
                                 Observable
                                     .just(.idle())
-                                    .delay(.milliseconds(250), scheduler: MainScheduler())
+                                    .delay(.milliseconds(25), scheduler: MainScheduler())
                             )
                     }
                 )
-                .pacedBy(delay: .milliseconds(500))
+                .pacedBy(delay: .milliseconds(30))
             ,
             f: { visualizer, newModel in
                 visualizer.model = newModel
