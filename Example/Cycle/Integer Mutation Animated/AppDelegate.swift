@@ -46,12 +46,10 @@ import RxSwift
                     toggler.root
                 }
                 .prefixed(
-                    with: .just([
-                        ValueToggler.Model.empty
-                    ])
+                    with: ValueToggler.Model.empty
                 )
 
-                return MutatingLens.zip(
+                return MutatingLens<Any, Any, Any>.zip(
                     toggler,
                     source.emittingTail(
                         every: .milliseconds(1000 / 60)

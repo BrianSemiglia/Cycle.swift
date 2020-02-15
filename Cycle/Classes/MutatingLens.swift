@@ -8,94 +8,133 @@
 
 import Foundation
 
-public struct MutatingLens<A, B> {
+public struct Prefixed {}
 
-    private let value: A
+public struct MutatingLens<A, B, C> {
+
+    public let value: A
     public let get: B
-    public let set: [A]
+    public let set: C
 
     public init(
         value: A,
         get: @escaping (A) -> B,
-        set: @escaping (B, A) -> [A] = { _, _ in [] }
+        set: @escaping (B, A) -> C
     ) {
-        self.init(
-            _value: value,
-            _get: get,
-            _set: set
-        )
-    }
-
-    public init(
-        value: A,
-        get: @escaping (A) -> B,
-        set: @escaping (B, A) -> A
-    ) {
-        self.init(
-            _value: value,
-            _get: get,
-            _set: { b, a in [set(b, value)] }
-        )
-    }
-    
-    private init(
-        _value: A,
-        _get: @escaping (A) -> B,
-        _set: @escaping (B, A) -> [A] = { _, _ in [] }
-    ) {
-        let b = _get(_value)
-        self.value = _value
+        let b = get(value)
+        self.value = value
         self.get = b
-        self.set = _set(b, value)
+        self.set = set(b, value)
     }
     
-    public static func zip<C>(
-        _ first: MutatingLens<A, B>,
-        _ second: MutatingLens<A, C>
-    ) -> MutatingLens<A, (B, C)> {
-        return MutatingLens<A, (B, C)>(
-            value: first.value,
-            get: { a in (first.get, second.get) },
-            set: { _, a in first.set + second.set }
-        )
-    }
-
-    public func map<C>(_ f: @escaping (A, B) -> C) -> MutatingLens<A, C> { return
-        MutatingLens<A, C>(
+    public func map<X>(_ f: @escaping (A, B) -> X) -> MutatingLens<A, X, C> {
+        .init(
             value: value,
             get: { a in f(a, self.get) },
             set: { _, _ in self.set }
         )
     }
-    
-    public func mapLeft(
-        _ f: @escaping (B, A) -> A
-    ) -> MutatingLens<A, B> { return
-        MutatingLens<A, B>(
-            value: value,
-            get: { _ in self.get },
-            set: { b, a in
-                self.set.last.map {
-                    [f(b, $0)]
-                } ?? []
-            }
-        )
-    }
-    
-    public func flatMap<C>(_ f: @escaping (A, B) -> MutatingLens<A, C>) -> MutatingLens<A, C> {
-        let other = f(value, get)
-        return MutatingLens<A, C>(
-            value: value,
-            get: { a in other.get },
-            set: { c, a in self.set + other.set }
-        )
-    }
+}
 
-    public func prefixed(with prefix: A) -> MutatingLens<A, B> { return
-        MutatingLens(
+extension MutatingLens {
+    public func prefixed<T>(with prefix: T) -> MutatingLens<A, B, C> where C == [T] {
+        .init(
             value: value,
             get: { _ in self.get },
             set: { _, _ in [prefix] + self.set }
+        )
+    }
+}
+
+extension MutatingLens {
+    public init<T>(
+        value: A,
+        get: @escaping (A) -> B,
+        set: @escaping (B, A) -> T
+    ) where C == [T] {
+        self.init(
+            value: value,
+            get: get,
+            set: { b, a in [set(b, value)] }
+        )
+    }
+    
+    public init<T>(
+        value: A,
+        get: @escaping (A) -> B
+    ) where C == [T] {
+        self.init(
+            value: value,
+            get: get,
+            set: { b, a in [] }
+        )
+    }
+}
+
+extension MutatingLens {
+        
+    public static func zip<A1, B1, B2, C1>(
+        _ _1: MutatingLens<A1, B1, [C1]>,
+        _ _2: MutatingLens<A1, B2, [C1]>
+    ) -> MutatingLens<A1, (B1, B2), [C1]> {
+        .init(
+            value: _1.value,
+            get: { a in (_1.get, _2.get) },
+            set: { _, a in _1.set + _2.set }
+        )
+    }
+    
+    public static func zip<A1, B1, B2, B3, C1>(
+        _ _1: MutatingLens<A1, B1, [C1]>,
+        _ _2: MutatingLens<A1, B2, [C1]>,
+        _ _3: MutatingLens<A1, B3, [C1]>
+    ) -> MutatingLens<A1, (B1, B2, B3), [C1]> {
+        .init(
+            value: _1.value,
+            get: { a in (_1.get, _2.get, _3.get) },
+            set: { _, a in _1.set + _2.set + _3.set }
+        )
+    }
+    
+    public static func zip<A1, B1, B2, B3, B4, C1>(
+        _ _1: MutatingLens<A1, B1, [C1]>,
+        _ _2: MutatingLens<A1, B2, [C1]>,
+        _ _3: MutatingLens<A1, B3, [C1]>,
+        _ _4: MutatingLens<A1, B4, [C1]>
+    ) -> MutatingLens<A1, (B1, B2, B3, B4), [C1]> {
+        .init(
+            value: _1.value,
+            get: { a in (_1.get, _2.get, _3.get, _4.get) },
+            set: { _, a in _1.set + _2.set + _3.set + _4.set }
+        )
+    }
+    
+    public static func zip<A1, B1, B2, B3, B4, B5, C1>(
+        _ _1: MutatingLens<A1, B1, [C1]>,
+        _ _2: MutatingLens<A1, B2, [C1]>,
+        _ _3: MutatingLens<A1, B3, [C1]>,
+        _ _4: MutatingLens<A1, B4, [C1]>,
+        _ _5: MutatingLens<A1, B5, [C1]>
+    ) -> MutatingLens<A1, (B1, B2, B3, B4, B5), [C1]> {
+        .init(
+            value: _1.value,
+            get: { a in (_1.get, _2.get, _3.get, _4.get, _5.get) },
+            set: { _, a in _1.set + _2.set + _3.set + _4.set + _5.set }
+        )
+    }
+    
+    public static func zip<A1, B1, B2, B3, B4, B5, B6, C1>(
+        _ _1: MutatingLens<A1, B1, [C1]>,
+        _ _2: MutatingLens<A1, B2, [C1]>,
+        _ _3: MutatingLens<A1, B3, [C1]>,
+        _ _4: MutatingLens<A1, B4, [C1]>,
+        _ _5: MutatingLens<A1, B5, [C1]>,
+        _ _6: MutatingLens<A1, B6, [C1]>
+    ) -> MutatingLens<A1, (B1, B2, B3, B4, B5, B6), [C1]> {
+        .init(
+            value: _1.value,
+            get: { a in (_1.get, _2.get, _3.get, _4.get, _5.get, _6.get) },
+            set: { _, a in _1.set + _2.set + _3.set + _4.set + _5.set + _6.set }
         )
     }
 }

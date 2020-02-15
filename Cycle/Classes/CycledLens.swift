@@ -16,7 +16,7 @@ public struct CycledLens<Receiver, Value: Equatable> {
     private let producer = PublishSubject<Value>()
     private let cleanup = DisposeBag()
     
-    public init(lens: (Observable<Value>) -> MutatingLens<Observable<Value>, Receiver>) {
+    public init(lens: (Observable<Value>) -> MutatingLens<Observable<Value>, Receiver, [Observable<Value>]>) {
         let lens = lens(
             producer
                 .distinctUntilChanged()

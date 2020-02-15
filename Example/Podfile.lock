@@ -1,5 +1,5 @@
 PODS:
-  - Cycle (0.0.19):
+  - Cycle (1.0.0):
     - RxCocoa (~> 5.0)
     - RxSwift (~> 5.0)
   - RxBlocking (5.0.1):
@@ -40,7 +40,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  Cycle: 4592e503b14f58408e4b5a75969434996ebf563d
+  Cycle: 87a7dc8bad8ef5fe175e01a950f8968ffc9c0da0
   RxBlocking: c5e090f42d046df8b0e7752742510f349963710f
   RxCocoa: e741b9749968e8a143e2b787f1dfbff2b63d0a5c
   RxExpect: 0685c9003c6d38532d5b101367eaf86b3adda81a

@@ -24,11 +24,11 @@ final public class Animator<A>: NSObject {
 }
 
 public extension Observable {
-    func emittingTail<T>(every: RxTimeInterval) -> MutatingLens<Observable<[T]>, Animator<T>> where Element == Array<T> {
+    func emittingTail<T>(every: RxTimeInterval) -> MutatingLens<Observable<[T]>, Animator<T>, [Observable<[T]>]> where Element == Array<T> {
         return lens(
             get: { Animator(input: $0, interval: every) },
             set: { b, a in
-                b.output
+                [b.output]
             }
         )
     }
@@ -41,13 +41,13 @@ private extension Observable where Element: Collection {
 }
 
 public extension Collection {
-    var head: Element? { return
+    var head: Element? {
         first
     }
 }
 
 public extension Collection {
-    var tail: [Element] { return
+    var tail: [Element] {
         Array(dropFirst())
     }
 }
