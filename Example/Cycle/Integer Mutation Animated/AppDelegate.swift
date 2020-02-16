@@ -26,24 +26,17 @@ import RxSwift
         >(
             lens: { source in
                 let toggler = source.lens(
-                    get: { state -> ValueToggler in
-                        ValueToggler().rendering(
-                            model: state
-                                .map { $0.head }
-                                .ignoringEmpty()
-                        )
-                    },
-                    set: { toggler, state -> Observable<[ValueToggler.Model]> in
-                        toggler
-                            .events()
-                            .tupledWithLatestFrom(state)
-                            .map(incrementingByAppendingAnimation)
-                         // .map(incrementingByDisablingControlsUntilAnimationEnd)
-                         // .map(incrementingByReplacingPendingAnimation)
-                    }
+                    lifter: { $0.head! },
+                    driver: ValueToggler(),
+                    reducer: incrementingByAppendingAnimation
+                    // reducer: incrementingByDisablingControlsUntilAnimationEnd
+                    // reducer: incrementingByReplacingPendingAnimation
                 )
-                .map { state, toggler in
-                    toggler.root
+                .map { state, toggler -> UIViewController in
+                    let x = UIViewController()
+                    x.view = toggler
+                    x.view.backgroundColor = .white
+                    return x
                 }
                 .prefixed(
                     with: ValueToggler.Model.empty
@@ -69,8 +62,8 @@ import RxSwift
 }
 
 func incrementingByAppendingAnimation(
-    event: ValueToggler.Event,
-    state: [ValueToggler.Model]
+    state: [ValueToggler.Model],
+    event: ValueToggler.Event
 ) -> [ValueToggler.Model] { return
     state
         .last
@@ -78,11 +71,11 @@ func incrementingByAppendingAnimation(
         .flatMap { total in
             Array(1...10).map { current -> ValueToggler.Model in
                 var x = state.last!
-                if event == .increment {
+                if event == .incrementing {
                     x.total = String(Int(x.total)! + current)
                     x.increment.state = .enabled
                 }
-                if event == .decrement {
+                if event == .decrementing {
                     x.total = String(Int(x.total)! - current)
                     x.decrement.state = .enabled
                 }
@@ -94,8 +87,8 @@ func incrementingByAppendingAnimation(
 }
 
 func incrementingByDisablingControlsUntilAnimationEnd(
-    event: ValueToggler.Event,
-    state: [ValueToggler.Model]
+    state: [ValueToggler.Model],
+    event: ValueToggler.Event
 ) -> [ValueToggler.Model] { return
     state
         .last
@@ -104,9 +97,9 @@ func incrementingByDisablingControlsUntilAnimationEnd(
             Array(1...10).map { current -> ValueToggler.Model in
                 var x = state.last!
                 switch event {
-                case .increment:
+                case .incrementing:
                     x.total = String(Int(x.total)! + current)
-                case .decrement:
+                case .decrementing:
                     x.total = String(Int(x.total)! - current)
                 }
                 x.increment.state = current == 10 ? .enabled : .disabled
@@ -119,11 +112,11 @@ func incrementingByDisablingControlsUntilAnimationEnd(
 }
 
 func incrementingByReplacingPendingAnimation(
-    event: ValueToggler.Event,
-    state: [ValueToggler.Model]
+    state: [ValueToggler.Model],
+    event: ValueToggler.Event
 ) -> [ValueToggler.Model] {
 
-    let valueDelta = event == .increment
+    let valueDelta = event == .incrementing
         ? 10
         : -10
 

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		49B140A4CE3585324E0273CE /* Pods_Integer_Mutation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E47239C96FFB80919EA1E46 /* Pods_Integer_Mutation.framework */; };
 		5A359C07119A4B4AD8DF18E7 /* Pods_Cycle_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22DC81DAA50022429D87BA17 /* Pods_Cycle_Tests.framework */; };
+		D30971A023F8C728000DE989 /* ValueToggler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D311B6D023924B23006FB67D /* ValueToggler.swift */; };
 		D311B6B323923BDD006FB67D /* LensTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D311B6B223923BDD006FB67D /* LensTests.swift */; };
 		D311B6B723923D5E006FB67D /* UIView+Reactive.swift in Sources */ = {isa = PBXBuildFile; fileRef = D311B6B523923D5E006FB67D /* UIView+Reactive.swift */; };
 		D311B6D223924B24006FB67D /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D311B6CE23924B23006FB67D /* LaunchScreen.xib */; };
@@ -16,7 +17,6 @@
 		D311B6D423924B24006FB67D /* ValueToggler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D311B6D023924B23006FB67D /* ValueToggler.swift */; };
 		D311B6DB23924B56006FB67D /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D311B6D723924B56006FB67D /* LaunchScreen.xib */; };
 		D311B6DC23924B56006FB67D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D311B6D823924B56006FB67D /* AppDelegate.swift */; };
-		D311B6DD23924B56006FB67D /* ValueToggler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D311B6D923924B56006FB67D /* ValueToggler.swift */; };
 		DCA5891CE155D69A22E20A3C /* Pods_Integer_Mutation_Animated.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48B2208FB5231D038BB30411 /* Pods_Integer_Mutation_Animated.framework */; };
 /* End PBXBuildFile section */
 
@@ -54,7 +54,6 @@
 		D311B6D123924B23006FB67D /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D311B6D723924B56006FB67D /* LaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LaunchScreen.xib; sourceTree = "<group>"; };
 		D311B6D823924B56006FB67D /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		D311B6D923924B56006FB67D /* ValueToggler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ValueToggler.swift; sourceTree = "<group>"; };
 		D311B6DA23924B56006FB67D /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D7DC6ED309A5C247C3B6A64B /* Pods-Cycle_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Cycle_Tests.release.xcconfig"; path = "Target Support Files/Pods-Cycle_Tests/Pods-Cycle_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		E4B95012FD8197F9DA5F9CAC /* Pods-Integer Mutation.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Integer Mutation.debug.xcconfig"; path = "Target Support Files/Pods-Integer Mutation/Pods-Integer Mutation.debug.xcconfig"; sourceTree = "<group>"; };
@@ -184,7 +183,6 @@
 			children = (
 				D311B6D723924B56006FB67D /* LaunchScreen.xib */,
 				D311B6D823924B56006FB67D /* AppDelegate.swift */,
-				D311B6D923924B56006FB67D /* ValueToggler.swift */,
 				D311B6DA23924B56006FB67D /* Info.plist */,
 			);
 			name = "Integer Mutation";
@@ -494,7 +492,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D311B6DD23924B56006FB67D /* ValueToggler.swift in Sources */,
+				D30971A023F8C728000DE989 /* ValueToggler.swift in Sources */,
 				D311B6DC23924B56006FB67D /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

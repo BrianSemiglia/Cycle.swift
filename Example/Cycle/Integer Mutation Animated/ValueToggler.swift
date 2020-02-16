@@ -9,8 +9,9 @@
 import UIKit
 import RxCocoa
 import RxSwift
+import Cycle
 
-final class ValueToggler: NSObject {
+final class ValueToggler: UIView, Drivable {
     
     struct Model: Equatable {
         struct Button: Equatable {
@@ -28,8 +29,8 @@ final class ValueToggler: NSObject {
     }
     
     enum Event {
-        case increment
-        case decrement
+        case incrementing
+        case decrementing
     }
     
     let label = UILabel(
@@ -59,62 +60,52 @@ final class ValueToggler: NSObject {
     )
     
     var cleanup = DisposeBag()
-    let root = UIViewController.empty
     
-    override init() {
+    @available(*, unavailable) required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    init() {
         increment.backgroundColor = .gray
         decrement.backgroundColor = .red
-        root.view.addSubview(label)
-        root.view.addSubview(increment)
-        root.view.addSubview(decrement)
-        super.init()
+        super.init(frame: .zero)
+        addSubview(label)
+        addSubview(increment)
+        addSubview(decrement)
     }
   
-    func rendering(model input: Observable<Model>) -> ValueToggler {
-        input
-            .subscribe(onNext: { latest in
-                self.increment.setTitle(
-                    latest.increment.title,
-                    for: .normal
-                )
-                self.increment.isEnabled =
-                    latest.increment.state == .enabled ||
-                    latest.increment.state == .highlighted
-                self.decrement.setTitle(
-                    latest.decrement.title,
-                    for: .normal
-                )
-                self.decrement.isEnabled =
-                    latest.decrement.state == .enabled ||
-                    latest.decrement.state == .highlighted
-                self.label.text = latest.total
-            })
-            .disposed(by:cleanup)
-        return self
+    func render(_ input: Model) {
+        self.increment.setTitle(
+            input.increment.title,
+            for: .normal
+        )
+        self.increment.isEnabled =
+            input.increment.state == .enabled ||
+            input.increment.state == .highlighted
+        self.decrement.setTitle(
+            input.decrement.title,
+            for: .normal
+        )
+        self.decrement.isEnabled =
+            input.decrement.state == .enabled ||
+            input.decrement.state == .highlighted
+        self.label.text = input.total
     }
     
     func events() -> Observable<ValueToggler.Event> {
         return Observable.merge(
-            self.increment.rx.tap.asObservable().map { Event.increment },
-            self.decrement.rx.tap.asObservable().map { Event.decrement }
+            self.increment.rx.tap.asObservable().map { Event.incrementing },
+            self.decrement.rx.tap.asObservable().map { Event.decrementing }
         )
     }
 }
 
 extension ValueToggler.Model {
-    static var empty: ValueToggler.Model { return
+    static var empty: ValueToggler.Model {
         ValueToggler.Model(
             total: "0",
             increment: ValueToggler.Model.Button(state: .enabled, title: "+"),
             decrement: ValueToggler.Model.Button(state: .enabled, title: "-")
         )
-    }
-}
-
-private extension UIViewController {
-    static var empty: UIViewController {
-        let x = UIViewController()
-        x.view.backgroundColor = .white
-        return x
     }
 }

@@ -20,31 +20,20 @@ import RxSwift
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
 
-        let lens = CycledLens<
-            UIViewController,
-            ValueToggler.Model
-        >(
+        let lens = CycledLens<UIViewController, ValueToggler.Model>(
             lens: { source in
                 source.lens(
-                    get: { state -> ValueToggler in
-                        ValueToggler().rendering(
-                            model: state
-                        )
-                    },
-                    set: { toggler, state -> Observable<ValueToggler.Model> in
-                        toggler
-                            .events()
-                            .tupledWithLatestFrom(state)
-                            .map(mutatingInteger)
-                    }
+                    driver: ValueToggler(),
+                    reducer: mutatingInteger
                 )
-                .map { state, toggler in
-                    toggler.root
+                .map { state, toggler -> UIViewController in
+                    let x = UIViewController()
+                    x.view = toggler
+                    x.view.backgroundColor = .white
+                    return x
                 }
                 .prefixed(
-                    with: .just(
-                        ValueToggler.Model.empty
-                    )
+                    with: ValueToggler.Model.empty
                 )
             }
         )
@@ -60,15 +49,15 @@ import RxSwift
 }
 
 func mutatingInteger(
-    event: ValueToggler.Event,
-    state: ValueToggler.Model
+    state: ValueToggler.Model,
+    event: ValueToggler.Event
 ) -> ValueToggler.Model {
     var x = state
-    if event == .increment {
+    if event == .incrementing {
         x.total = String(Int(x.total)! + 1)
         x.increment.state = .enabled
     }
-    if event == .decrement {
+    if event == .decrementing {
         x.total = String(Int(x.total)! - 1)
         x.decrement.state = .enabled
     }
