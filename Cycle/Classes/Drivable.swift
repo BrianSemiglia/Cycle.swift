@@ -20,9 +20,9 @@ public extension Observable {
     func lens<Driver: Drivable>(
         driver: Driver,
         drivenOn: ImmediateSchedulerType = MainScheduler(),
-        reducer: @escaping (Element, Driver.Event) -> Element,
+        reducer: @escaping (Driver.Model, Driver.Event) -> Driver.Model,
         reducedOn: ImmediateSchedulerType = SerialDispatchQueueScheduler(qos: .userInteractive)
-    ) -> MutatingLens<Observable<Element>, Driver, [Observable<Element>]> where Element == Driver.Model {
+    ) -> MutatingLens<Observable<Driver.Model>, Driver, [Observable<Driver.Model>]> where Element == Driver.Model {
         lens(
             get: { states in
                 driver.rendering(states) { (driver, state) in
