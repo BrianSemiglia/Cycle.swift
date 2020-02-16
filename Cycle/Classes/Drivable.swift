@@ -33,6 +33,7 @@ public extension Observable {
                 toggler
                     .events()
                     .withLatestFrom(state) { ($1, $0) }
+                    .share()
                     .observeOn(reducedOn)
                     .map(reducer)
             }
@@ -56,6 +57,7 @@ public extension Observable {
                 toggler
                     .events()
                     .withLatestFrom(state) { ($1, $0) }
+                    .share()
                     .observeOn(reducedOn)
                     .map(reducer)
             }
