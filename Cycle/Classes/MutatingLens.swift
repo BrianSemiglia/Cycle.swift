@@ -137,4 +137,74 @@ extension MutatingLens {
             set: { _, a in _1.set + _2.set + _3.set + _4.set + _5.set + _6.set }
         )
     }
+    
+    public static func zip<A1, B1, B2, B3, B4, B5, B6, B7, C1>(
+        _ _1: MutatingLens<A1, B1, [C1]>,
+        _ _2: MutatingLens<A1, B2, [C1]>,
+        _ _3: MutatingLens<A1, B3, [C1]>,
+        _ _4: MutatingLens<A1, B4, [C1]>,
+        _ _5: MutatingLens<A1, B5, [C1]>,
+        _ _6: MutatingLens<A1, B6, [C1]>,
+        _ _7: MutatingLens<A1, B7, [C1]>
+    ) -> MutatingLens<A1, (B1, B2, B3, B4, B5, B6, B7), [C1]> {
+        .init(
+            value: _1.value,
+            get: { _ in (_1.get, _2.get, _3.get, _4.get, _5.get, _6.get, _7.get) },
+            set: { _, _ in _1.set + _2.set + _3.set + _4.set + _5.set + _6.set + _7.set }
+        )
+    }
+    
+    public static func zip<A1, B1, B2, B3, B4, B5, B6, B7, B8, C1>(
+        _ _1: MutatingLens<A1, B1, [C1]>,
+        _ _2: MutatingLens<A1, B2, [C1]>,
+        _ _3: MutatingLens<A1, B3, [C1]>,
+        _ _4: MutatingLens<A1, B4, [C1]>,
+        _ _5: MutatingLens<A1, B5, [C1]>,
+        _ _6: MutatingLens<A1, B6, [C1]>,
+        _ _7: MutatingLens<A1, B7, [C1]>,
+        _ _8: MutatingLens<A1, B8, [C1]>
+    ) -> MutatingLens<A1, (B1, B2, B3, B4, B5, B6, B7, B8), [C1]> {
+        .init(
+            value: _1.value,
+            get: { _ in (_1.get, _2.get, _3.get, _4.get, _5.get, _6.get, _7.get, _8.get) },
+            set: { _, _ in _1.set + _2.set + _3.set + _4.set + _5.set + _6.set + _7.set + _8.set }
+        )
+    }
+    
+    public static func zip<A1, B1, B2, B3, B4, B5, B6, B7, B8, B9, C1>(
+        _ _1: MutatingLens<A1, B1, [C1]>,
+        _ _2: MutatingLens<A1, B2, [C1]>,
+        _ _3: MutatingLens<A1, B3, [C1]>,
+        _ _4: MutatingLens<A1, B4, [C1]>,
+        _ _5: MutatingLens<A1, B5, [C1]>,
+        _ _6: MutatingLens<A1, B6, [C1]>,
+        _ _7: MutatingLens<A1, B7, [C1]>,
+        _ _8: MutatingLens<A1, B8, [C1]>,
+        _ _9: MutatingLens<A1, B9, [C1]>
+    ) -> MutatingLens<A1, (B1, B2, B3, B4, B5, B6, B7, B8, B9), [C1]> {
+        .init(
+            value: _1.value,
+            get: { _ in (_1.get, _2.get, _3.get, _4.get, _5.get, _6.get, _7.get, _8.get, _9.get) },
+            set: { _, _ in _1.set + _2.set + _3.set + _4.set + _5.set + _6.set + _7.set + _8.set + _9.set }
+        )
+    }
+    
+    public static func zip<A1, B1, B2, B3, B4, B5, B6, B7, B8, B9, B10, C1>(
+        _ _1: MutatingLens<A1, B1, [C1]>,
+        _ _2: MutatingLens<A1, B2, [C1]>,
+        _ _3: MutatingLens<A1, B3, [C1]>,
+        _ _4: MutatingLens<A1, B4, [C1]>,
+        _ _5: MutatingLens<A1, B5, [C1]>,
+        _ _6: MutatingLens<A1, B6, [C1]>,
+        _ _7: MutatingLens<A1, B7, [C1]>,
+        _ _8: MutatingLens<A1, B8, [C1]>,
+        _ _9: MutatingLens<A1, B9, [C1]>,
+        _ _10: MutatingLens<A1, B10, [C1]>
+    ) -> MutatingLens<A1, (B1, B2, B3, B4, B5, B6, B7, B8, B9, B10), [C1]> {
+        .init(
+            value: _1.value,
+            get: { _ in (_1.get, _2.get, _3.get, _4.get, _5.get, _6.get, _7.get, _8.get, _9.get, _10.get) },
+            set: { _, _ in _1.set + _2.set + _3.set + _4.set + _5.set + _6.set + _7.set + _8.set + _9.set + _10.set }
+        )
+    }
 }
