@@ -53,7 +53,7 @@ public extension Observable {
                     driver.render(state)
                 }
             },
-            set: { toggler, state -> Observable<Element> in
+            set: { toggler, state in
                 toggler
                     .events()
                     .withLatestFrom(state) { ($1, $0) }
