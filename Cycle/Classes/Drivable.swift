@@ -24,19 +24,11 @@ public extension Observable {
         reducedOn: ImmediateSchedulerType = SerialDispatchQueueScheduler(qos: .userInteractive)
     ) -> MutatingLens<Observable<Driver.Model>, Driver, [Observable<Driver.Model>]> where Element == Driver.Model {
         lens(
-            get: { states in
-                driver.rendering(states) { (driver, state) in
-                    driver.render(state)
-                }
-            },
-            set: { toggler, state in
-                toggler
-                    .events()
-                    .withLatestFrom(state) { ($1, $0) }
-                    .share()
-                    .observeOn(reducedOn)
-                    .map(reducer)
-            }
+            lifter: { e in e },
+            driver: driver,
+            drivenOn: drivenOn,
+            reducer: reducer,
+            reducedOn: reducedOn
         )
     }
             
