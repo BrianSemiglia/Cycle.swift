@@ -6,11 +6,7 @@
 //  Copyright © 2019 Brian Semiglia. All rights reserved.
 //
 
-import Foundation
 import RxSwift
-
-protocol Lensable {}
-extension Observable: Lensable {}
 
 public extension Observable {
     func lens<B, C>(
